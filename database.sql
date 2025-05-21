@@ -83,13 +83,13 @@ CREATE TABLE IF NOT EXISTS reports (
 );
 
 -- Tạo bảng comment_news
-CREATE TABLE IF NOT EXISTS comment_news (
-    newsId BIGINT NOT NULL,
-    commentId BIGINT NOT NULL,
-    PRIMARY KEY (newsId, commentId),
-    FOREIGN KEY (newsId) REFERENCES news(id) ON DELETE CASCADE,
-    FOREIGN KEY (commentId) REFERENCES comments(id) on delete cascade
-);
+# CREATE TABLE IF NOT EXISTS comment_news (
+#     newsId BIGINT NOT NULL,
+#     commentId BIGINT NOT NULL,
+#     PRIMARY KEY (newsId, commentId),
+#     FOREIGN KEY (newsId) REFERENCES news(id) ON DELETE CASCADE,
+#     FOREIGN KEY (commentId) REFERENCES comments(id) on delete cascade
+# );
 
 -- Tạo bảng save_news
 CREATE TABLE IF NOT EXISTS save_news (
