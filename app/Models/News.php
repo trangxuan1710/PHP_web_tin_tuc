@@ -37,7 +37,7 @@ class News extends Model
     }
     public function comments()
     {
-        return $this->belongsToMany(Comments::class, 'comment_news', 'newsId', 'commentId');
+        return $this->belongsToMany(Comment::class, 'comment_news', 'newsId', 'commentId');
     }
     public function label()
     {
