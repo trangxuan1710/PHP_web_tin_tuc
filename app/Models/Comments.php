@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Comments extends Model
+class Comment extends Model
 {
     use HasFactory;
     protected $table = 'comments';
@@ -39,5 +39,17 @@ class Comments extends Model
 //    {
 //        return $this->belongsTo(Comment::class, 'commentId');
 //    }
+
+    public function parent()
+    {
+        return $this->belongsTo(Comment::class, 'commentId');
+    }
+
+    // Quan hệ phản hồi
+    public function replies()
+    {
+        return $this->hasMany(Comment::class, 'commentId');
+    }
+
 
 }
