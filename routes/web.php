@@ -28,7 +28,6 @@ Route::get('/', function () {
 });
 Route::get('/news/search', [NewsController::class, 'search'])->name('news.search');
 
-<<<<<<< HEAD
 Route::get('/manager/login', [ManagerController::class, 'showLoginForm'])->name('managerLogin');
 Route::post('/manager/login', [ManagerController::class, 'handleLogin']);
 Route::get('/manager/logout', [ManagerController::class, 'handleLogout'])->name('managerLogout');
@@ -59,7 +58,6 @@ Route::middleware(['auth'])->group(function () {
 });
 
 */
-=======
 Route::get('/signup', function () {
     return view('auth.user-signup');
 });
@@ -88,4 +86,12 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/profile/update', [ProfileController::class, 'updateProfile'])->name('profile.update');
     Route::delete('/notifications/delete', [ProfileController::class, 'deleteNotifications'])->name('notifications.delete');
 });
->>>>>>> c1eca48 (add login signup, update profile)
+
+//Route::middleware('auth')->group(function () {
+Route::get('/news/{newsId}/comments', [CommentController::class, 'index'])->name('comments.index');
+Route::post('/comments', [CommentController::class, 'store'])->name('comments.store');
+Route::post('/comments/{id}/like', [CommentController::class, 'like'])->name('comments.like');
+Route::post('/comments/{id}/dislike', [CommentController::class, 'dislike'])->name('comments.dislike');
+Route::post('/comments/{id}/report', [CommentController::class, 'report'])->name('comments.report');
+
+//});
