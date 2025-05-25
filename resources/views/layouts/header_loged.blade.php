@@ -44,7 +44,7 @@
                 <span id="notification-dot" class="absolute left-1/2 -bottom-0.5 -translate-x-1/2 w-2 h-2 bg-red-500 rounded-full border-2 border-white block"></span>
             </button>
             <div id="notification-dropdown-menu"
-                class="dropdown-menu absolute right-0 mt-3 w-64 bg-white border border-gray-200 rounded-md shadow-lg z-10 overflow-hidden">
+                class="hidden dropdown-menu absolute right-0 mt-3 w-64 bg-white border border-gray-200 rounded-md shadow-lg z-10 overflow-hidden">
                 <div class="px-4 py-2 text-sm font-semibold text-gray-700 border-b border-gray-100">Thông báo mới</div>
                 <a href="#"
                     class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200 text-sm">
@@ -73,7 +73,7 @@
                 </svg>
 
                 <div id="user-dropdown-menu"
-                    class="dropdown-menu absolute w-56 right-0 mt-4 bg-white border border-gray-200 rounded-md shadow-lg z-10 overflow-hidden">
+                    class="hidden dropdown-menu absolute w-56 right-0 mt-4 bg-white border border-gray-200 rounded-md shadow-lg z-10 overflow-hidden">
                     <a href="#"
                         class="flex gap-3 px-3 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -104,11 +104,21 @@
     </div>
 </header>
 
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         var notificationBell = document.getElementById('notification-bell');
         var notificationDot = document.getElementById('notification-dot');
         var hasUnread = true;
+
+        // Dropdown toggle for user profile
+        var userProfile = document.getElementById('user-profile');
+        var userDropdown = document.getElementById('user-dropdown-menu');
+        var notificationDropdownMenu = document.getElementById('notification-dropdown-menu');
+
+        // Ẩn cả hai dropdown khi tải trang
+        userDropdown.style.display = 'none';
+        notificationDropdownMenu.style.display = 'none';
 
         notificationBell.addEventListener('click', function() {
             if (hasUnread) {
@@ -116,5 +126,34 @@
                 hasUnread = false;
             }
         });
+
+        userProfile.addEventListener('click', function(event) {
+            event.stopPropagation();
+            if (userDropdown.style.display === 'none') {
+                userDropdown.style.display = 'block';
+                notificationDropdownMenu.style.display = 'none';
+            } else {
+                userDropdown.style.display = 'none';
+            }
+        });
+
+        notificationBell.addEventListener('click', function(event) {
+            event.stopPropagation();
+            if (notificationDropdownMenu.style.display === 'none') {
+                notificationDropdownMenu.style.display = 'block';
+                userDropdown.style.display = 'none';
+            } else {
+                notificationDropdownMenu.style.display = 'none';
+            }
+        });
+
+        // Ẩn dropdown khi click ra ngoài
+        document.addEventListener('click', function(event) {
+            if (!userProfile.contains(event.target)) {
+                userDropdown.style.display = 'none';
+                notificationDropdownMenu.style.display = 'none';
+            }
+        });
     });
 </script>
+<script src="{{ asset('js/dropdown-toggle.js') }}"></script>
