@@ -1,0 +1,1 @@
+@extends("managers.layouts.app")

@@ -33,7 +33,7 @@ class News extends Model
 
     public function user()
     {
-        return $this->belongsTo(Users::class, 'userId');
+        return $this->belongsTo(Managers::class, 'userId');
     }
     public function comments()
     {

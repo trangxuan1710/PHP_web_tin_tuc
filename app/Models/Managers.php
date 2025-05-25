@@ -4,11 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Hash;
 
-class Users extends Model
+class Managers extends Model
 {
     use HasFactory;
-    protected $table = 'users';
+    protected $table = 'managers';
     protected $primaryKey = 'id';
     public $keyType = 'int';
     public $incrementing = true;
@@ -25,8 +26,13 @@ class Users extends Model
         'password',
     ];
     protected $casts = [
-        'password' => 'hashed',
+//        'password' => 'hashed',
         'isActive' => 'boolean',
-
     ];
+
+    public function setPasswordAttribute($value)
+    {
+        $this->attributes['password'] = Hash::make($value);
+    }
 }
+

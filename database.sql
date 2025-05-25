@@ -22,7 +22,7 @@ INSERT INTO clients (fullName, password, email, isMute, avatarUrl, isActive) VAL
 INSERT INTO clients (fullName, password, email, isMute, avatarUrl, isActive) VALUES ('Le Minh C', '$2b$12$RAN630EQ48vJeh.jfBSPfecgApI8Dot8ck/b6apNICCdywaS0GYpy', 'c.le@example.com', FALSE, NULL, FALSE);
 INSERT INTO clients (fullName, password, email, isMute, avatarUrl, isActive) VALUES ('Pham Hoang D', '$2b$12$MAkBcLQSpQEX1rAVwchIaeNpzejUbdl6AZvAIOSbWF8bqoEcAhok6', 'd.pham@example.com', FALSE, 'url_avatar_d.gif', TRUE);
 
--- Tạo bảng users
+-- Tạo bảng managers
 CREATE TABLE IF NOT EXISTS managers (
     id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     fullName VARCHAR(255) NOT NULL,
@@ -33,9 +33,9 @@ CREATE TABLE IF NOT EXISTS managers (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-INSERT INTO managers (fullName, password, role,email, isActive) VALUES ('Trang Xuân', '$2b$12$4.FthDpDH0mmetIANiges.7vk59.gW2DNMzjJmrEkToPMQNI7c8Tq', 'admin', 'trang@gmail.com', TRUE);
-INSERT INTO managers (fullName, password, role,email, isActive) VALUES ('Phạm Vân Anh', '$2b$12$k2qIfnDDFEunC6kWQOmq1OYsKQbF6cIrCmsy/NspM3rWHLpneOt1G', 'editor', 'vananh@gmail.com', TRUE);
-INSERT INTO managers (fullName, password, role,email, isActive) VALUES ('Thảo Nhi', '$2b$12$70fqwwm6c.2i2qDeLI.XZO6CiKRyKZ5yZb9rEurGbf3jI3qWpQG5q', 'editor', 'thaonhi@gmail.com', TRUE);
+INSERT INTO managers (fullName, password, role,email) VALUES ('Trang Xuân', '$2b$12$4.FthDpDH0mmetIANiges.7vk59.gW2DNMzjJmrEkToPMQNI7c8Tq', 'admin', 'trang@gmail.com');
+INSERT INTO managers (fullName, password, role,email) VALUES ('Phạm Vân Anh', '$2b$12$k2qIfnDDFEunC6kWQOmq1OYsKQbF6cIrCmsy/NspM3rWHLpneOt1G', 'editor', 'vananh@gmail.com');
+INSERT INTO managers (fullName, password, role,email) VALUES ('Thảo Nhi', '$2b$12$70fqwwm6c.2i2qDeLI.XZO6CiKRyKZ5yZb9rEurGbf3jI3qWpQG5q', 'editor', 'thaonhi@gmail.com');
 
 -- Tạo bảng label
 CREATE TABLE IF NOT EXISTS labels (
