@@ -33,11 +33,11 @@
     </style>
 </head>
 <body class="flex h-screen overflow-hidden">
-<div id="sidebar-overlay" class="sidebar-overlay md:hidden" onclick="toggleSidebar()"></div>
+<div id="sidebar-overlay" class="sidebar-overlay lg:hidden" onclick="toggleSidebar()"></div>
 
 <aside id="sidebar" class="w-64 bg-white shadow-lg p-6 flex flex-col justify-between rounded-r-lg
-                                transform -translate-x-full md:translate-x-0
-                                fixed md:relative h-full z-50 sidebar-transition">
+                                transform -translate-x-full lg:translate-x-0
+                                fixed lg:relative h-full z-50 sidebar-transition">
     <div>
         <h2 class="text-xl font-semibold text-gray-800 mb-8">Trang quản trị</h2>
         <div class="space-y-4">
@@ -69,10 +69,10 @@
 
 <div id="main-content-area" class="flex-1 flex flex-col overflow-hidden transition-all duration-300">
     <header class="bg-white shadow-lg p-6 flex items-center justify-between">
-        <button id="sidebar-toggle" class="md:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <button id="sidebar-toggle" class="lg:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
             <i class="fas fa-bars text-xl"></i>
         </button>
-        <h1 class="text-2xl font-bold text-gray-800 flex-grow text-center md:text-left ml-0">Xin chào, Trang Xuân</h1>
+        <h1 class="text-2xl font-bold text-gray-800 flex-grow text-center lg:text-left ml-0">Xin chào, Trang Xuân</h1>
     </header>
 
     <main class="flex-1 p-6 overflow-auto">
@@ -83,36 +83,35 @@
 <script>
     const sidebar = document.getElementById('sidebar');
     const sidebarToggle = document.getElementById('sidebar-toggle');
-    const mainContentArea = document.getElementById('main-content-area');
     const sidebarOverlay = document.getElementById('sidebar-overlay');
+
+    // Define the breakpoint for 'lg' in pixels (Tailwind's default lg is 1024px)
+    const LG_BREAKPOINT = 1024;
 
     function toggleSidebar() {
         // Toggle sidebar visibility
         sidebar.classList.toggle('-translate-x-full');
         sidebar.classList.toggle('translate-x-0');
 
-        // Toggle main content margin on desktop (md breakpoint and above)
-        // This ensures content shifts when sidebar is manually toggled on larger screens
-        // mainContentArea.classList.toggle('md:ml-0');
-        // mainContentArea.classList.toggle('md:ml-64');
-
-        // Toggle overlay for mobile
-        sidebarOverlay.classList.toggle('active');
+        // Toggle overlay for screens smaller than lg
+        if (window.innerWidth < LG_BREAKPOINT) {
+            sidebarOverlay.classList.toggle('active');
+        }
     }
 
     // Event listener for the toggle button
     sidebarToggle.addEventListener('click', toggleSidebar);
 
-    // Close sidebar if window is resized to desktop size while sidebar is open on mobile
+    // Handle sidebar state on window resize
     window.addEventListener('resize', () => {
-        if (window.innerWidth >= 780) { // Tailwind's 'md' breakpoint
+        if (window.innerWidth >= LG_BREAKPOINT) {
+            // On large screens, ensure sidebar is visible and overlay is hidden
             sidebar.classList.remove('-translate-x-full');
             sidebar.classList.add('translate-x-0');
-            // mainContentArea.classList.remove('md:ml-0');
-            // mainContentArea.classList.add('md:ml-64');
             sidebarOverlay.classList.remove('active');
         } else {
-            // Ensure sidebar is hidden by default on mobile if resized from desktop
+            // On screens smaller than lg, ensure sidebar is hidden if it was open
+            // and overlay is hidden unless explicitly opened by toggle button
             if (sidebar.classList.contains('translate-x-0') && !sidebar.classList.contains('-translate-x-full')) {
                 sidebar.classList.add('-translate-x-full');
                 sidebar.classList.remove('translate-x-0');
@@ -123,11 +122,12 @@
 
     // Initial check on load to ensure correct state based on screen size
     window.onload = () => {
-        if (window.innerWidth < 800) {
+        if (window.innerWidth < LG_BREAKPOINT) {
+            // On small screens, sidebar should be hidden by default
             sidebar.classList.add('-translate-x-full');
             sidebar.classList.remove('translate-x-0');
-
         } else {
+            // On large screens, sidebar should be visible by default
             sidebar.classList.remove('-translate-x-full');
             sidebar.classList.add('translate-x-0');
         }
