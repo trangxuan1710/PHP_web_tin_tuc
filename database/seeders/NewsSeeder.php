@@ -74,8 +74,5 @@ class NewsSeeder extends Seeder
             ],
         ];
 
-        foreach ($newsData as $data) {
-            News::create($data);
-        }
     }
 }

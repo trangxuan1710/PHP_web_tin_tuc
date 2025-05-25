@@ -87,11 +87,19 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/notifications/delete', [ProfileController::class, 'deleteNotifications'])->name('notifications.delete');
 });
 
-//Route::middleware('auth')->group(function () {
-Route::get('/news/{newsId}/comments', [CommentController::class, 'index'])->name('comments.index');
-Route::post('/comments', [CommentController::class, 'store'])->name('comments.store');
-Route::post('/comments/{id}/like', [CommentController::class, 'like'])->name('comments.like');
-Route::post('/comments/{id}/dislike', [CommentController::class, 'dislike'])->name('comments.dislike');
-Route::post('/comments/{id}/report', [CommentController::class, 'report'])->name('comments.report');
 
-//});
+Route::get('/news/{id}', [NewsController::class, 'show'])->name('news.show');
+Route::post('/news/{id}/save', [NewsController::class, 'save'])->name('news.save');
+Route::get('/saved-news', [NewsController::class, 'savedNews'])->name('news.saved');
+
+
+Route::get('/news/{newsId}/comments', [CommentController::class, 'index'])->name('comments.index');
+//    Route::post('/comments', [CommentController::class, 'store'])->name('comments.store');
+Route::post('/news/{id}/comments', [CommentController::class, 'store'])->name('comments.store');
+Route::middleware('auth')->group(function () {
+
+    Route::post('/comments/{id}/like', [CommentController::class, 'like'])->name('comments.like');
+    Route::post('/comments/{id}/dislike', [CommentController::class, 'dislike'])->name('comments.dislike');
+    Route::post('/comments/{id}/report', [CommentController::class, 'report'])->name('comments.report');
+
+});

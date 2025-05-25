@@ -47,11 +47,9 @@ class Comment extends Model
 //    }
     public function replies()
     {
-<<<<<<< HEAD
         return $this->hasMany(Comment::class, 'commentId')->orderBy('date', 'asc');
-=======
         return $this->hasMany(Comment::class, 'commentId');
->>>>>>> e4a45b9 (update comments,like,dislike)
+        return $this->hasMany(Comment::class, 'commentId')->orderBy('date', 'asc');
     }
 
 
