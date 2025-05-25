@@ -6,25 +6,23 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
         Schema::create('news', function (Blueprint $table) {
             $table->id();
             $table->string('title');
+            $table->integer('views')->default(0);
+            $table->unsignedBigInteger('userId')->nullable(); // Giả sử userId là khoá ngoài
+            $table->dateTime('date')->nullable();
+            $table->string('tag')->nullable();
+            $table->text('content')->nullable();
+            $table->string('thumbNailUrl')->nullable();
+            $table->boolean('isHot')->default(false);
+            $table->unsignedBigInteger('labelId')->nullable();
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
         Schema::dropIfExists('news');

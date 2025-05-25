@@ -46,10 +46,15 @@ class Comment extends Model
     }
 
     // Quan hệ phản hồi
+//    public function replies()
+//    {
+//        return $this->hasMany(Comment::class, 'commentId');
+//    }
     public function replies()
     {
-        return $this->hasMany(Comment::class, 'commentId');
+        return $this->hasMany(Comment::class, 'commentId')->orderBy('date', 'asc');
     }
+
 
 
 }

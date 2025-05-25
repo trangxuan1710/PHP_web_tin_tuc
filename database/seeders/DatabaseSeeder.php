@@ -27,5 +27,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             CommentTestSeeder::class,
         ]);
+        $this->call(NewsSeeder::class);
+
     }
 }
