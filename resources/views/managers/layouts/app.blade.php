@@ -41,19 +41,33 @@
     <div>
         <h2 class="text-xl font-semibold text-gray-800 mb-8">Trang quản trị</h2>
         <div class="space-y-4">
-            <a href="{{route("manageNews")}}" class="flex items-center p-3 rounded-lg bg-blue-100 text-blue-700 font-medium hover:bg-blue-200 transition-colors duration-200">
+            {{-- Quản lý bài viết --}}
+            <a href="{{route("manageNews")}}"
+               class="flex items-center p-3 rounded-lg font-medium transition-colors duration-200
+               {{ request()->routeIs('manageNews') ? 'bg-blue-100 text-blue-700' : 'text-gray-700 hover:bg-gray-100' }}">
                 <i class="fas fa-file-alt mr-3 text-lg"></i>
                 Quản lý bài viết
             </a>
-            <a href="#" class="flex items-center p-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors duration-200">
+
+            {{-- Quản lý bình luận --}}
+            <a href="{{route('manageCommentsIndex')}}"
+               class="flex items-center p-3 rounded-lg font-medium transition-colors duration-200
+               {{ request()->routeIs('manageCommentsIndex') ? 'bg-blue-100 text-blue-700' : 'text-gray-700 hover:bg-gray-100' }}">
                 <i class="fas fa-comments mr-3 text-lg"></i>
                 Quản lý bình luận
             </a>
-            <a href="/" class="flex items-center p-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors duration-200">
+
+            <a href=""
+               class="flex items-center p-3 rounded-lg font-medium transition-colors duration-200
+               {{ request()->routeIs('handleReports') ? 'bg-blue-100 text-blue-700' : 'text-gray-700 hover:bg-gray-100' }}">
                 <i class="fas fa-exclamation-triangle mr-3 text-lg"></i>
                 Xử lý báo cáo
             </a>
-            <a href="{{route("managerChangePassword")}}" class="flex items-center p-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors duration-200">
+
+            {{-- Đổi mật khẩu (managerChangePassword) --}}
+            <a href="{{route("managerChangePassword")}}"
+               class="flex items-center p-3 rounded-lg font-medium transition-colors duration-200
+               {{ request()->routeIs('managerChangePassword') ? 'bg-blue-100 text-blue-700' : 'text-gray-700 hover:bg-gray-100' }}">
                 <i class="fas fa-key mr-3 text-lg"></i>
                 Đổi mật khẩu
             </a>
@@ -120,7 +134,6 @@
         }
     });
 
-    // Initial check on load to ensure correct state based on screen size
     window.onload = () => {
         if (window.innerWidth < LG_BREAKPOINT) {
             // On small screens, sidebar should be hidden by default

@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\FileController;
 
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\NewsController;
 
@@ -34,3 +34,5 @@ Route::get('/manager/manageNews/edit/{id}', [NewsController::class, 'edit'])->na
 Route::put('/news/{id}', [NewsController::class, 'update'])->name('news.update');
 Route::delete('/news/{id}', [NewsController::class, 'destroy'])->name('news.destroy');
 
+Route::get('/manager/manageComments', [CommentController::class, 'index'])->name('manageCommentsIndex');
+Route::delete('comments/{commentId}', [CommentController::class, 'delete'])->name('manageCommentsDelete');

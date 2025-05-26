@@ -67,8 +67,10 @@ CREATE TABLE IF NOT EXISTS comments (
     date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     like_count INT DEFAULT 0,
     commentId BIGINT,
+    newsId BIGINT,
     FOREIGN KEY (clientId) REFERENCES clients(id) ON DELETE CASCADE,
-    FOREIGN KEY (commentId) REFERENCES comments(id) ON DELETE CASCADE
+    FOREIGN KEY (commentId) REFERENCES comments(id) ON DELETE CASCADE,
+    FOREIGN KEY (newsId) REFERENCES news(id) ON DELETE CASCADE
 );
 
 -- Tạo bảng reports
