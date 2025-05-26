@@ -20,7 +20,6 @@ class Managers extends Model
         'email',
         'password',
         'role', // Thêm 'role' vào đây
-
     ];
     protected $hidden = [
         'password',

@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS managers (
 INSERT INTO managers (fullName, password, role,email) VALUES ('Trang Xuân', '$2b$12$4.FthDpDH0mmetIANiges.7vk59.gW2DNMzjJmrEkToPMQNI7c8Tq', 'admin', 'trang@gmail.com');
 INSERT INTO managers (fullName, password, role,email) VALUES ('Phạm Vân Anh', '$2b$12$k2qIfnDDFEunC6kWQOmq1OYsKQbF6cIrCmsy/NspM3rWHLpneOt1G', 'editor', 'vananh@gmail.com');
 INSERT INTO managers (fullName, password, role,email) VALUES ('Thảo Nhi', '$2b$12$70fqwwm6c.2i2qDeLI.XZO6CiKRyKZ5yZb9rEurGbf3jI3qWpQG5q', 'editor', 'thaonhi@gmail.com');
+INSERT INTO managers (fullName, password, role,email) VALUES ('Chau', '$2y$10$f/9f4E5b7C8d90E1F2G3H4I5J6K7L8M9N0O1P2Q3R4S5T6U7V8W9X0Y1Z2a3b4c5d6', 'editor', 'chau@gmail.com');
 
 -- Tạo bảng label
 CREATE TABLE IF NOT EXISTS labels (

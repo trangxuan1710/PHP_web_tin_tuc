@@ -10,7 +10,7 @@
 <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
     <h2 class="text-2xl font-bold text-center mb-6 text-gray-800">Đăng nhập</h2>
 
-    <form method="POST" action="{{ route('login') }}">
+    <form method="POST" action="{{ route('managerLogin') }}">
         @csrf
         <div class="mb-4">
             <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Email:</label>

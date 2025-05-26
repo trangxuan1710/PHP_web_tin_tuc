@@ -49,18 +49,18 @@
                 <i class="fas fa-comments mr-3 text-lg"></i>
                 Quản lý bình luận
             </a>
-            <a href="#" class="flex items-center p-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors duration-200">
+            <a href="/" class="flex items-center p-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors duration-200">
                 <i class="fas fa-exclamation-triangle mr-3 text-lg"></i>
                 Xử lý báo cáo
             </a>
-            <a href="#" class="flex items-center p-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors duration-200">
-                <i class="fas fa-users mr-3 text-lg"></i>
-                Quản lý người dùng
+            <a href="{{route("managerChangePassword")}}" class="flex items-center p-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors duration-200">
+                <i class="fas fa-key mr-3 text-lg"></i>
+                Đổi mật khẩu
             </a>
         </div>
     </div>
     <div class="mt-8">
-        <a href="#" class="flex items-center p-3 rounded-lg text-red-600 hover:bg-red-100 transition-colors duration-200">
+        <a href="{{route("managerLogout")}}" class="flex items-center p-3 rounded-lg text-red-600 hover:bg-red-100 transition-colors duration-200">
             <i class="fas fa-sign-out-alt mr-3 text-lg"></i>
             Đăng xuất
         </a>
