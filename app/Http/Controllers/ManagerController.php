@@ -10,12 +10,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 class ManagerController extends Controller
 {
-
     function showLoginForm() {
         return view('managers.login');
-    }
-    function showManageNews() {
-        return view('managers.manageNews');
     }
     function handleLogin(Request $request) {
         $request->validate([
@@ -29,6 +25,10 @@ class ManagerController extends Controller
                 'email' => 'Thông tin đăng nhập không hợp lệ.', // Hoặc thông báo cụ thể hơn
             ])->onlyInput('email');
         } else {
+
+            $request->session()->put('logged_in_manager_id', $manager->id);
+            // 5. Tạo lại session để ngăn chặn session fixation attacks (khuyến nghị)
+            $request->session()->regenerate();
             return redirect()->route('manageNews');
         }
     }

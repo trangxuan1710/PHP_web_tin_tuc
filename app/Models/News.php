@@ -11,13 +11,15 @@ class News extends Model
     protected $table = 'news';
 
     public $timestamps = false;
-
+    protected $primaryKey = 'id';
+    public $keyType = 'int';
+    public $incrementing = true;
     const UPDATED_AT = 'date';
     const CREATED_AT = null;
 
     protected $fillable = [
         'title',
-        'userId',
+        'managerId',
         'date',
         'tag',
         'content',
@@ -31,9 +33,9 @@ class News extends Model
         'date' => 'datetime',
     ];
 
-    public function user()
+    public function manager()
     {
-        return $this->belongsTo(Managers::class, 'userId');
+        return $this->belongsTo(Managers::class, 'managerId');
     }
     public function comments()
     {

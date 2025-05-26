@@ -41,7 +41,7 @@
     <div>
         <h2 class="text-xl font-semibold text-gray-800 mb-8">Trang quản trị</h2>
         <div class="space-y-4">
-            <a href="#" class="flex items-center p-3 rounded-lg bg-blue-100 text-blue-700 font-medium hover:bg-blue-200 transition-colors duration-200">
+            <a href="{{route("manageNews")}}" class="flex items-center p-3 rounded-lg bg-blue-100 text-blue-700 font-medium hover:bg-blue-200 transition-colors duration-200">
                 <i class="fas fa-file-alt mr-3 text-lg"></i>
                 Quản lý bài viết
             </a>

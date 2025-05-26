@@ -101,7 +101,6 @@
                 notificationBell.setAttribute('aria-expanded', 'false');
             }
         }
-
         // Cập nhật header khi trang được tải
         window.onload = updateHeader;
     </script>
