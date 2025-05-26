@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\FileController;
+use App\Http\Controllers\ImageController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\NewsController;
 use Illuminate\Support\Facades\Route;
@@ -26,3 +27,7 @@ Route::get('/manager/manageNews/addNews', [NewsController::class, 'formCreateNew
 Route::post('/news', [NewsController::class, 'store'])->name('news.store');
 
 
+
+Route::get('/manager/manageNews/edit/{id}', [NewsController::class, 'edit'])->name('news.edit');
+Route::put('/news/{id}', [NewsController::class, 'update'])->name('news.update');
+Route::delete('/news/{id}', [NewsController::class, 'destroy'])->name('news.destroy');

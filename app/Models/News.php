@@ -11,7 +11,9 @@ class News extends Model
     protected $table = 'news';
 
     public $timestamps = false;
-
+    protected $primaryKey = 'id';
+    public $keyType = 'int';
+    public $incrementing = true;
     const UPDATED_AT = 'date';
     const CREATED_AT = null;
 
