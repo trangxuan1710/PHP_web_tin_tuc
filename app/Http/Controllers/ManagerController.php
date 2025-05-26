@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\News;
 use Illuminate\Http\Request;
 
-class UserController extends Controller
+class ManagerController extends Controller
 {
     //
+
+
 }

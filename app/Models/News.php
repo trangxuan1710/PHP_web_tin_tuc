@@ -17,7 +17,7 @@ class News extends Model
 
     protected $fillable = [
         'title',
-        'userId',
+        'managerId',
         'date',
         'tag',
         'content',
@@ -31,9 +31,9 @@ class News extends Model
         'date' => 'datetime',
     ];
 
-    public function user()
+    public function manager()
     {
-        return $this->belongsTo(Users::class, 'userId');
+        return $this->belongsTo(Managers::class, 'managerId');
     }
     public function comments()
     {
