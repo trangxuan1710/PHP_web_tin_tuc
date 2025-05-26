@@ -3,6 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\ProfileController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -17,3 +19,11 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::patch('/change-password/{id}', [ProfileController::class, 'changePassword'])->name('api.profile.change-password');
+
+Route::put('/notifications/read/{id}', [ProfileController::class, 'readNotifications'])->name('api.notifications.read');
+Route::put('/profile/update/{id}', [ProfileController::class, 'updateProfile'])->name('api.profile.update');
+
+Route::delete('/notifications/delete/{id}', [ProfileController::class, 'deleteNotifications'])->name('api.notifications.delete');
+

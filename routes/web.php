@@ -2,6 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\ProfileController;
+use GuzzleHttp\Client;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -17,6 +20,17 @@ Route::get('/', function () {
     return view('home');
 });
 
-Route::get('/profile', function () {
-    return view('user-profile');
+Route::get('/profile/{id}', [ProfileController::class, 'showProfile'])->name('profile');
+
+Route::get('profile/{id}/change-password', function ($id) {
+    return view('change-password', ['id' => $id]);
+})->name('change-password');
+Route::put('profile/{id}/update-password', [ProfileController::class, 'updatePassword'])->name('update-password');
+
+/*
+Route::middleware(['auth'])->group(function () {
+    Route::get('/profile/{id}', [ProfileController::class, 'showProfile'])->name('profile');
+
 });
+
+*/

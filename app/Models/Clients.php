@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
 
 class Clients extends Model
 {
-    use HasFactory;
+    use HasFactory, Notifiable;
+
     protected $table = 'clients';
     protected $primaryKey = 'id';
     public $keyType = 'int';
@@ -18,6 +20,7 @@ class Clients extends Model
 
     protected $fillable = [
         'fullName',
+        'bio',
         'email',
         'password',
         'isMute',
@@ -33,4 +36,14 @@ class Clients extends Model
         'isMute' => 'boolean',
         'isActive' => 'boolean',
     ];
+
+    public function sentNotifications()
+    {
+        return $this->hasMany(Notifications::class, 'replierId');
+    }
+
+    public function receivedNotifications()
+    {
+        return $this->hasMany(Notifications::class, 'clientId');
+    }
 }
