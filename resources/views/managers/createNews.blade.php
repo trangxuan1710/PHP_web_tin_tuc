@@ -119,16 +119,38 @@
             <a href="{{ route('manageNews') }}" class="w-full md:w-auto bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-6 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-75 transition duration-200 ease-in-out text-center">
                 Hủy
             </a>
-            <button type="submit" class="w-full md:w-auto bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition duration-200 ease-in-out">
+            {{-- Thêm một input hidden để lưu trạng thái --}}
+            <input type="hidden" name="action_type" id="action_type" value="">
+
+            {{-- Nút Lưu nháp --}}
+            <button type="button" onclick="setFormAction('draft')" class="w-full md:w-auto bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition duration-200 ease-in-out">
                 Lưu nháp
             </button>
-            <button type="submit" class="w-full md:w-auto bg-blue-700 hover:bg-blue-800 text-white font-semibold py-2 px-6 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-opacity-75 transition duration-200 ease-in-out">
+
+            {{-- Nút Lưu bản thực / Cập nhật --}}
+            <button type="button" onclick="setFormAction('publish')" class="w-full md:w-auto bg-blue-700 hover:bg-blue-800 text-white font-semibold py-2 px-6 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-opacity-75 transition duration-200 ease-in-out">
                 {{ isset($news) ? 'Cập nhật' : 'Lưu' }}
             </button>
         </div>
     </form>
 </div>
 
+
+{{--handle submit--}}
+<script>
+    function setFormAction(action) {
+        // Lấy form cha của các nút này
+        const form = document.querySelector('form'); // Hoặc lấy form bằng ID nếu bạn có nhiều form
+        if (form) {
+            // Gán giá trị cho input hidden
+            document.getElementById('action_type').value = action;
+            // Gửi form
+            form.submit();
+        } else {
+            console.error("Form không tìm thấy.");
+        }
+    }
+</script>
 <script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js"></script>
 
 <script>

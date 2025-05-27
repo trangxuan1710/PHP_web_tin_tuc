@@ -40,19 +40,6 @@
             @enderror
         </div>
 
-        <div class="mb-6 flex items-center justify-between">
-            <label class="flex items-center text-gray-700 text-sm">
-                <input type="checkbox" name="remember" id="remember" class="mr-2 leading-tight">
-                <span>Ghi nhớ tôi</span>
-            </label>
-
-            @if (Route::has('password.request'))
-                <a class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800" href="{{ route('password.request') }}">
-                    Quên mật khẩu?
-                </a>
-            @endif
-        </div>
-
         <div class="flex items-center justify-center">
             <button type="submit"
                     class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full">
@@ -61,12 +48,7 @@
         </div>
     </form>
 
-    @if (Route::has('register'))
-        <p class="text-center text-gray-600 text-xs mt-4">
-            Chưa có tài khoản?
-            <a class="text-blue-500 hover:text-blue-800 font-bold" href="{{ route('register') }}">Đăng ký ngay</a>
-        </p>
-    @endif
+
 </div>
 </body>
 </html>

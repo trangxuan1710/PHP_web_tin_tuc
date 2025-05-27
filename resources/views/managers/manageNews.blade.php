@@ -8,7 +8,17 @@
                 <a href="{{ route('addNews') }}" class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg shadow transition-colors duration-200">
                     Thêm bài viết
                 </a>
-                <form action="{{ route('manageNews') }}" method="GET" class="m-0">
+                <form action="{{ route('manageNews') }}" method="GET" class="m-0 flex items-center space-x-2">
+                    {{-- Dropdown để chọn nhãn --}}
+                    <select name="label_id" class="py-2 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">Tất cả nhãn</option>
+                        @foreach($labels as $labelOption)
+                            <option value="{{ $labelOption->id }}" {{ old('label_id', $labelId ?? '') == $labelOption->id ? 'selected' : '' }}>
+                                {{ $labelOption->type }}
+                            </option>
+                        @endforeach
+                    </select>
+                    {{-- Ô nhập nội dung tìm kiếm theo tiêu đề --}}
                     <div class="relative">
                         <input type="text"
                                name="keyword"
@@ -17,9 +27,8 @@
                                class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
                     </div>
-                    {{-- Nút submit này là cần thiết để form có thể được gửi khi nhấn Enter --}}
-                    <button type="submit" class="hidden">Submit</button>
-
+                    {{-- Nút tìm kiếm --}}
+                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg shadow transition-colors duration-200">Tìm kiếm</button>
                 </form>
             </div>
         </div>
@@ -38,13 +47,24 @@
             @php use Illuminate\Support\Str; @endphp
 
             @forelse ($news as $item)
-                <div class="flex items-center bg-gray-50 p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
+                @php
+                    $bgColorClass = 'bg-gray-50'; // Màu nền mặc định
+                    if (isset($item->status)) {
+                        if ($item->status == 'publish') {
+                            $bgColorClass = 'bg-green-50'; // Màu nền cho trạng thái public
+                        }
+                    }
+                    $hoverShadowClass = 'hover:shadow-md';
+
+                @endphp
+                <div class="flex items-center {{$bgColorClass}} p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
                     <div class="flex-1">
-                        <p class="font-medium text-gray-900">ID: {{ $item->id }} - {{ $item->title }}</p>
+
+                        <p class="font-medium text-gray-900">ID: {{ $item->id }} - {{ $item->title }} </p>
 
                         <p class="text-sm text-gray-600">
                             @if ($item->manager)
-                                {{ $item->manager->name }} -
+                                {{ $item->manager->fullName }} -
                             @else
                                 Người dùng không xác định -
                             @endif
@@ -56,18 +76,6 @@
                             $status = $item->isHot ? 'Tin nóng' : 'Bình thường';
                             $statusClass = '';
                             switch ($status) {
-                                case 'Đã xuất bản':
-                                    $statusClass = 'bg-green-200 text-green-800';
-                                    break;
-                                case 'Bản nháp':
-                                    $statusClass = 'bg-yellow-200 text-yellow-800';
-                                    break;
-                                case 'Viết lại':
-                                    $statusClass = 'bg-purple-200 text-purple-800';
-                                    break;
-                                case 'Chờ duyệt':
-                                    $statusClass = 'bg-blue-200 text-blue-800';
-                                    break;
                                 case 'Tin nóng':
                                     $statusClass = 'bg-red-200 text-red-800';
                                     break;
@@ -82,7 +90,7 @@
                         <span class="px-3 py-1 text-xs font-semibold rounded-full {{ $statusClass }}">
                     {{ $status }}
                 </span>
-                        {{-- Nút Sửa: Trỏ đến route news.edit với ID của bài viết --}}
+
                         <a href="{{ route('news.edit', $item->id) }}" class="text-yellow-500 hover:text-yellow-600 transition-colors duration-200">
                             <i class="fas fa-edit text-lg"></i>
                         </a>
@@ -110,35 +118,34 @@
                     const newsItemElement = document.querySelector(`.news-item-${newsId}`); // Lấy phần tử cha của tin tức
                     console.log(newsId,"loooo")
                     if (confirm('Bạn có chắc chắn muốn xóa tin tức này không?')) {
-                        // Gửi yêu cầu xóa bằng Fetch API
-                        fetch(`/news/${newsId}`, { // Sử dụng route '/news/{id}' đã định nghĩa trong Laravel
+
+                        fetch(`/news/${newsId}`, {
                             method: 'DELETE',
                             headers: {
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}', // Laravel yêu cầu CSRF token
-                                'Content-Type': 'application/json', // Đặt kiểu nội dung
-                                'Accept': 'application/json' // Yêu cầu phản hồi JSON
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json'
                             }
                         })
                             .then(response => {
-                                // Kiểm tra nếu phản hồi không thành công (ví dụ: 4xx hoặc 5xx)
+
                                 if (!response.ok) {
                                     return response.json().then(errorData => {
                                         throw new Error(errorData.message || 'Lỗi không xác định.');
                                     });
                                 }
-                                return response.json(); // Phân tích phản hồi JSON
+                                return response.json();
                             })
                             .then(data => {
                                 // Xóa thành công
                                 console.log('Xóa thành công:', data);
                                 if (newsItemElement) {
-                                    newsItemElement.remove(); // Xóa phần tử HTML của tin tức khỏi DOM
+                                    newsItemElement.remove();
                                 }
                                 showAlert(data.message || 'Tin tức đã được xóa thành công!', 'success');
 
-                                // Kiểm tra nếu không còn tin tức nào, hiển thị thông báo "Chưa có tin tức"
                                 if (document.querySelectorAll('.delete-news-btn').length === 0) {
-                                    const parentDiv = newsItemElement.closest('.space-y-4'); // Tìm div cha chứa danh sách
+                                    const parentDiv = newsItemElement.closest('.space-y-4');
                                     if (parentDiv) {
                                         parentDiv.innerHTML = '<div class="p-4 text-center text-gray-500 bg-white rounded-lg shadow-sm">Chưa có tin tức nào được tạo.</div>';
                                     }

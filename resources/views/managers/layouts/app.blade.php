@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -35,7 +36,7 @@
 <body class="flex h-screen overflow-hidden">
 <div id="sidebar-overlay" class="sidebar-overlay lg:hidden" onclick="toggleSidebar()"></div>
 
-<aside id="sidebar" class="w-64 bg-white shadow-lg p-6 flex flex-col justify-between rounded-r-lg
+<aside id="sidebar" class="w-64 bg-white shadow-lg p-6 flex flex-col justify-between
                                 transform -translate-x-full lg:translate-x-0
                                 fixed lg:relative h-full z-50 sidebar-transition">
     <div>
@@ -57,9 +58,9 @@
                 Quản lý bình luận
             </a>
 
-            <a href=""
+            <a href="{{route('managerManageReports')}}"
                class="flex items-center p-3 rounded-lg font-medium transition-colors duration-200
-               {{ request()->routeIs('handleReports') ? 'bg-blue-100 text-blue-700' : 'text-gray-700 hover:bg-gray-100' }}">
+               {{ request()->routeIs('managerManageReports') ? 'bg-blue-100 text-blue-700' : 'text-gray-700 hover:bg-gray-100' }}">
                 <i class="fas fa-exclamation-triangle mr-3 text-lg"></i>
                 Xử lý báo cáo
             </a>
@@ -86,7 +87,7 @@
         <button id="sidebar-toggle" class="lg:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
             <i class="fas fa-bars text-xl"></i>
         </button>
-        <h1 class="text-2xl font-bold text-gray-800 flex-grow text-center lg:text-left ml-0">Xin chào, Trang Xuân</h1>
+        <h1 class="text-2xl font-bold text-gray-800 flex-grow text-center lg:text-left ml-0">Xin chào, {{$manager->fullName}}</h1>
     </header>
 
     <main class="flex-1 p-6 overflow-auto">

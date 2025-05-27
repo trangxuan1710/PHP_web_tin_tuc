@@ -23,6 +23,7 @@ class News extends Model
         'date',
         'tag',
         'content',
+        'status',
         'thumbNailUrl',
         'isHot',
         'labelId',

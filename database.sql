@@ -36,14 +36,19 @@ CREATE TABLE IF NOT EXISTS managers (
 INSERT INTO managers (fullName, password, role,email) VALUES ('Trang Xuân', '$2b$12$4.FthDpDH0mmetIANiges.7vk59.gW2DNMzjJmrEkToPMQNI7c8Tq', 'admin', 'trang@gmail.com');
 INSERT INTO managers (fullName, password, role,email) VALUES ('Phạm Vân Anh', '$2b$12$k2qIfnDDFEunC6kWQOmq1OYsKQbF6cIrCmsy/NspM3rWHLpneOt1G', 'editor', 'vananh@gmail.com');
 INSERT INTO managers (fullName, password, role,email) VALUES ('Thảo Nhi', '$2b$12$70fqwwm6c.2i2qDeLI.XZO6CiKRyKZ5yZb9rEurGbf3jI3qWpQG5q', 'editor', 'thaonhi@gmail.com');
-INSERT INTO managers (fullName, password, role,email) VALUES ('Chau', '$2y$10$f/9f4E5b7C8d90E1F2G3H4I5J6K7L8M9N0O1P2Q3R4S5T6U7V8W9X0Y1Z2a3b4c5d6', 'editor', 'chau@gmail.com');
+INSERT INTO managers (fullName, password, role,email) VALUES ('Chau', '$2y$10$9qIC/5I3PnlaCq9EkRdOIeCjiFV37owCPUisIT7VLLdkIdRCexR0u', 'editor', 'chau@gmail.com'); -- password 12345
 
 -- Tạo bảng label
 CREATE TABLE IF NOT EXISTS labels (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     type VARCHAR(255) NOT NULL
 );
-
+INSERT INTO labels (type) VALUES
+                              ('Tin tức nóng'),
+                              ('Phân tích chuyên sâu'),
+                              ('Đời sống'),
+                              ('Công nghệ'),
+                              ('Giải trí');
 -- Tạo bảng News
 CREATE TABLE IF NOT EXISTS news (
     id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -54,7 +59,9 @@ CREATE TABLE IF NOT EXISTS news (
     content TEXT,
     thumbNailUrl VARCHAR(255),
     isHot BOOLEAN DEFAULT FALSE,
+    status VARCHAR(255) NOT NULL CHECK (status = 'draft' or status = 'publish'),
     labelId INT,
+
     FOREIGN KEY (managerId) REFERENCES managers(id),
     FOREIGN KEY (labelId) REFERENCES labels(id)
 );
@@ -80,18 +87,12 @@ CREATE TABLE IF NOT EXISTS reports (
     content TEXT,
     clientId BIGINT NOT NULL,
     commentId BIGINT NOT NULL,
+    created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (clientId) REFERENCES clients(id) ON DELETE CASCADE,
     FOREIGN KEY (commentId) REFERENCES comments(id) ON DELETE CASCADE
 );
 
--- Tạo bảng comment_news
-CREATE TABLE IF NOT EXISTS comment_news (
-	newsId BIGINT NOT NULL,
-	commentId BIGINT NOT NULL,
-	PRIMARY KEY (newsId, commentId),
-	FOREIGN KEY (newsId) REFERENCES news(id) ON DELETE CASCADE,
-	FOREIGN KEY (commentId) REFERENCES comments(id) on delete cascade
-);
+
 
 -- Tạo bảng save_news
 CREATE TABLE IF NOT EXISTS save_news (

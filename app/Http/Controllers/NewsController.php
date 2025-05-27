@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Labels;
+use App\Models\Managers;
 use App\Models\News;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -14,27 +15,38 @@ class NewsController extends Controller
 
     public function showManageNews(Request $request) // Truyền Request vào phương thức
     {
-        $query = News::with('manager');
-
-
-        $keyword = $request->input('keyword'); // hoặc $request->query('keyword')
-
-        if ($keyword && $keyword!='') {
-            $query->where(function($q) use ($keyword) {
-                $q->where('title', 'like', '%' . $keyword . '%'); // Tìm kiếm trong tiêu đề
-            });
+        $managerId = $request->session()->get('logged_in_manager_id');
+        $manager  = Managers::find($managerId);
+        if($manager == null){
+            return redirect()->route('managerLogin');
         }
+        $keyword = $request->input('keyword');
+        $labelId = $request->input('label_id'); // Lấy label_id từ request
 
-        // Sắp xếp theo cột 'date' giảm dần
-        $news = $query->orderBy('date', 'desc')->get();
+        // Lấy tất cả các nhãn để truyền vào dropdown
+        $labels = Labels::all();
 
-        // Truyền biến $news và $keyword sang view
-        return view('managers.manageNews', compact('news', 'keyword'));
+        $news = News::with(['manager', 'label']) // Eager load mối quan hệ manager và label
+        ->when($keyword, function ($query, $keyword) {
+            $query->where('title', 'like', '%' . $keyword . '%');
+        })
+            ->when($labelId, function ($query, $labelId) {
+                $query->where('labelId', $labelId); // Lọc theo labelId
+            })
+            ->orderBy('date', 'desc') // Hoặc thứ tự bạn muốn
+            ->get();
+
+        return view('managers.manageNews', compact('manager','news', 'keyword', 'labelId','labels'));
     }
     //
-    public function formCreateNews() {
+    public function formCreateNews(Request $request) {
+        $managerId = $request->session()->get('logged_in_manager_id');
+        $manager  = Managers::find($managerId);
+        if($manager == null){
+            return redirect()->route('managerLogin');
+        }
         $labels = Labels::orderBy('type')->get();
-        return view('managers.createNews', compact('labels'));
+        return view('managers.createNews', compact('manager','labels'));
     }
     public function store(Request $request)
     {
@@ -43,11 +55,16 @@ class NewsController extends Controller
             'title' => 'required|string|max:255',
             'label_id' => 'required|exists:labels,id',
             'content' => 'required|string',
+            'action_type' => 'required|in:draft,publish',
             'thumbnail' => 'nullable|image|mimes:jpeg,png,gif|max:2048', // max 2MB
             'isHot' => 'required|in:0,1|boolean',
         ]);
-        $managerId =$request->session()->get('logged_in_manager_id');
-        log::info($managerId);
+
+        $managerId = $request->session()->get('logged_in_manager_id');
+        $manager  = Managers::find($managerId);
+        if($manager == null){
+            return redirect()->route('managerLogin');
+        }
         log::info($request);
         $thumbNailUrl = null;
         if ($request->hasFile('thumbnail')) {
@@ -64,6 +81,7 @@ class NewsController extends Controller
             'tag' => $labelType,
             'content' => $request->input('content'),
             'thumbNailUrl' => $thumbNailUrl,
+            'status' => $request->input('action_type'),
             'isHot' => (bool)$request->isHot,
             'managerId' => $managerId,
             'labelId' => $request->label_id,
@@ -71,21 +89,30 @@ class NewsController extends Controller
         log::info($news);
         return redirect()->route('manageNews')->with('success', 'Tin tức đã được lưu thành công!');
     }
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
+        $managerId = $request->session()->get('logged_in_manager_id');
+        $manager  = Managers::find($managerId);
+        if($manager == null){
+            return redirect()->route('managerLogin');
+        }
         // Tìm bài viết theo ID, nếu không tìm thấy sẽ tự động trả về 404
         $news = News::with('manager', 'label')->findOrFail($id); // Eager load manager và label
 
         $labels = Labels::orderBy('type')->get(); // Lấy danh sách labels để hiển thị dropdown
 
         // Truyền cả $news (bài viết cần chỉnh sửa) và $labels sang view
-        return view('managers.createNews', compact('news', 'labels'));
+        return view('managers.createNews', compact('manager','news', 'labels'));
     }
     public function update(Request $request, $id)
     {
+        $managerId = $request->session()->get('logged_in_manager_id');
+        $manager  = Managers::find($managerId);
+        if($manager == null){
+            return redirect()->route('managerLogin');
+        }
         // Tìm bài viết cần cập nhật
         $news = News::findOrFail($id);
-
         // Validate dữ liệu đầu vào (tương tự store nhưng có thể có quy tắc khác cho update)
         $request->validate([
             'title' => 'required|string|max:255',
@@ -93,6 +120,7 @@ class NewsController extends Controller
             'content' => 'required|string',
             'thumbnail' => 'nullable|image|mimes:jpeg,png,gif|max:2048', // null nếu không upload mới
             'isHot' => 'required|in:0,1|boolean',
+            'action_type' => 'required|in:draft,publish',
         ]);
         log::info(@$news->thumbnail);
         $thumbNailUrl = $news->thumbNailUrl; // Giữ lại ảnh cũ nếu không upload ảnh mới
@@ -118,14 +146,20 @@ class NewsController extends Controller
             'content' => $request->input('content'),
             'thumbNailUrl' => $thumbNailUrl, // Cập nhật đường dẫn ảnh
             'isHot' => (bool)$request->isHot,
+            'status' => $request->input('action_type'),
             // 'managerId' và 'labelId' có thể không cần cập nhật nếu chúng không đổi
-            'labelId' => $request->label_id, // Cập nhật labelId từ form
+            'labelId' => $request->label_id,
         ]);
 
         return redirect()->route('manageNews')->with('success', 'Tin tức đã được cập nhật thành công!');
     }
     public function destroy($id, Request $request)
     {
+        $managerId = $request->session()->get('logged_in_manager_id');
+        $manager  = Managers::find($managerId);
+        if($manager == null){
+            return redirect()->route('managerLogin');
+        }
         $news = News::find($id);
 
         if (!$news) {
@@ -137,27 +171,16 @@ class NewsController extends Controller
         }
 
         try {
-            // Lấy đường dẫn thumbnail trước khi xóa bản ghi (nếu có)
             $thumbnailPath = $news->thumbNailUrl;
-
-            // Xóa bản ghi tin tức khỏi database
             $news->delete();
-
-            // Xóa file thumbnail khỏi storage nếu nó tồn tại
             if ($thumbnailPath && Storage::disk('public')->exists($thumbnailPath)) {
                 Storage::disk('public')->delete($thumbnailPath);
             }
-
-            // Trả về phản hồi thành công
             if ($request->wantsJson()) {
-                // Nếu là AJAX request, trả về JSON response
                 return response()->json(['message' => 'Tin tức đã được xóa thành công!']);
             }
-            // Nếu không phải AJAX, chuyển hướng về trang trước đó hoặc trang danh sách
             return redirect()->route('news.index')->with('success', 'Tin tức đã được xóa thành công!');
-
         } catch (\Exception $e) {
-            // Xử lý lỗi trong quá trình xóa
             if ($request->wantsJson()) {
                 return response()->json(['message' => 'Lỗi khi xóa tin tức: ' . $e->getMessage()], 500);
             }

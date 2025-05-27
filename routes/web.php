@@ -6,7 +6,7 @@ use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\NewsController;
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\ReportController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -36,3 +36,8 @@ Route::delete('/news/{id}', [NewsController::class, 'destroy'])->name('news.dest
 
 Route::get('/manager/manageComments', [CommentController::class, 'index'])->name('manageCommentsIndex');
 Route::delete('comments/{commentId}', [CommentController::class, 'delete'])->name('manageCommentsDelete');
+
+
+
+Route::get('/manager/manageReports', [ReportController::class, 'index'])->name('managerManageReports');
+Route::post('/manager/processReport/{id}', [ReportController::class, 'processReport'])->name('processReport');
