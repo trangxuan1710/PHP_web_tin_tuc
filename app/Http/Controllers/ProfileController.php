@@ -166,28 +166,26 @@ class ProfileController extends Controller
         return response()->json(['message' => 'Thông báo đã được xóa thành công.'], 200);
     }
 
-    function updatePassword(int $id, Request $request) {
-        $request->validate([
-            'current_password' => ['required', 'string'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-        ], [
-            'current_password.required' => 'Vui lòng nhập mật khẩu hiện tại.',
-            'password.required' => 'Vui lòng nhập mật khẩu mới.',
-            'password.min' => 'Mật khẩu mới phải có ít nhất :min ký tự.',
-            'password.confirmed' => 'Xác nhận mật khẩu mới không khớp.',
-        ]);
-        $clientId = $request->session()->get('logged_in_client_id');
-        $client = Clients::find($clientId);
-        log::info($client);
-        log::info($request->current_password);
-        if (password_verify(Request('current_password'), $manager->password)) {
-            throw ValidationException::withMessages([
-                'current_password' => __('Mật khẩu hiện tại không chính xác.'),
-            ]);
+    public function changePassword(int $id, Request $request)
+    {
+        $client = Clients::find($id);
+
+        if (!$client) {
+            return response()->json(['message' => 'Người dùng không tồn tại.'], 404);
         }
-        $manager->update([
-            'password' => Hash::make($request->password),
+
+        $validatedData = $request->validate([
+            'currentPassword' => 'required|string',
+            'newPassword' => 'required|string|min:8|confirmed',
         ]);
 
+        if (!password_verify($validatedData['currentPassword'], $client->password)) {
+            return response()->json(['message' => 'Mật khẩu hiện tại không đúng.'], 403);
+        }
 
+        $client->password = bcrypt($validatedData['newPassword']);
+        $client->save();
+
+        return response()->json(['message' => 'Mật khẩu đã được cập nhật thành công.'], 200);
+    }
 }

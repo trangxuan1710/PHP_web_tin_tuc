@@ -22,10 +22,7 @@ Route::get('/', function () {
 
 Route::get('/profile/{id}', [ProfileController::class, 'showProfile'])->name('profile');
 
-Route::get('profile/{id}/change-password', function ($id) {
-    return view('change-password', ['id' => $id]);
-})->name('change-password');
-Route::put('profile/{id}/update-password', [ProfileController::class, 'updatePassword'])->name('update-password');
+Route::put('/profile/{id}/change-password', [ProfileController::class, 'changePassword'])->name('profile.changePassword');
 
 /*
 Route::middleware(['auth'])->group(function () {

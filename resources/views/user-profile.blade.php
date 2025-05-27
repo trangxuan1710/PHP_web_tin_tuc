@@ -97,11 +97,35 @@
         <main id="main-content" class="flex-[2]"></main>
     </div>
 
-    <div id="change-password-modal" class="bg-white rounded-lg shadow-lg p-8 mb-8 flex hidden">
-        @include('user.change-password')
-    </div>
-
     @include('layouts.footer')
+
+    <!-- Modal đổi mật khẩu -->
+    <div id="change-password-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 hidden">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6 relative">
+            <button id="close-change-password-modal" class="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-2xl font-bold">&times;</button>
+            <h2 class="text-xl font-semibold text-blue-800 mb-4">Đổi mật khẩu</h2>
+            <form id="change-password-form" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Mật khẩu hiện tại</label>
+                    <input type="password" id="current-password" name="current_password" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Mật khẩu mới</label>
+                    <input type="password" id="new-password" name="new_password" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Xác nhận mật khẩu mới</label>
+                    <input type="password" id="confirm-password" name="confirm_password" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
+                </div>
+                <div id="change-password-error" class="text-red-600 text-sm"></div>
+                <div id="change-password-success" class="text-green-600 text-sm"></div>
+                <div class="flex justify-end space-x-2 pt-2">
+                    <button type="button" id="cancel-change-password-btn" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400">Hủy</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Đổi mật khẩu</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <script id="notifications-data" type="application/json">
         @json($notifications ?? [])
@@ -726,6 +750,17 @@
             }
         }
 
+        // Hiển thị và ẩn modal đổi mật khẩu
+        function showChangePasswordModal() {
+            document.getElementById('change-password-modal').classList.remove('hidden');
+            document.getElementById('change-password-form').reset();
+            document.getElementById('change-password-error').textContent = '';
+            document.getElementById('change-password-success').textContent = '';
+        }
+        function hideChangePasswordModal() {
+            document.getElementById('change-password-modal').classList.add('hidden');
+        }
+
         /**
          * Gắn tất cả các trình nghe sự kiện động sau khi nội dung được render.
          */
@@ -776,9 +811,7 @@
             }
             if (changePasswordBtn) {
                 changePasswordBtn.onclick = () => {
-                    changePasswordModal.classList.remove('hidden'); // Hiển thị modal đổi mật khẩu
-                    console.log('Chức năng đổi mật khẩu');
-                    // Trong một ứng dụng thực tế, điều này sẽ mở một modal hoặc điều hướng đến trang đổi mật khẩu
+                    showChangePasswordModal();
                 };
             }
             if (profileAvatarEditBtn && avatarFileInput) {
@@ -1006,11 +1039,62 @@
                 console.log('Đăng xuất');
                 // Trong một ứng dụng thực tế, điều này sẽ xử lý logic đăng xuất
             });
+
+            // Modal đổi mật khẩu
+            document.getElementById('close-change-password-modal').onclick = hideChangePasswordModal;
+            document.getElementById('cancel-change-password-btn').onclick = hideChangePasswordModal;
+
+            document.getElementById('change-password-form').onsubmit = async function(e) {
+                e.preventDefault();
+                const errorDiv = document.getElementById('change-password-error');
+                const successDiv = document.getElementById('change-password-success');
+                errorDiv.textContent = '';
+                successDiv.textContent = '';
+
+                const currentPassword = document.getElementById('current-password').value.trim();
+                const newPassword = document.getElementById('new-password').value.trim();
+                const confirmPassword = document.getElementById('confirm-password').value.trim();
+
+                if (!currentPassword || !newPassword || !confirmPassword) {
+                    errorDiv.textContent = 'Vui lòng nhập đầy đủ thông tin.';
+                    return;
+                }
+                if (newPassword.length < 6) {
+                    errorDiv.textContent = 'Mật khẩu mới phải có ít nhất 6 ký tự.';
+                    return;
+                }
+                if (newPassword !== confirmPassword) {
+                    errorDiv.textContent = 'Mật khẩu xác nhận không khớp.';
+                    return;
+                }
+
+                try {
+                    const url = "{{ route('profile.changePassword', ['id' => $client->id]) }}";
+                    const res = await fetch(url, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': "{{ csrf_token() }}",
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            currentPassword: currentPassword,
+                            newPassword: newPassword,
+                            newPassword_confirmation: confirmPassword
+                        })
+                    });
+                    const data = await res.json();
+                    if (res.ok) {
+                        successDiv.textContent = data.message || 'Đổi mật khẩu thành công!';
+                        setTimeout(hideChangePasswordModal, 1200);
+                    } else {
+                        errorDiv.textContent = data.message || 'Đổi mật khẩu thất bại.';
+                    }
+                } catch (err) {
+                    errorDiv.textContent = 'Có lỗi xảy ra. Vui lòng thử lại.';
+                }
+            };
         });
-    </script>
-    <script>
-        // Hiển thị modal khi nhấn nút "Đổi mật khẩu"
-        
     </script>
 </body>
 
