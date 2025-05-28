@@ -21,6 +21,7 @@ class Comments extends Model
         'date',
         'like_count',
         'commentId',
+        'newsId',
     ];
 
     protected $casts = [
@@ -33,11 +34,7 @@ class Comments extends Model
     }
     public function news()
     {
-        return $this->belongsToMany(News::class, 'comment_news', 'commentId', 'newsId');
+        return $this->belongsTo(News::class, 'newsId');
     }
-//    public function parentComment()
-//    {
-//        return $this->belongsTo(Comment::class, 'commentId');
-//    }
 
 }

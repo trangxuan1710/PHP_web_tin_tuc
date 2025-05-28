@@ -5,6 +5,7 @@
         "build": "vite build"
     },
     "devDependencies": {
+        "@ckeditor/ckeditor5-build-classic": "^39.0.2",
         "autoprefixer": "^10.4.0",
         "axios": "^1.1.2",
         "laravel-vite-plugin": "^1.2.0",
