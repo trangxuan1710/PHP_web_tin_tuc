@@ -12,6 +12,7 @@ class Reports extends Model
     protected $primaryKey = 'id';
     protected $keyType = 'int';
     public $timestamps = false;
+    const CREATED_AT = 'date';
 
     protected $fillable = [
         'reason',
@@ -21,7 +22,9 @@ class Reports extends Model
     ];
 
     protected $casts = [
-        // No specific casts needed for this table based on the schema
+
+        'created_at' => 'datetime',
+
     ];
 
     public function client()
@@ -31,6 +34,6 @@ class Reports extends Model
 
     public function comment()
     {
-        return $this->belongsTo(Comments::class, 'commentId');
+        return $this->belongsTo(Comment::class, 'commentId');
     }
 }
