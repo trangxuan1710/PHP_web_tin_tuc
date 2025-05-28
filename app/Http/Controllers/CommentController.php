@@ -39,7 +39,7 @@ class CommentController extends Controller
         return view('managers.manageComment', compact('manager','comments'));
     }
 
-    public function delete(Request $request, $commentId) // Use Route Model Binding directly
+    public function delete( $commentId, Request $request)
     {
         $id = $request->session()->get('logged_in_manager_id');
         $manager  = Managers::find($id);
@@ -47,9 +47,11 @@ class CommentController extends Controller
             return redirect()->route('managerLogin');
         }
         try {
-
-            $comment = Comments::with(['client', 'news'])::find($commentId);
-            $client = $comment->isMute -1;
+            $comment = Comments::query()
+                ->with(['client', 'news'])
+                ->find($commentId);;
+            $client =  $comment->client;
+            $client->isMute = $client->isMute - 1 ;
             $client->save();
             $comment->delete();
             return redirect()->route('manageCommentsIndex')->with('success', 'Bình luận đã được xóa thành công.');

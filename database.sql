@@ -44,11 +44,12 @@ CREATE TABLE IF NOT EXISTS labels (
                                       type VARCHAR(255) NOT NULL
 );
 INSERT INTO labels (type) VALUES
-                              ('Tin tức nóng'),
-                              ('Phân tích chuyên sâu'),
                               ('Đời sống'),
-                              ('Công nghệ'),
-                              ('Giải trí');
+                              ('Thể thao'),
+                              ('Khoa học công nghệ'),
+                              ('Sức khỏe'),
+                              ('Giải trí'),
+                              ('Kinh doanh');
 -- Tạo bảng News
 CREATE TABLE IF NOT EXISTS news (
                                     id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,

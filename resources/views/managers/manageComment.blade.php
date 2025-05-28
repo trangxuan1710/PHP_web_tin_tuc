@@ -26,7 +26,7 @@
                     </div>
                 </div>
                 {{-- Search by Content --}}
-                <div class="relative w-full sm:w-1/3"> {{-- New input for Content --}}
+                <div class="relative w-full sm:w-1/3">
                     <input type="text" name="search_content" placeholder="Tìm nội dung bình luận..." value="{{ request('search_content') }}"
                            class="w-full pl-9 pr-3 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                     <div class="absolute inset-y-0 left-0 pl-2 flex items-center text-gray-400">
@@ -42,7 +42,7 @@
                     </a>
                 </div>
             </div>
-
+        </form>
             @if (session('success'))
                 <div class="bg-green-100 border border-green-400 text-green-700 text-sm px-3 py-2 rounded relative mb-3" role="alert">
                     <strong class="font-bold">Thành công!</strong>
@@ -112,7 +112,7 @@
                                 {{ $comment->date->format('d/m/Y') }}
                             </td>
                             <td class="px-1 py-1 whitespace-nowrap text-center font-medium w-20">
-                                <form action="{{ route('manageCommentsDelete', $comment->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Bạn có chắc chắn muốn xóa bình luận này?');">
+                                <form action="{{route('manageCommentsDelete', $comment->id)}}" method="POST" class="inline-block" onsubmit="return confirm('Bạn có chắc chắn muốn xóa bình luận này?');">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="text-red-600 hover:text-red-900 p-0.5" title="Xóa">
@@ -133,7 +133,7 @@
                     </tbody>
                 </table>
             </div>
-        </form>
+
 
         <div class="mt-3 flex justify-center">
             {{ $comments->links() }}
