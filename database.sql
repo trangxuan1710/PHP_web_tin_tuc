@@ -47,17 +47,18 @@ CREATE TABLE IF NOT EXISTS labels (
 
 -- Tạo bảng News
 CREATE TABLE IF NOT EXISTS news (
-    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,
-    managerId BIGINT NOT NULL,
-    date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    tag VARCHAR(255),
-    content TEXT,
-    thumbNailUrl VARCHAR(255),
-    isHot BOOLEAN DEFAULT FALSE,
-    labelId INT,
-    FOREIGN KEY (managerId) REFERENCES managers(id),
-    FOREIGN KEY (labelId) REFERENCES labels(id)
+                                    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                                    title VARCHAR(255) NOT NULL,
+                                    managerId BIGINT NOT NULL,
+                                    date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                                    tag VARCHAR(255),
+                                    content TEXT,
+                                    status VARCHAR(255) NOT NULL CHECK( status IN('draft','publish')),
+                                    thumbNailUrl VARCHAR(255),
+                                    isHot BOOLEAN DEFAULT FALSE,
+                                    labelId INT,
+                                    FOREIGN KEY (managerId) REFERENCES managers(id),
+                                    FOREIGN KEY (labelId) REFERENCES labels(id)
 );
 INSERT INTO news (title, managerId, date, tag, content, thumbNailUrl, isHot, status, labelId) VALUES
                                                                                                   ('Tech Conference 2025 Highlights', 1, '2025-05-20 10:00:00', 'Technology', 'Detailed summary of the major announcements and discussions from the annual tech conference. Keynotes included advancements in AI and quantum computing.', 'https://placehold.co/300x200/A7C7E7/333333?text=Tech+Conf', TRUE, 'publish', 1),
