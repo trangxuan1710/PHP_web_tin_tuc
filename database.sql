@@ -29,21 +29,27 @@ CREATE TABLE IF NOT EXISTS managers (
     id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     fullName VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
-    role VARCHAR(255) NOT NULL CHECK (role IN('admin', 'editor')),
     email VARCHAR(255) UNIQUE NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-INSERT INTO managers (fullName, password, role,email) VALUES ('Trang Xuân', '$2b$12$4.FthDpDH0mmetIANiges.7vk59.gW2DNMzjJmrEkToPMQNI7c8Tq', 'admin', 'trang@gmail.com');
-INSERT INTO managers (fullName, password, role,email) VALUES ('Phạm Vân Anh', '$2b$12$k2qIfnDDFEunC6kWQOmq1OYsKQbF6cIrCmsy/NspM3rWHLpneOt1G', 'editor', 'vananh@gmail.com');
-INSERT INTO managers (fullName, password, role,email) VALUES ('Thảo Nhi', '$2b$12$70fqwwm6c.2i2qDeLI.XZO6CiKRyKZ5yZb9rEurGbf3jI3qWpQG5q', 'editor', 'thaonhi@gmail.com');
+INSERT INTO managers (fullName, password, email) VALUES ('Trang Xuân', '$2b$12$4.FthDpDH0mmetIANiges.7vk59.gW2DNMzjJmrEkToPMQNI7c8Tq', 'trang@gmail.com');
+INSERT INTO managers (fullName, password, email) VALUES ('Phạm Vân Anh', '$2b$12$k2qIfnDDFEunC6kWQOmq1OYsKQbF6cIrCmsy/NspM3rWHLpneOt1G', 'vananh@gmail.com');
+INSERT INTO managers (fullName, password, email) VALUES ('Thảo Nhi', '$2b$12$70fqwwm6c.2i2qDeLI.XZO6CiKRyKZ5yZb9rEurGbf3jI3qWpQG5q', 'thaonhi@gmail.com');
 
 -- Tạo bảng label
 CREATE TABLE IF NOT EXISTS labels (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     type VARCHAR(255) NOT NULL
 );
+INSERT INTO hrm.labels (type) VALUES ('Đời sống');
+INSERT INTO hrm.labels (type) VALUES ('Thể thao');
+INSERT INTO hrm.labels (type) VALUES ('Khoa học - Công nghệ');
+INSERT INTO hrm.labels (type) VALUES ('Sức khoẻ');
+INSERT INTO hrm.labels (type) VALUES ('Giải trí');
+INSERT INTO hrm.labels (type) VALUES ('Kinh doanh');
+
 
 -- Tạo bảng News
 CREATE TABLE IF NOT EXISTS news (
@@ -56,7 +62,7 @@ CREATE TABLE IF NOT EXISTS news (
                                     status VARCHAR(255) NOT NULL CHECK( status IN('draft','publish')),
                                     thumbNailUrl VARCHAR(255),
                                     isHot BOOLEAN DEFAULT FALSE,
-                                    labelId INT,
+                                    labelId INT NOT NULL,
                                     FOREIGN KEY (managerId) REFERENCES managers(id),
                                     FOREIGN KEY (labelId) REFERENCES labels(id)
 );
@@ -64,11 +70,11 @@ INSERT INTO news (title, managerId, date, tag, content, thumbNailUrl, isHot, sta
                                                                                                   ('Tech Conference 2025 Highlights', 1, '2025-05-20 10:00:00', 'Technology', 'Detailed summary of the major announcements and discussions from the annual tech conference. Keynotes included advancements in AI and quantum computing.', 'https://placehold.co/300x200/A7C7E7/333333?text=Tech+Conf', TRUE, 'publish', 1),
                                                                                                   ('Global Economic Outlook Q3', 2, '2025-05-21 11:30:00', 'Economy', 'An in-depth analysis of the global economic trends for the third quarter. Experts predict steady growth despite regional challenges.', 'https://placehold.co/300x200/B2D8B2/333333?text=Economy+Q3', FALSE, 'publish', 2),
                                                                                                   ('New Environmental Policies Announced', 3, '2025-05-22 14:15:00', 'Environment', 'The government has unveiled a new set of policies aimed at reducing carbon emissions and promoting renewable energy sources.', 'https://placehold.co/300x200/FFDAB9/333333?text=Eco+Policy', TRUE, 'draft', 3),
-                                                                                                  ('Healthcare Advances in Gene Therapy', 4, '2025-05-23 09:00:00', 'Health', 'Recent breakthroughs in gene therapy offer new hope for treating previously incurable genetic disorders. Clinical trials show promising results.', 'https://placehold.co/300x200/E6E6FA/333333?text=Gene+Therapy', FALSE, 'publish', 4),
+                                                                                                  ('Healthcare Advances in Gene Therapy', 1, '2025-05-23 09:00:00', 'Health', 'Recent breakthroughs in gene therapy offer new hope for treating previously incurable genetic disorders. Clinical trials show promising results.', 'https://placehold.co/300x200/E6E6FA/333333?text=Gene+Therapy', FALSE, 'publish', 4),
                                                                                                   ('Upcoming Arts Festival Preview', 1, '2025-05-24 16:45:00', 'Arts', 'A sneak peek into the upcoming international arts festival, featuring renowned artists and diverse cultural performances. This article is still under review.', 'https://placehold.co/300x200/FFFACD/333333?text=Arts+Fest', TRUE, 'draft', 5),
                                                                                                   ('Sports Championship Finals Recap', 2, '2025-05-25 18:00:00', 'Sports', 'A thrilling recap of the national sports championship finals, including highlights, player interviews, and expert commentary.', 'https://placehold.co/300x200/F0E68C/333333?text=Sports+Finals', TRUE, 'publish', 1),
                                                                                                   ('DIY Home Improvement Trends', 3, '2025-05-26 13:20:00', 'Lifestyle', 'Discover the latest trends in DIY home improvement, with tips and tricks for easy and affordable upgrades to your living space.', 'https://placehold.co/300x200/D8BFD8/333333?text=DIY+Home', FALSE, 'publish', 2),
-                                                                                                  ('Travel Guide: Summer Destinations', 4, '2025-05-27 10:50:00', 'Travel', 'Explore the top summer travel destinations for 2025. This guide covers everything from exotic beaches to mountain retreats. Awaiting final approval.', 'https://placehold.co/300x200/ADD8E6/333333?text=Summer+Travel', FALSE, 'draft', 3),
+                                                                                                  ('Travel Guide: Summer Destinations', 1, '2025-05-27 10:50:00', 'Travel', 'Explore the top summer travel destinations for 2025. This guide covers everything from exotic beaches to mountain retreats. Awaiting final approval.', 'https://placehold.co/300x200/ADD8E6/333333?text=Summer+Travel', FALSE, 'draft', 3),
                                                                                                   ('Startup Success Stories of the Year', 1, NOW() - INTERVAL 1 DAY, 'Business', 'Inspiring stories from the most successful startups of the past year, highlighting their journeys and innovations.', 'https://placehold.co/300x200/98FB98/333333?text=Startups', TRUE, 'publish', 4),
                                                                                                   ('Culinary Delights: New Recipes to Try', 2, NOW(), 'Food', 'A collection of exciting new recipes from top chefs around the world. Perfect for home cooks looking to spice up their meals.', 'https://placehold.co/300x200/FFB6C1/333333?text=New+Recipes', FALSE, 'publish', 5);
 -- Tạo bảng comments
@@ -136,6 +142,7 @@ CREATE TABLE IF NOT EXISTS reports (
     content TEXT,
     clientId BIGINT NOT NULL,
     commentId BIGINT NOT NULL,
+    created_at TIMESTAMP default current_timestamp,
     FOREIGN KEY (clientId) REFERENCES clients(id) ON DELETE CASCADE,
     FOREIGN KEY (commentId) REFERENCES comments(id) ON DELETE CASCADE
 );
@@ -145,36 +152,36 @@ CREATE TABLE IF NOT EXISTS reports (
 -- Sample Data for 'reports' table
 
 
-INSERT INTO reports (reason, content, clientId, commentId, created_at) VALUES
+INSERT INTO reports (reason, content, clientId, commentId) VALUES
 -- Report for commentId = 3 (Reply to comment 2 on newsId = 1)
-('spam', 'The link provided looks suspicious and might be spam.', 1, 3, '2025-05-20 14:00:00'),
+('spam', 'The link provided looks suspicious and might be spam.', 1, 3),
 
 -- Report for commentId = 9 (Reply to comment 8 on newsId = 3)
-('harassment', 'This user is being aggressive in their replies.', 2, 9, '2025-05-22 18:00:00'),
+('harassment', 'This user is being aggressive in their replies.', 2, 9),
 
 -- Report for commentId = 10 (Comment on newsId = 4)
-('inappropriate_content', 'The language used in this comment is not suitable for the platform.', 3, 10, '2025-05-23 11:00:00'),
+('inappropriate_content', 'The language used in this comment is not suitable for the platform.', 3, 10),
 
 -- Report for commentId = 1 (Comment on newsId = 1)
-('spam', 'This comment seems like a generic advertisement.', 4, 1, '2025-05-21 10:00:00'),
+('spam', 'This comment seems like a generic advertisement.', 4, 1),
 
 -- Report for commentId = 14 (Reply to comment 13 on newsId = 6)
-('harassment', 'User is repeatedly targeting another user in the sports discussion.', 1, 14, '2025-05-25 21:00:00'),
+('harassment', 'User is repeatedly targeting another user in the sports discussion.', 1, 14),
 
 -- Report for commentId = 5 (Comment on newsId = 2)
-('inappropriate_content', NULL, 2, 5, '2025-05-21 15:30:00'), -- No specific content, just the reason
+('inappropriate_content', NULL, 2, 5), -- No specific content, just the reason
 
 -- Report for commentId = 18 (Comment on newsId = 10)
-('spam', 'This looks like a bot comment trying to promote something unrelated.', 3, 18, NOW() - INTERVAL 2 HOUR),
+('spam', 'This looks like a bot comment trying to promote something unrelated.', 3, 18),
 
 -- Report for commentId = 7 (Comment on newsId = 3)
-('inappropriate_content', 'The comment contains offensive terms.', 4, 7, '2025-05-22 17:30:00'),
+('inappropriate_content', 'The comment contains offensive terms.', 4, 7),
 
 -- Report for commentId = 12 (Comment on newsId = 5)
-('harassment', 'The user is making personal attacks.', 1, 12, '2025-05-24 19:00:00'),
+('harassment', 'The user is making personal attacks.', 1, 12),
 
 -- Report for commentId = 20 (Reply to comment 19 on newsId = 10)
-('spam', NULL, 2, 20, NOW() - INTERVAL 15 MINUTE);
+('spam', NULL, 2, 20);
 
 
 

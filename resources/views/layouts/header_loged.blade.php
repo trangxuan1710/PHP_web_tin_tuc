@@ -26,14 +26,14 @@ return [
         </div>
 
         <div class="flex items-center space-x-4 flex-1">
-            <a href="#"
+            <a href="/"
                 class="text-blue-600 hover:text-blue-800 transition-colors duration-200 p-2 rounded-full hover:bg-blue-50 flex-shrink-0"
                 aria-label="Trang chủ">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
                     <path fill="#0d99ff" d="m12 5.69l5 4.5V18h-2v-6H9v6H7v-7.81zM12 3L2 12h3v8h6v-6h2v6h6v-8h3z" />
                 </svg>
             </a>
-            <div class="flex-1 mx-8">
+            <div class="w-1/2 mx-8">
                 <form action="{{ route('news.search') }}" method="GET" class="relative">
                     <input type="text"
                            name="q"
