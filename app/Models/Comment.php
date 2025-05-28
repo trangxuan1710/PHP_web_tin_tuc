@@ -33,7 +33,7 @@ class Comment extends Model
     }
     public function news()
     {
-        return $this->belongsToMany(News::class, 'comment_news', 'commentId', 'newsId');
+        return $this->belongsTo(News::class,  'newsId');
     }
     public function parent()
     {

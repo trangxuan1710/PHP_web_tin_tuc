@@ -3,14 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Comment;
-use App\Models\Comments;
 use App\Models\Clients; // Import Clients model if not already (for clarity, though not directly used here)
 use App\Models\Managers;
 use App\Models\News;    // Import News model if not already (for clarity, though not directly used here)
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
-use App\Models\News;
+
 
 class CommentController extends Controller
 {
@@ -26,7 +25,7 @@ class CommentController extends Controller
         if($manager == null){
             return redirect()->route('managerLogin');
         }
-        $query = Comments::with(['client', 'news']);
+        $query = Comment::with(['client', 'news']);
 
         if ($request->has('search_id') && !empty($request->search_id)) {
             $query->where('id', $request->search_id);
@@ -51,7 +50,7 @@ class CommentController extends Controller
             return redirect()->route('managerLogin');
         }
         try {
-            $comment = Comments::query()
+            $comment = Comment::query()
                 ->with(['client', 'news'])
                 ->find($commentId);;
             $client =  $comment->client;

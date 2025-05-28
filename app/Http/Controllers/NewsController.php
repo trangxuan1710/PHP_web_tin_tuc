@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Label;
 use App\Models\Labels;
 use App\Models\Managers;
 use App\Models\News;
@@ -26,10 +27,8 @@ class NewsController extends Controller
             'comments.replies.client'
         ])->findOrFail($id);
         ;
-
         $news->increment('views');
         return view('news.show', compact('news'));
-
     }
     public function savedNews()
     {
@@ -72,7 +71,7 @@ class NewsController extends Controller
         $labelId = $request->input('label_id'); // Lấy label_id từ request
 
         // Lấy tất cả các nhãn để truyền vào dropdown
-        $labels = Labels::all();
+        $labels = Label::all();
 
         $news = News::with(['manager', 'label']) // Eager load mối quan hệ manager và label
         ->when($keyword, function ($query, $keyword) {
@@ -93,7 +92,7 @@ class NewsController extends Controller
         if($manager == null){
             return redirect()->route('managerLogin');
         }
-        $labels = Labels::orderBy('type')->get();
+        $labels = Label::orderBy('type')->get();
         return view('managers.createNews', compact('manager','labels'));
     }
     public function store(Request $request)
