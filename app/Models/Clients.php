@@ -30,7 +30,6 @@ class Clients extends Model
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
-        'isMute' => 'boolean',
         'isActive' => 'boolean',
     ];
 }

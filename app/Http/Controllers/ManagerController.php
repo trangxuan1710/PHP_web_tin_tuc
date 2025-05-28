@@ -3,10 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Managers;
-use Illuminate\Hashing\BcryptHasher;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
@@ -29,7 +26,6 @@ class ManagerController extends Controller
         ]);
         $manager  = Managers::where('email', Request('email'))->first();
         log::info($manager);
-        log::info($manager->password);
         log::info($request);
         if(!$manager || !$manager->checkPassword($request->password)) {
             return back()->withErrors([
@@ -52,7 +48,6 @@ class ManagerController extends Controller
             'password.min' => 'Mật khẩu mới phải có ít nhất :min ký tự.',
             'password.confirmed' => 'Xác nhận mật khẩu mới không khớp.',
         ]);
-//        $managerId = $request->session()->get('logged_in_manager_id');
         log::info($request);
         $id = $request->session()->get('logged_in_manager_id');
         $manager  = Managers::find($id);

@@ -41,6 +41,9 @@ class ReportController extends Controller
         try {
             if ($action === 'resolve') {
                 if ($report->comment) {
+                    $client =  $report->comment->client;
+                    $client = $client->isMute - 1 ;
+                    $client->save();
                     $report->comment->delete();
                     Log::info("Comment ID: {$report->comment->id} deleted due to report resolution.");
                 }
