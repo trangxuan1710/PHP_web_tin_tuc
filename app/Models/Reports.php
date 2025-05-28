@@ -31,6 +31,6 @@ class Reports extends Model
 
     public function comment()
     {
-        return $this->belongsTo(Comments::class, 'commentId');
+        return $this->belongsTo(Comment::class, 'commentId');
     }
 }

@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\NewsController;
 use App\Models\News; // Đảm bảo đã import Model News
 use App\Models\Label; // Đảm bảo đã import Model Label nếu bạn sử dụng nó
 
@@ -61,3 +63,17 @@ Auth::routes();
 // Route cho trang chủ khi đã đăng nhập
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
+// Route tin tức
+Route::get('/news/{id}', [NewsController::class, 'show'])->name('news.show');
+Route::post('/news/{id}/save', [NewsController::class, 'save'])->name('news.save');
+Route::get('/saved-news', [NewsController::class, 'savedNews'])->name('news.saved');
+
+// Route bình luận
+Route::get('/news/{newsId}/comments', [CommentController::class, 'index'])->name('comments.index');
+Route::post('/news/{id}/comments', [CommentController::class, 'store'])->name('comments.store');
+
+Route::middleware('auth')->group(function () {
+    Route::post('/comments/{id}/like', [CommentController::class, 'like'])->name('comments.like');
+    Route::post('/comments/{id}/dislike', [CommentController::class, 'dislike'])->name('comments.dislike');
+    Route::post('/comments/{id}/report', [CommentController::class, 'report'])->name('comments.report');
+});

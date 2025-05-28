@@ -12,13 +12,22 @@ class DatabaseSeeder extends Seeder
      *
      * @return void
      */
-    public function run()
-    {
-        // \App\Models\User::factory(10)->create();
+//    public function run()
+//    {
+//        // \App\Models\User::factory(10)->create();
+//
+//        // \App\Models\User::factory()->create([
+//        //     'name' => 'Test User',
+//        //     'email' => 'test@example.com',
+//        // ]);
+//    }
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+    public function run(): void
+    {
+        $this->call([
+            CommentTestSeeder::class,
+        ]);
+        $this->call(NewsSeeder::class);
+
     }
 }

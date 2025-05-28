@@ -174,40 +174,41 @@
 <main class="container mx-auto px-4 py-6 grid grid-cols-1 md:grid-cols-3 gap-6">
     <div class="md:col-span-2">
         <section class="news-section">
+            @if(isset($featuredNews) && $featuredNews) {{-- Added isset check --}}
             <div class="main-article">
-                <img src="https://placehold.co/600x400/E0E0E0/333333?text=Tin+Chinh" alt="Featured News Image" class="rounded-lg">
+                <img src="https://hhtqtv.vip/assets/upload/store/icon-user/zCwHOmKwdPOIxii1709557530.webp" alt="{{ $featuredNews->title }}" class="rounded-lg">
+{{--                //{{ asset('storage/' . $featuredNews->thumbnailUrl) }}  đoạn này là lấy ảnh từ database--}}
                 <div class="main-article-content">
-                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4">Nga không chấp nhận 'ngừng bắn vô điều kiện' với Ukraine</h2>
-                    <p class="text-gray-700 leading-relaxed mb-4">Ngoại trưởng Nga Lavrov nói Moscow không thể chấp nhận một lệnh ngừng bắn vô điều kiện ở Ukraine vì điều đó sẽ giúp quân đội Ukraine tập hợp lại. Ông cũng nhấn mạnh rằng các cuộc đàm phán hòa bình phải tính đến "thực tế trên mặt đất".</p>
-                    <a href="#" class="text-blue-600 hover:underline font-semibold">Đọc thêm &rarr;</a>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4">{{ $featuredNews->title }}</h2>
+                    <p class="text-gray-700 leading-relaxed mb-4">{{ Str::limit($featuredNews->content, 300) }}</p>
+                    <a href="{{ route('news.show', $featuredNews->id) }}" class="text-blue-600 hover:underline font-semibold">Đọc thêm &rarr;</a>
                 </div>
             </div>
+            @else
+                <p class="text-center text-gray-500">Không có tin tức nổi bật nào để hiển thị.</p>
+            @endif
         </section>
 
         <section class="news-section">
             <h2 class="text-xl font-bold text-gray-800 mb-4">Tin tức nổi bật khác</h2>
             <div class="small-news-grid">
-                <div class="news-card">
-                    <img src="https://placehold.co/300x180/D0D0D0/444444?text=Tin+Nho+1" alt="Small News 1">
-                    <div class="news-card-content">
-                        <h3>Thanh tra đầu tiên trong giới giải trí Hàn Quốc bị bắt</h3>
-                        <p>Một vụ bê bối mới đang gây chấn động ngành giải trí Hàn Quốc khi một thanh tra cấp cao bị bắt giữ vì cáo buộc tham nhũng...</p>
+                @forelse($recentNews as $article)
+                    <div class="news-card">
+                        @if($article->thumbnailUrl)
+                            <img src="{{ asset('storage/' . $article->thumbnailUrl) }}" alt="{{ $article->title }}">
+                        @else
+                            <img src="https://placehold.co/300x180?text=No+Image" alt="No Image">
+                        @endif
+                        <div class="news-card-content">
+                            <a href="{{ route('news.show', $article->id) }}" class="block"> {{-- Added dynamic link --}}
+                                <h3>{{ $article->title }}</h3>
+                            </a>
+                            <p>{{ Str::limit($article->content, 100) }}</p>
+                        </div>
                     </div>
-                </div>
-                <div class="news-card">
-                    <img src="https://placehold.co/300x180/C0C0C0/555555?text=Tin+Nho+2" alt="Small News 2">
-                    <div class="news-card-content">
-                        <h3>Bộ Công Thương: Đảm phán Việt - Mỹ về hợp tác kinh tế</h3>
-                        <p>Đoàn đàm phán cấp cao của Bộ Công Thương Việt Nam đã có buổi làm việc với các đối tác Mỹ để thúc đẩy hợp tác kinh tế song phương...</p>
-                    </div>
-                </div>
-                <div class="news-card">
-                    <img src="https://placehold.co/300x180/B0B0B0/666666?text=Tin+Nho+3" alt="Small News 3">
-                    <div class="news-card-content">
-                        <h3>Bóc phốt: Nói về vụ tiền vàng</h3>
-                        <p>Một vụ việc liên quan đến "tiền vàng" đang gây xôn xao dư luận, với nhiều lời tố cáo và bằng chứng được đưa ra...</p>
-                    </div>
-                </div>
+                @empty
+                    <p class="text-center text-gray-500 col-span-full">Không có tin tức gần đây nào để hiển thị.</p>
+                @endforelse
             </div>
         </section>
 
@@ -220,27 +221,23 @@
                 <button>Thể thao</button>
             </div>
             <div class="small-news-grid">
-                <div class="news-card">
-                    <img src="https://placehold.co/300x180/A0A0A0/777777?text=Kinh+Doanh+1" alt="Business News 1">
-                    <div class="news-card-content">
-                        <h3>Doanh nghiệp Việt Nam tăng tốc chuyển đổi số</h3>
-                        <p>Nhiều doanh nghiệp lớn tại Việt Nam đang đẩy mạnh ứng dụng công nghệ số vào hoạt động sản xuất và kinh doanh...</p>
+                @forelse($businessNews as $article)
+                    <div class="news-card">
+                        @if($article->thumbnailUrl)
+                            <img src="{{ asset('storage/' . $article->thumbnailUrl) }}" alt="{{ $article->title }}">
+                        @else
+                            <img src="https://placehold.co/300x180?text=No+Image" alt="No Image">
+                        @endif
+                        <div class="news-card-content">
+                            <a href="{{ route('news.show', $article->id) }}" class="block"> {{-- Added dynamic link --}}
+                                <h3>{{ $article->title }}</h3>
+                            </a>
+                            <p>{{ Str::limit($article->content, 100) }}</p>
+                        </div>
                     </div>
-                </div>
-                <div class="news-card">
-                    <img src="https://placehold.co/300x180/909090/888888?text=Kinh+Doanh+2" alt="Business News 2">
-                    <div class="news-card-content">
-                        <h3>Mỹ-Trung: Cuộc chiến chip chưa có hồi kết</h3>
-                        <p>Cuộc cạnh tranh công nghệ giữa Mỹ và Trung Quốc, đặc biệt là trong lĩnh vực chip bán dẫn, vẫn đang diễn ra gay gắt...</p>
-                    </div>
-                </div>
-                <div class="news-card">
-                    <img src="https://placehold.co/300x180/808080/999999?text=Kinh+Doanh+3" alt="Business News 3">
-                    <div class="news-card-content">
-                        <h3>Chính sách thuế mới ảnh hưởng đến thị trường</h3>
-                        <p>Những thay đổi trong chính sách thuế mới của chính phủ dự kiến sẽ có tác động đáng kể đến thị trường tài chính và bất động sản...</p>
-                    </div>
-                </div>
+                @empty
+                    <p class="text-center text-gray-500 col-span-full">Không có tin tức kinh doanh nào để hiển thị.</p>
+                @endforelse
             </div>
         </section>
     </div>

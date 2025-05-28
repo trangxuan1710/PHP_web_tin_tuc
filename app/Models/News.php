@@ -17,6 +17,7 @@ class News extends Model
 
     protected $fillable = [
         'title',
+        'views',
         'userId',
         'date',
         'tag',
@@ -37,10 +38,20 @@ class News extends Model
     }
     public function comments()
     {
-        return $this->belongsToMany(Comments::class, 'comment_news', 'newsId', 'commentId');
+        return $this->belongsToMany(Comment::class, 'comment_news', 'newsId', 'commentId');
     }
     public function label()
     {
-        return $this->belongsTo(Labels::class, 'labelId');
+        return $this->belongsTo(Label::class, 'labelId');
     }
+    public function incrementViews()
+    {
+        $this->increment('views');
+    }
+    public function savedByClients()
+    {
+        return $this->belongsToMany(Clients::class, 'saved_news', 'news_id', 'client_id')->withTimestamps();
+    }
+
+
 }
