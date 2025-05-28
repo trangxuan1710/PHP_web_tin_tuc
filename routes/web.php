@@ -24,6 +24,7 @@ use App\Http\Controllers\ReportController;
 Route::get('/', function () {
     return view('home');
 });
+Route::get('/news/search', [NewsController::class, 'search'])->name('news.search');
 
 Route::get('/manager/login', [ManagerController::class, 'showLoginForm'])->name('managerLogin');
 Route::post('/manager/login', [ManagerController::class, 'handleLogin']);
