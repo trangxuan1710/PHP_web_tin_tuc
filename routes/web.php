@@ -29,10 +29,10 @@ use App\Http\Controllers\ReportController;
 
 // Route cho trang chủ mặc định (hoặc khi chưa đăng nhập)
 Route::get('/', function () {
-    if (Auth::check()) {
+    /*if (Auth::check()) {
         return redirect()->route('home'); // Nếu đã đăng nhập, chuyển hướng đến trang home đã đăng nhập
     }
-
+*/
     // Lấy dữ liệu tin tức từ database để hiển thị trên trang welcome
     // Đảm bảo bạn có dữ liệu trong bảng 'news' để tránh lỗi
     $featuredNews = null;

@@ -79,7 +79,7 @@ class ProfileController extends Controller
                     Rule::unique('clients')->ignore($client->id),
                 ],
                 'bio' => 'nullable|string|max:500',
-                'avatarUrl' => 'nullable|string|url',
+                'avatarUrl' => 'nullable|string',
                 // Thêm các trường khác nếu có
             ]);
 

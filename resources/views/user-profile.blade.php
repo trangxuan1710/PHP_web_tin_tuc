@@ -94,7 +94,7 @@
                         </button>
                     </li>
                     <li class="mt-auto pt-4 border-t border-gray-200">
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                        <form id="logout" action="{{ route('logout') }}" method="POST" style="display: none;">
                             @csrf
                         </form>
                         <button id="btn-logout" class="w-full text-left px-4 py-3 rounded-md text-red-600 hover:bg-red-50 transition duration-200 flex items-center">
@@ -1087,7 +1087,7 @@
                 updateUrlForTab('accountSettings');
             });
             logoutBtn.addEventListener('click', () => {
-                document.getElementById('logout-form').submit();
+                document.getElementById('logout').submit();
                 console.log('Đăng xuất');
                 // Trong một ứng dụng thực tế, điều này sẽ xử lý logic đăng xuất
             });
