@@ -6,11 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class SaveNews extends Pivot
+class NearestNews extends Pivot
 {
     use HasFactory;
 
-    protected $table = 'save_news';
+    protected $table = 'nearest_news';
 
     // Bảng trung gian không có khóa chính tự tăng
     public $incrementing = false;
@@ -19,24 +19,20 @@ class SaveNews extends Pivot
     protected $primaryKey = ['clientId', 'newsId'];
 
     // Bảng trung gian này không có các cột timestamp
-    public $timestamps = true;
+    public $timestamps = false;
 
     protected $fillable = [
         'clientId',
         'newsId',
     ];
 
-    protected $cast = [
-        'saveDate' => 'datetime',
-    ];
-
     public function client()
     {
-        return $this->belongsTo(Clients::class, 'clientId');
+        return $this->belongsToMany(Clients::class, 'clientId');
     }
 
     public function news()
     {
-        return $this->belongsTo(News::class, 'newsId');
+        return $this->belongsToMany(News::class, 'newsId');
     }
 }

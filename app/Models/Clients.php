@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Clients extends Model
 {
     use HasFactory;
+
     protected $table = 'clients';
     protected $primaryKey = 'id';
     public $keyType = 'int';
@@ -18,6 +19,7 @@ class Clients extends Model
 
     protected $fillable = [
         'fullName',
+        'bio',
         'email',
         'password',
         'isMute',
@@ -29,8 +31,29 @@ class Clients extends Model
     ];
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password' => 'hashed',
         'isMute' => 'boolean',
         'isActive' => 'boolean',
     ];
+
+    public function sentNotifications()
+    {
+        return $this->hasMany(Notifications::class, 'replierId');
+    }
+
+    public function receivedNotifications()
+    {
+        return $this->hasMany(Notifications::class, 'clientId');
+    }
+
+    public function saveNews()
+    {
+        return $this->belongsToMany(News::class, 'save_news', 'clientId', 'newsId')
+        ->using(SaveNews::class);
+    }
+
+    public function nearestNews()
+    {
+        return $this->belongsToMany(News::class, 'nearest_news', 'clientId', 'newsId')
+        ->using(NearestNews::class);
+    }
 }

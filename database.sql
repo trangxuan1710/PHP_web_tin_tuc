@@ -8,21 +8,23 @@ use hrm;
 CREATE TABLE IF NOT EXISTS clients (
     id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     fullName VARCHAR(255) NOT NULL,
+    bio TEXT(255),
     password VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     isMute BOOLEAN DEFAULT FALSE,
-    avatarUrl VARCHAR(255),
+    avatarUrl TEXT,
     isActive BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-INSERT INTO clients (fullName, password, email, isMute, avatarUrl, isActive) VALUES ('Nguyen Van A', '$2b$12$6xmtzoaFRg8vbTxMEpZnVOfgiLyEDUSswuehPZxO0mH3nwFriVHRm', 'a.nguyen@example.com', FALSE, 'url_avatar_a.jpg', TRUE);
+INSERT INTO clients (fullName, password, email, isMute, avatarUrl, isActive) VALUES ('Nguyen Van A', '$2b$12$6xmtzoaFRg8vbTxMEpZnVOfgiLyEDUSswuehPZxO0mH3nwFriVHRm', 'a.nguyen@example.com', FALSE, null, TRUE);
 INSERT INTO clients (fullName, password, email, isMute, avatarUrl, isActive) VALUES ('Tran Thi B', '$2b$12$.KPeHWFLAEdJdFBZBVP4pexgluTP9VcvW2CkjtiMC3eEQ1wui77hS', 'b.tran@example.com', TRUE, 'url_avatar_b.png', TRUE);
 INSERT INTO clients (fullName, password, email, isMute, avatarUrl, isActive) VALUES ('Le Minh C', '$2b$12$RAN630EQ48vJeh.jfBSPfecgApI8Dot8ck/b6apNICCdywaS0GYpy', 'c.le@example.com', FALSE, NULL, FALSE);
 INSERT INTO clients (fullName, password, email, isMute, avatarUrl, isActive) VALUES ('Pham Hoang D', '$2b$12$MAkBcLQSpQEX1rAVwchIaeNpzejUbdl6AZvAIOSbWF8bqoEcAhok6', 'd.pham@example.com', FALSE, 'url_avatar_d.gif', TRUE);
+INSERT INTO clients (fullName, password, email, isMute, isActive) VALUES ('Trang Xuan', '123456', 'trangxuan@gmail.com', FALSE, TRUE);
 
--- Tạo bảng users
+-- Tạo bảng managers
 CREATE TABLE IF NOT EXISTS managers (
     id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     fullName VARCHAR(255) NOT NULL,
@@ -33,9 +35,9 @@ CREATE TABLE IF NOT EXISTS managers (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-INSERT INTO managers (fullName, password, role,email, isActive) VALUES ('Trang Xuân', '$2b$12$4.FthDpDH0mmetIANiges.7vk59.gW2DNMzjJmrEkToPMQNI7c8Tq', 'admin', 'trang@gmail.com', TRUE);
-INSERT INTO managers (fullName, password, role,email, isActive) VALUES ('Phạm Vân Anh', '$2b$12$k2qIfnDDFEunC6kWQOmq1OYsKQbF6cIrCmsy/NspM3rWHLpneOt1G', 'editor', 'vananh@gmail.com', TRUE);
-INSERT INTO managers (fullName, password, role,email, isActive) VALUES ('Thảo Nhi', '$2b$12$70fqwwm6c.2i2qDeLI.XZO6CiKRyKZ5yZb9rEurGbf3jI3qWpQG5q', 'editor', 'thaonhi@gmail.com', TRUE);
+INSERT INTO managers (fullName, password, role,email) VALUES ('Trang Xuân', '$2b$12$4.FthDpDH0mmetIANiges.7vk59.gW2DNMzjJmrEkToPMQNI7c8Tq', 'admin', 'trang@gmail.com');
+INSERT INTO managers (fullName, password, role,email) VALUES ('Phạm Vân Anh', '$2b$12$k2qIfnDDFEunC6kWQOmq1OYsKQbF6cIrCmsy/NspM3rWHLpneOt1G', 'editor', 'vananh@gmail.com');
+INSERT INTO managers (fullName, password, role,email) VALUES ('Thảo Nhi', '$2b$12$70fqwwm6c.2i2qDeLI.XZO6CiKRyKZ5yZb9rEurGbf3jI3qWpQG5q', 'editor', 'thaonhi@gmail.com');
 
 -- Tạo bảng label
 CREATE TABLE IF NOT EXISTS labels (
@@ -43,7 +45,7 @@ CREATE TABLE IF NOT EXISTS labels (
     type VARCHAR(255) NOT NULL
 );
 
--- Tạo bảng News
+-- Tạo bảng news
 CREATE TABLE IF NOT EXISTS news (
     id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
@@ -66,8 +68,10 @@ CREATE TABLE IF NOT EXISTS comments (
     date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     like_count INT DEFAULT 0,
     commentId BIGINT,
+    newsId BIGINT NOT NULL,
     FOREIGN KEY (clientId) REFERENCES clients(id) ON DELETE CASCADE,
-    FOREIGN KEY (commentId) REFERENCES comments(id) ON DELETE CASCADE
+    FOREIGN KEY (commentId) REFERENCES comments(id) ON DELETE CASCADE,
+    FOREIGN KEY (newsId) REFERENCES news(id) ON DELETE CASCADE
 );
 
 -- Tạo bảng reports
@@ -81,20 +85,39 @@ CREATE TABLE IF NOT EXISTS reports (
     FOREIGN KEY (commentId) REFERENCES comments(id) ON DELETE CASCADE
 );
 
--- Tạo bảng comment_news
-CREATE TABLE IF NOT EXISTS comment_news (
-	newsId BIGINT NOT NULL,
-	commentId BIGINT NOT NULL,
-	PRIMARY KEY (newsId, commentId),
-	FOREIGN KEY (newsId) REFERENCES news(id) ON DELETE CASCADE,
-	FOREIGN KEY (commentId) REFERENCES comments(id) on delete cascade
-);
 
 -- Tạo bảng save_news
 CREATE TABLE IF NOT EXISTS save_news (
     clientId BIGINT NOT NULL,
     newsId BIGINT NOT NULL,
     PRIMARY KEY (clientId, newsId),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (clientId) REFERENCES clients(id) ON DELETE CASCADE,
     FOREIGN KEY (newsId) REFERENCES news(id) on delete cascade
 );
+
+-- Tạo bảng nearest_news
+CREATE TABLE IF NOT EXISTS nearest_news (
+    clientId BIGINT NOT NULL,
+    newsId BIGINT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (clientId, newsId),
+    FOREIGN KEY (clientId) REFERENCES clients(id) ON DELETE CASCADE,
+    FOREIGN KEY (newsId) REFERENCES news(id) on delete cascade
+);
+
+-- Tạo bảng notifications
+CREATE TABLE notifications (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    clientId BIGINT NOT NULL,
+    replierId BIGINT NOT NULL,
+    newsURL TEXT NOT NULL,
+    content TEXT NOT NULL,
+    isRead BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (clientId) REFERENCES clients(id) on DELETE CASCADE,
+    FOREIGN KEY (replierId) REFERENCES clients(id)
+);
+
+INSERT INTO notifications (id, clientId, replierId, newsURL, content) VALUES ('1', '1', '2', 'example.com', 'like');
+INSERT INTO notifications (id, clientId, replierId, newsURL, content) VALUES ('2', '1', '3', 'example.com', 'comment');
