@@ -26,6 +26,7 @@ use App\Http\Controllers\AuthenticationController;
 Route::get('/', function () {
     return view('home');
 });
+Route::get('/news/search', [NewsController::class, 'search'])->name('news.search');
 
 <<<<<<< HEAD
 Route::get('/manager/login', [ManagerController::class, 'showLoginForm'])->name('managerLogin');

@@ -33,18 +33,17 @@ return [
                     <path fill="#0d99ff" d="m12 5.69l5 4.5V18h-2v-6H9v6H7v-7.81zM12 3L2 12h3v8h6v-6h2v6h6v-8h3z" />
                 </svg>
             </a>
-            <div
-                class="flex items-center space-x-2 px-2 py-1 border-gray-300 border-2 rounded-full focus-within:ring-2 focus-within:ring-blue-500 flex-1 w-fit sm:w-24 md:w-72 max-w-md">
-                <a href="#" class="text-gray-600 hover:text-blue-600 transition-colors duration-200 p-2 rounded-full
-                        hover:bg-blue-50" aria-label="Tìm kiếm">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="30   " height="30" viewBox="0 0 15 15">
-                        <path fill="#0d99ff" fill-rule="evenodd"
-                            d="M10 6.5a3.5 3.5 0 1 1-7 0a3.5 3.5 0 0 1 7 0m-.691 3.516a4.5 4.5 0 1 1 .707-.707l2.838 2.837a.5.5 0 0 1-.708.708z"
-                            clip-rule="evenodd" stroke-width="0.5" stroke="#0d99ff" />
-                    </svg>
-                </a>
-                <input type="text" id="search-input" placeholder="Nhập từ khoá"
-                    class="bg-transparent focus:outline-none text-gray-700 placeholder-gray-400 w-full">
+            <div class="flex-1 mx-8">
+                <form action="{{ route('news.search') }}" method="GET" class="relative">
+                    <input type="text"
+                           name="q"
+                           placeholder="Nhập từ khoá"
+                           class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                           value="{{ request('q') }}" >
+                    <button type="submit" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </button>
+                </form>
             </div>
         </div>
     </div>
