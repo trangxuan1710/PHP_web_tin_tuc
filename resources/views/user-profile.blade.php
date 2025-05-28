@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang cá nhân</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* CSS tùy chỉnh cho nút chỉnh sửa avatar */
@@ -93,6 +94,9 @@
                         </button>
                     </li>
                     <li class="mt-auto pt-4 border-t border-gray-200">
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                            @csrf
+                        </form>
                         <button id="btn-logout" class="w-full text-left px-4 py-3 rounded-md text-red-600 hover:bg-red-50 transition duration-200 flex items-center">
                             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
@@ -572,7 +576,7 @@
 
         async function updateProfile(data) {
             try {
-                const updateUrl = "{{ route('api.profile.update', ['id' => $client->id]) }}";
+                const updateUrl = "{{ route('profile.update') }}";
 
                 // Gửi yêu cầu Fetch và chờ phản hồi
                 const response = await fetch(updateUrl, {
@@ -650,7 +654,7 @@
         async function readNotifications(id = null) {
             console.log(id);
             try {
-                const updateUrl = "{{ route('api.notifications.read', ['id' => $client->id]) }}";
+                const updateUrl = "{{ route('notifications.read') }}";
 
                 const response = await fetch(updateUrl, {
                     method: 'PUT',
@@ -680,12 +684,20 @@
         async function deleteNotifications(notificationId = null) {
             if (notificationId != null) {
                 if (!confirm(`Bạn có chắc chắn muốn xóa thông báo ID ${notificationId} không?`)) {
+                    console.log('Người dùng đã huỷ');
                     return; // Người dùng đã hủy
                 }
 
+                notifications = notifications.map(n =>
+                    n.id === notificationId ? {
+                        ...n,
+                        isRead: true
+                    } : n
+                );
+
                 try {
                     // URL API để xóa thông báo
-                    const deleteUrl = "{{ route('api.notifications.delete', ['id' => $client->id]) }}";
+                    const deleteUrl = "{{ route('notifications.delete') }}";
 
                     const response = await fetch(deleteUrl, {
                         method: 'DELETE', // Sử dụng phương thức DELETE
@@ -712,12 +724,15 @@
                 }
             } else {
                 if (!confirm('Bạn có chắc chắn muốn xóa tất cả thông báo không?')) {
+                    console.log('Người dùng đã huỷ');
                     return; // Người dùng đã hủy
                 }
 
+                notifications = notifications.filter(n => !n.isRead); // Giữ lại chỉ các thông báo chưa đọc
+
                 try {
                     // URL API để xóa thông báo
-                    const deleteUrl = "{{ route('api.notifications.delete', ['id' => $client->id]) }}";
+                    const deleteUrl = "{{ route('notifications.delete') }}";
 
                     const response = await fetch(deleteUrl, {
                         method: 'DELETE', // Sử dụng phương thức DELETE
@@ -738,46 +753,6 @@
                 } catch (error) {
                     console.error('Lỗi mạng hoặc server:', error);
                 }
-            }
-        }
-
-        async function deleteAllNotifications() {
-            if (!confirm('Bạn có chắc chắn muốn xóa tất cả thông báo đã đọc không?')) {
-                return; // Người dùng đã hủy
-            }
-
-            try {
-                // URL API để xóa tất cả thông báo đã đọc
-                const deleteUrl = `/api/notifications/delete-all`;
-
-                const response = await fetch(deleteUrl, {
-                    method: 'DELETE', // Sử dụng phương thức DELETE
-                    headers: {
-                        'X-CSRF-TOKEN': csrfToken, // Gửi CSRF token
-                        'Accept': 'application/json', // Chấp nhận phản hồi JSON
-                    },
-                });
-
-                const data = await response.json(); // Phân tích phản hồi JSON
-
-                if (response.ok) { // Mã trạng thái 2xx (ví dụ: 200 OK, 204 No Content)
-                    notifications = notifications.filter(n => !n.read); // Giữ lại chỉ các thông báo chưa đọc
-                    // Điều chỉnh trang hiện tại nếu trang đó trở nên trống
-                    const totalNotificationsAfterDelete = notifications.length;
-                    const totalNotificationPagesAfterDelete = Math.ceil(totalNotificationsAfterDelete / notificationsPerPage);
-                    if (currentNotificationPage > totalNotificationPagesAfterDelete && totalNotificationPagesAfterDelete > 0) {
-                        currentNotificationPage = totalNotificationPagesAfterDelete;
-                    } else if (totalNotificationPagesAfterDelete === 0) {
-                        currentNotificationPage = 1; // Về trang 1 nếu không còn thông báo
-                    }
-                    renderMainContent();
-                    console.log(`Tất cả thông báo đã đọc đã bị xóa.`);
-                } else { // Mã trạng thái lỗi (4xx, 5xx)
-                    console.error('Lỗi khi xóa thông báo:', data.message || 'Đã xảy ra lỗi không xác định.');
-                }
-
-            } catch (error) {
-                console.error('Lỗi mạng hoặc server:', error);
             }
         }
 
@@ -958,7 +933,6 @@
                     e.stopPropagation(); // Ngăn chặn sự kiện click của item cha (đánh dấu đã đọc)
                     const idToDelete = parseInt(e.currentTarget.dataset.id);
                     deleteNotifications(idToDelete); // Gọi hàm xóa thông báo
-                    notifications = notifications.filter(n => n.id !== idToDelete);
                     // Điều chỉnh trang hiện tại nếu trang đó trở nên trống
                     const totalNotificationsAfterDelete = notifications.length;
                     const totalNotificationPagesAfterDelete = Math.ceil(totalNotificationsAfterDelete / notificationsPerPage);
@@ -976,7 +950,6 @@
             if (deleteAllReadNotificationsBtn) {
                 deleteAllReadNotificationsBtn.onclick = () => {
                     deleteNotifications();
-                    notifications = notifications.filter(n => !n.isRead); // Giữ lại chỉ các thông báo chưa đọc
                     // Điều chỉnh trang hiện tại nếu trang đó trở nên trống
                     const totalNotificationsAfterDelete = notifications.length;
                     const totalNotificationPagesAfterDelete = Math.ceil(totalNotificationsAfterDelete / notificationsPerPage);
@@ -996,7 +969,7 @@
                 markAllAsReadBtn.onclick = () => {
                     notifications = notifications.map(n => ({
                         ...n,
-                        read: true
+                        isRead: true
                     }));
                     readNotifications(); // Cập nhật trạng thái đã đọc trên server
                     renderMainContent();
@@ -1037,13 +1010,49 @@
             });
         }
 
+        function updateUrlForTab(tab) {
+            const url = `/user/${tab}`;
+            history.pushState({
+                tab
+            }, '', url);
+        }
+
+        window.addEventListener('popstate', (event) => {
+            const params = new URLSearchParams(window.location.search);
+            const tabFromUrl = params.get('tab');
+            if (tabFromUrl && ['profile', 'saveNews', 'nearestNews', 'accountSettings'].includes(tabFromUrl)) {
+                activeTab = tabFromUrl;
+                isEditing = false;
+                updateSidebar();
+                renderMainContent();
+            }
+        });
+
         /**
          * Khởi tạo ứng dụng khi trang tải.
          */
         document.addEventListener('DOMContentLoaded', () => {
             // Render ban đầu của sidebar và nội dung chính
+            const params = new URLSearchParams(window.location.search);
+            let tabFromUrl = params.get('tab');
+            if (!tabFromUrl) {
+                // Lấy tab từ path, ví dụ: /user/saveNews
+                const pathParts = window.location.pathname.split('/');
+                // pathParts: ["", "user", "saveNews"]
+                if (pathParts.length >= 3 && ['profile', 'saveNews', 'nearestNews', 'accountSettings'].includes(pathParts[2])) {
+                    tabFromUrl = pathParts[2];
+                }
+            }
+            if (tabFromUrl && ['profile', 'saveNews', 'nearestNews', 'accountSettings'].includes(tabFromUrl)) {
+                activeTab = tabFromUrl;
+            } else {
+                activeTab = 'profile';
+            }
+
             updateSidebar();
             renderMainContent();
+
+            console.log(activeTab);
 
             // Gắn trình nghe sự kiện cho việc chuyển đổi tab
             tabProfileBtn.addEventListener('click', () => {
@@ -1054,26 +1063,31 @@
                 }; // Đặt lại dữ liệu người dùng đã chỉnh sửa
                 updateSidebar();
                 renderMainContent();
+                updateUrlForTab('profile');
             });
             tabSaveNewsBtn.addEventListener('click', () => {
                 activeTab = 'saveNews';
                 isEditing = false; // Đặt lại chế độ chỉnh sửa khi chuyển tab
                 updateSidebar();
                 renderMainContent();
+                updateUrlForTab('saveNews');
             });
             tabNearestNewsBtn.addEventListener('click', () => {
                 activeTab = 'nearestNews';
                 isEditing = false; // Đặt lại chế độ chỉnh sửa khi chuyển tab
                 updateSidebar();
                 renderMainContent();
+                updateUrlForTab('nearestNews');
             });
             tabAccountSettingsBtn.addEventListener('click', () => {
                 activeTab = 'accountSettings';
                 isEditing = false; // Đặt lại chế độ chỉnh sửa khi chuyển tab
                 updateSidebar();
                 renderMainContent();
+                updateUrlForTab('accountSettings');
             });
             logoutBtn.addEventListener('click', () => {
+                document.getElementById('logout-form').submit();
                 console.log('Đăng xuất');
                 // Trong một ứng dụng thực tế, điều này sẽ xử lý logic đăng xuất
             });
@@ -1107,7 +1121,7 @@
                 }
 
                 try {
-                    const url = "{{ route('profile.changePassword', ['id' => $client->id]) }}";
+                    const url = "{{ route('user.changePassword') }}";
                     const res = await fetch(url, {
                         method: 'PUT',
                         headers: {

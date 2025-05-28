@@ -7,14 +7,14 @@ use App\Http\Controllers\NewsController;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\CommentController;
-use App\Http\Controllers\NewsController;
 use App\Models\News; // Đảm bảo đã import Model News
 use App\Models\Label; // Đảm bảo đã import Model Label nếu bạn sử dụng nó
 
 use App\Http\Controllers\ProfileController;
-use GuzzleHttp\Client;
+use App\Http\Controllers\AuthenticationController;
 use App\Http\Controllers\ReportController;
 /*
 |--------------------------------------------------------------------------
@@ -57,7 +57,7 @@ Route::get('/', function () {
     } catch (\Exception $e) {
         // Xử lý lỗi nếu không thể kết nối database hoặc không tìm thấy bảng/dữ liệu
         // Bạn có thể log lỗi này hoặc hiển thị thông báo thân thiện hơn cho người dùng
-        \Log::error("Lỗi khi lấy dữ liệu tin tức cho trang welcome: " . $e->getMessage());
+        Log::error("Lỗi khi lấy dữ liệu tin tức cho trang welcome: " . $e->getMessage());
         // Các biến sẽ vẫn là null/collection rỗng, view sẽ xử lý hiển thị "Không có dữ liệu"
     }
 
@@ -106,14 +106,31 @@ Route::delete('comments/{commentId}', [CommentController::class, 'delete'])->nam
 
 Route::get('/manager/manageReports', [ReportController::class, 'index'])->name('managerManageReports');
 Route::post('/manager/processReport/{id}', [ReportController::class, 'processReport'])->name('processReport');
-Route::get('/profile/{id}', [ProfileController::class, 'showProfile'])->name('profile');
-
-Route::put('/profile/{id}/change-password', [ProfileController::class, 'changePassword'])->name('profile.changePassword');
-
-/*
-Route::middleware(['auth'])->group(function () {
-    Route::get('/profile/{id}', [ProfileController::class, 'showProfile'])->name('profile');
-
+Route::get('/signup', function () {
+    return view('auth.user-signup');
 });
 
+Route::get('/login', function () {
+    return view('auth.user-login');
+});
+
+Route::post('/signup', [AuthenticationController::class, 'register'])->name('login');
+Route::post('/login', [AuthenticationController::class, 'login'])->name('login');
+
+/*
+Route::get('/profile/{id}', [ProfileController::class, 'showProfile'])->name('profile');
+Route::put('/profile/{id}/change-password', [ProfileController::class, 'changePassword'])->name('profile.changePassword');
 */
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/user', [ProfileController::class, 'showProfile'])->name('profile');
+    Route::get('/user/{tab?}', [ProfileController::class, 'showProfile'])
+        ->where('tab', 'profile|saveNews|nearestNews|accountSettings')
+        ->name('profile.tab');
+    Route::put('/user/change-password', [ProfileController::class, 'changePassword'])->name('user.changePassword');
+    Route::post('/logout', [AuthenticationController::class, 'logout'])->name('logout');
+    
+    Route::put('/notifications/read', [ProfileController::class, 'readNotifications'])->name('notifications.read');
+    Route::put('/profile/update', [ProfileController::class, 'updateProfile'])->name('profile.update');
+    Route::delete('/notifications/delete', [ProfileController::class, 'deleteNotifications'])->name('notifications.delete');
+});
