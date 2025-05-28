@@ -41,9 +41,19 @@ class ProfileController extends Controller
                 ];
             });
 
+        $saveNews = $client->saveNews()
+        ->orderByDesc('save_news.created_at')
+        ->get()
+        ->toArray();
+        $nearestNews = $client->nearestNews()->orderByDesc('nearest_news.created_at')
+        ->get()
+        ->toArray();
+
         return view('user-profile', [
             'client' => $client,
             'notifications' => $notifications,
+            'saveNews' => $saveNews,
+            'nearestNews' => $nearestNews,
         ]);
     }
 
@@ -68,7 +78,7 @@ class ProfileController extends Controller
                     Rule::unique('clients')->ignore($client->id),
                 ],
                 'bio' => 'nullable|string|max:500',
-                'avatarUrl' => 'nullable|string|max:255|url',
+                'avatarUrl' => 'nullable|string|url',
                 // Thêm các trường khác nếu có
             ]);
 
@@ -118,11 +128,10 @@ class ProfileController extends Controller
             if ($notificationId === null) {
                 // Trường hợp 1: notificationId là null, đánh dấu TẤT CẢ thông báo chưa đọc
                 Notifications::where('clientId', $id)
-                            ->where('isRead', false)
-                            ->update(['isRead' => true]);
+                    ->where('isRead', false)
+                    ->update(['isRead' => true]);
 
                 return response()->json(['message' => 'Tất cả thông báo đã được đánh dấu là đã đọc.'], 200);
-
             } else {
                 // Trường hợp 2: notificationId có giá trị, đánh dấu MỘT thông báo cụ thể
                 $notification = Notifications::find($notificationId);
@@ -136,7 +145,7 @@ class ProfileController extends Controller
                     $notification->isRead = true;
                     $notification->save();
                 }
-                
+
                 return response()->json(['message' => 'Thông báo đã được đánh dấu là đã đọc.'], 200);
             }
         } catch (\Exception $e) {
@@ -165,6 +174,7 @@ class ProfileController extends Controller
 
         return response()->json(['message' => 'Thông báo đã được xóa thành công.'], 200);
     }
+
 
     public function changePassword(int $id, Request $request)
     {

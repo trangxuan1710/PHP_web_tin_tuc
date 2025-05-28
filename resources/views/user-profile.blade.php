@@ -63,12 +63,22 @@
                         </button>
                     </li>
                     <li class="mb-2">
-                        <button id="tab-savedNews" class="w-full text-left px-4 py-3 rounded-md transition duration-200">
+                        <button id="tab-saveNews" class="w-full text-left px-4 py-3 rounded-md transition duration-200">
                             <span class="flex items-center">
                                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
                                 </svg>
                                 Tin tức đã lưu
+                            </span>
+                        </button>
+                    </li>
+                    <li class="mb-2">
+                        <button id="tab-nearestNews" class="w-full text-left px-4 py-3 rounded-md transition duration-200">
+                            <span class="flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-3" viewBox="0 0 24 24">
+                                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 6h3a1 1 0 0 1 1 1v11a2 2 0 0 1-4 0V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v12a3 3 0 0 0 3 3h11M8 8h4m-4 4h4m-4 4h4" />
+                                </svg>
+                                Đã xem gần đây
                             </span>
                         </button>
                     </li>
@@ -130,6 +140,12 @@
     <script id="notifications-data" type="application/json">
         @json($notifications ?? [])
     </script>
+    <script id="saveNews-data" type="application/json">
+        @json($saveNews ?? [])
+    </script>
+    <script id="nearestNews-data" type="application/json">
+        @json($nearestNews ?? [])
+    </script>
 
     <script>
         // Hàm tạo avatar mặc định từ tên
@@ -154,12 +170,14 @@
             })()
         };
 
-        let saveNews = "{{ $savedNews ?? '[]' }}";
+        let saveNews = JSON.parse(document.getElementById('saveNews-data').textContent);
+        let nearestNews = JSON.parse(document.getElementById('nearestNews-data').textContent);
         let notifications = JSON.parse(document.getElementById('notifications-data').textContent);
 
         // Kiểm tra dữ liệu từ backend
         console.log('user:', user);
         console.log('saveNews:', saveNews);
+        console.log('nearestNews', nearestNews);
         console.log('notifications:', notifications);
 
         let isEditing = false; // Trạng thái chỉnh sửa thông tin cá nhân
@@ -176,7 +194,8 @@
         const mainContent = document.getElementById('main-content');
 
         const tabProfileBtn = document.getElementById('tab-profile');
-        const tabSavedNewsBtn = document.getElementById('tab-savedNews');
+        const tabSaveNewsBtn = document.getElementById('tab-saveNews');
+        const tabNearestNewsBtn = document.getElementById('tab-nearestNews')
         const tabAccountSettingsBtn = document.getElementById('tab-accountSettings');
         const logoutBtn = document.getElementById('btn-logout');
 
@@ -205,13 +224,14 @@
                         </div>
                     </div>
                 `;
-            } else if (activeTab === 'savedNews') {
-                contentHtml = renderSavedNews();
+            } else if (activeTab === 'saveNews') {
+                contentHtml = renderNews(data = saveNews, isSaveNews = true);
             } else if (activeTab === 'accountSettings') {
                 contentHtml = renderAccountSettings();
+            } else if (activeTab === 'nearestNews') {
+                contentHtml = renderNews(data = nearestNews, isSaveNews = false);
             }
             mainContent.innerHTML = contentHtml;
-
             // Gắn lại các trình nghe sự kiện sau khi render HTML mới
             attachEventListeners();
         }
@@ -228,11 +248,14 @@
             tabProfileBtn.className = `w-full text-left px-4 py-3 rounded-md transition duration-200 ${
                 activeTab === 'profile' ? 'bg-blue-100 text-blue-700 font-semibold shadow-sm' : 'text-gray-700 hover:bg-gray-50'
             }`;
-            tabSavedNewsBtn.className = `w-full text-left px-4 py-3 rounded-md transition duration-200 ${
-                activeTab === 'savedNews' ? 'bg-blue-100 text-blue-700 font-semibold shadow-sm' : 'text-gray-700 hover:bg-gray-50'
+            tabSaveNewsBtn.className = `w-full text-left px-4 py-3 rounded-md transition duration-200 ${
+                activeTab === 'saveNews' ? 'bg-blue-100 text-blue-700 font-semibold shadow-sm' : 'text-gray-700 hover:bg-gray-50'
             }`;
             tabAccountSettingsBtn.className = `w-full text-left px-4 py-3 rounded-md transition duration-200 ${
                 activeTab === 'accountSettings' ? 'bg-blue-100 text-blue-700 font-semibold shadow-sm' : 'text-gray-700 hover:bg-gray-50'
+            }`;
+            tabNearestNewsBtn.className = `w-full text-left px-4 py-3 rounded-md transition duration-200 ${
+                activeTab === 'nearestNews' ? 'bg-blue-100 text-blue-700 font-semibold shadow-sm' : 'text-gray-700 hover:bg-gray-50'
             }`;
         }
 
@@ -333,20 +356,28 @@
          * Tạo HTML cho phần tin tức đã lưu.
          * @returns {string} Chuỗi HTML.
          */
-        function renderSavedNews() {
-            if (savedNews.length === 0) {
-                return `
+
+        function renderNews(data, isSaveNews) {
+            if (data.length === 0)
+                if (isSaveNews) {
+                    return `
                     <div class="p-6 bg-white rounded-lg shadow-md">
                         <h2 class="text-2xl font-semibold text-blue-800 mb-6 border-b pb-2">Tin tức đã lưu</h2>
                         <p class="text-gray-600 italic">Bạn chưa lưu tin tức nào.</p>
                     </div>
                 `;
-            }
+                }
+            else return `
+                    <div class="p-6 bg-white rounded-lg shadow-md">
+                        <h2 class="text-2xl font-semibold text-blue-800 mb-6 border-b pb-2">Tin tức đã xem gần đây</h2>
+                        <p class="text-gray-600 italic">Bạn chưa xem tin tức nào.</p>
+                    </div>
+                `;
 
-            const totalPages = Math.ceil(savedNews.length / newsPerPage);
+            const totalPages = Math.ceil(data.length / newsPerPage);
             const startIndex = (currentPage - 1) * newsPerPage;
             const endIndex = startIndex + newsPerPage;
-            const currentNews = savedNews.slice(startIndex, endIndex);
+            const currentNews = data.slice(startIndex, endIndex);
 
             const newsCardsHtml = currentNews.map(news => `
                 <div class="flex flex-col bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200">
@@ -360,7 +391,7 @@
                         <p class="text-gray-600 text-xs">Lưu ngày: ${news.date}</p>
                     </div>
                     <div class="flex justify-between items-center p-4 border-t border-gray-200">
-                        <button data-url="${news.url}" class="news-read-more-btn px-4 py-2 bg-blue-500 text-white text-sm font-semibold rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 flex items-center space-x-2">
+                        <button data-url="" class="news-read-more-btn px-4 py-2 bg-blue-500 text-white text-sm font-semibold rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 flex items-center space-x-2">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.747 0-3.332.477-4.5 1.253"></path>
                             </svg>
@@ -757,6 +788,7 @@
             document.getElementById('change-password-error').textContent = '';
             document.getElementById('change-password-success').textContent = '';
         }
+
         function hideChangePasswordModal() {
             document.getElementById('change-password-modal').classList.add('hidden');
         }
@@ -865,7 +897,7 @@
                 };
             }
             if (nextPageBtn) {
-                const totalPages = Math.ceil(savedNews.length / newsPerPage);
+                const totalPages = Math.ceil(saveNews.length / newsPerPage);
                 nextPageBtn.onclick = () => {
                     if (currentPage < totalPages) {
                         currentPage++;
@@ -895,7 +927,7 @@
                     const id = parseInt(e.currentTarget.dataset.id);
                     const title = e.currentTarget.dataset.title;
                     if (confirm(`Bạn có chắc chắn muốn xóa tin tức "${title}"?`)) { // Sử dụng confirm theo hướng dẫn, nhưng sẽ dùng modal tùy chỉnh trong ứng dụng thực tế
-                        savedNews = savedNews.filter(item => item.id !== id);
+                        saveNews = saveNews.filter(item => item.id !== id);
                         renderMainContent(); // Render lại tin tức đã lưu
                         console.log(`Tin tức "${title}" đã bị xóa.`);
                     }
@@ -1023,8 +1055,14 @@
                 updateSidebar();
                 renderMainContent();
             });
-            tabSavedNewsBtn.addEventListener('click', () => {
-                activeTab = 'savedNews';
+            tabSaveNewsBtn.addEventListener('click', () => {
+                activeTab = 'saveNews';
+                isEditing = false; // Đặt lại chế độ chỉnh sửa khi chuyển tab
+                updateSidebar();
+                renderMainContent();
+            });
+            tabNearestNewsBtn.addEventListener('click', () => {
+                activeTab = 'nearestNews';
                 isEditing = false; // Đặt lại chế độ chỉnh sửa khi chuyển tab
                 updateSidebar();
                 renderMainContent();

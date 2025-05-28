@@ -27,7 +27,7 @@ class Notifications extends Model
 
     protected $casts = [
         'isRead' => 'boolean',
-        'clentId' => 'integer',
+        'clientId' => 'integer',
         'replierId' => 'integer',
         'created_at' => 'datetime',
     ];

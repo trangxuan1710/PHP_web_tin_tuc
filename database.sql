@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS clients (
     password VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     isMute BOOLEAN DEFAULT FALSE,
-    avatarUrl VARCHAR(255),
+    avatarUrl TEXT,
     isActive BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -68,8 +68,10 @@ CREATE TABLE IF NOT EXISTS comments (
     date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     like_count INT DEFAULT 0,
     commentId BIGINT,
+    newsId BIGINT NOT NULL,
     FOREIGN KEY (clientId) REFERENCES clients(id) ON DELETE CASCADE,
-    FOREIGN KEY (commentId) REFERENCES comments(id) ON DELETE CASCADE
+    FOREIGN KEY (commentId) REFERENCES comments(id) ON DELETE CASCADE,
+    FOREIGN KEY (newsId) REFERENCES news(id) ON DELETE CASCADE
 );
 
 -- Tạo bảng reports
@@ -83,20 +85,22 @@ CREATE TABLE IF NOT EXISTS reports (
     FOREIGN KEY (commentId) REFERENCES comments(id) ON DELETE CASCADE
 );
 
--- Tạo bảng comment_news
-CREATE TABLE IF NOT EXISTS comment_news (
-	newsId BIGINT NOT NULL,
-	commentId BIGINT NOT NULL,
-	PRIMARY KEY (newsId, commentId),
-	FOREIGN KEY (newsId) REFERENCES news(id) ON DELETE CASCADE,
-	FOREIGN KEY (commentId) REFERENCES comments(id) on delete cascade
-);
 
 -- Tạo bảng save_news
 CREATE TABLE IF NOT EXISTS save_news (
     clientId BIGINT NOT NULL,
     newsId BIGINT NOT NULL,
-    saveDate TIMESTAMP,
+    PRIMARY KEY (clientId, newsId),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (clientId) REFERENCES clients(id) ON DELETE CASCADE,
+    FOREIGN KEY (newsId) REFERENCES news(id) on delete cascade
+);
+
+-- Tạo bảng nearest_news
+CREATE TABLE IF NOT EXISTS nearest_news (
+    clientId BIGINT NOT NULL,
+    newsId BIGINT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (clientId, newsId),
     FOREIGN KEY (clientId) REFERENCES clients(id) ON DELETE CASCADE,
     FOREIGN KEY (newsId) REFERENCES news(id) on delete cascade

@@ -4,11 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Notifications\Notifiable;
 
 class Clients extends Model
 {
-    use HasFactory, Notifiable;
+    use HasFactory;
 
     protected $table = 'clients';
     protected $primaryKey = 'id';
@@ -44,5 +43,17 @@ class Clients extends Model
     public function receivedNotifications()
     {
         return $this->hasMany(Notifications::class, 'clientId');
+    }
+
+    public function saveNews()
+    {
+        return $this->belongsToMany(News::class, 'save_news', 'clientId', 'newsId')
+        ->using(SaveNews::class);
+    }
+
+    public function nearestNews()
+    {
+        return $this->belongsToMany(News::class, 'nearest_news', 'clientId', 'newsId')
+        ->using(NearestNews::class);
     }
 }
