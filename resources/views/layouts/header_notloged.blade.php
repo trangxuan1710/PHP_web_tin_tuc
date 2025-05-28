@@ -8,7 +8,7 @@
         </div>
 
         <div class="flex items-center space-x-4 flex-1">
-            <a href="#"
+            <a href="/"
                 class="text-blue-600 hover:text-blue-800 transition-colors duration-200 p-2 rounded-full hover:bg-blue-50 flex-shrink-0"
                 aria-label="Trang chủ">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
@@ -33,8 +33,8 @@
     </div>
 
     <div class="flex items-center flex-1 justify-end space-x-2">
-        <a href="#" class="text-blue-600 hover:text-blue-800 font-medium font-sans transition-colors duration-200 whitespace-nowrap text-base px-4 py-2 rounded-full hover:bg-blue-50">Đăng nhập</a>
+        <a href="/login" class="text-blue-600 hover:text-blue-800 font-medium font-sans transition-colors duration-200 whitespace-nowrap text-base px-4 py-2 rounded-full hover:bg-blue-50">Đăng nhập</a>
         <span class="mx-2 text-gray-400">/</span>
-        <a href="#" class="text-blue-600 hover:text-blue-800 font-medium font-sans transition-colors duration-200 whitespace-nowrap text-base px-4 py-2 rounded-full hover:bg-blue-50">Đăng ký</a>
+        <a href="/signup" class="text-blue-600 hover:text-blue-800 font-medium font-sans transition-colors duration-200 whitespace-nowrap text-base px-4 py-2 rounded-full hover:bg-blue-50">Đăng ký</a>
     </div>
 </header>

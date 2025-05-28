@@ -8,17 +8,18 @@ use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Mockery\Matcher\Not;
 
 class ProfileController extends Controller
 {
 
-    protected function showProfile(int $id)
+    protected function showProfile()
     {
 
         /** @var \App\Models\Clients $client */
-        $client = Clients::find($id);
+        $client = Auth::user();
 
         if (!$client) {
             abort(404);
@@ -57,10 +58,10 @@ class ProfileController extends Controller
         ]);
     }
 
-    public function updateProfile(int $id, Request $request)
+    public function updateProfile(Request $request)
     {
         /** @var \App\Models\Client $client */
-        $client = Clients::find($id);
+        $client = Auth::user();
 
         if (!$client) {
             return response()->json(['message' => 'Người dùng chưa đăng nhập.'], 401);
@@ -112,9 +113,10 @@ class ProfileController extends Controller
         return response()->json(['fullName' => $client->fullName], 200);
     }
 
-    public function readNotifications(int $id, Request $request)
+    public function readNotifications(Request $request)
     {
-        $client = Clients::find($id);
+        /** @var \App\Models\Client $client */
+        $client = Auth::user();
 
         if (!$client) {
             abort(404, 'Người dùng không tồn tại.');
@@ -127,7 +129,7 @@ class ProfileController extends Controller
 
             if ($notificationId === null) {
                 // Trường hợp 1: notificationId là null, đánh dấu TẤT CẢ thông báo chưa đọc
-                Notifications::where('clientId', $id)
+                Notifications::where('clientId', $client->id)
                     ->where('isRead', false)
                     ->update(['isRead' => true]);
 
@@ -153,12 +155,15 @@ class ProfileController extends Controller
         }
     }
 
-    public function deleteNotifications(int $id, Request $request)
+    public function deleteNotifications(Request $request)
     {
+        /** @var \App\Models\Client $client */
+        $client = Auth::user();
+
         $notificationId = $request->input('notificationId');
 
         if ($notificationId === null) {
-            Notifications::where('clientId', $id)
+            Notifications::where('clientId', $client->id)
                 ->where('isRead', true)
                 ->delete();
             return response()->json(['message' => 'Tất cả thông báo đã đọc đã được xóa thành công.'], 200);
@@ -176,9 +181,10 @@ class ProfileController extends Controller
     }
 
 
-    public function changePassword(int $id, Request $request)
+    public function changePassword(Request $request)
     {
-        $client = Clients::find($id);
+        /** @var \App\Models\Client $client */
+        $client = Auth::user();
 
         if (!$client) {
             return response()->json(['message' => 'Người dùng không tồn tại.'], 404);
@@ -189,11 +195,11 @@ class ProfileController extends Controller
             'newPassword' => 'required|string|min:8|confirmed',
         ]);
 
-        if (!password_verify($validatedData['currentPassword'], $client->password)) {
+        if (!Hash::check($validatedData['currentPassword'], $client->password)) {
             return response()->json(['message' => 'Mật khẩu hiện tại không đúng.'], 403);
         }
 
-        $client->password = bcrypt($validatedData['newPassword']);
+        $client->password = Hash::make($validatedData['newPassword']);
         $client->save();
 
         return response()->json(['message' => 'Mật khẩu đã được cập nhật thành công.'], 200);
