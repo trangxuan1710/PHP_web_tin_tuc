@@ -57,4 +57,9 @@ class Clients extends Authenticatable
         return $this->belongsToMany(News::class, 'nearest_news', 'clientId', 'newsId')
         ->using(NearestNews::class);
     }
+    public function savedNews()
+    {
+        return $this->belongsToMany(News::class, 'saved_news', 'client_id', 'news_id')->withTimestamps();
+    }
+
 }

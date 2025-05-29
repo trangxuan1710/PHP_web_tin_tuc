@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Label;
-use App\Models\Labels;
 use App\Models\Managers;
 use App\Models\News;
 use Illuminate\Http\Request;

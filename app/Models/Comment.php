@@ -48,6 +48,8 @@ class Comment extends Model
     public function replies()
     {
         return $this->hasMany(Comment::class, 'commentId')->orderBy('date', 'asc');
+        return $this->hasMany(Comment::class, 'commentId');
+        return $this->hasMany(Comment::class, 'commentId')->orderBy('date', 'asc');
     }
 
 
