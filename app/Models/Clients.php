@@ -32,4 +32,9 @@ class Clients extends Model
         'password' => 'hashed',
         'isActive' => 'boolean',
     ];
+    public function savedNews()
+    {
+        return $this->belongsToMany(News::class, 'saved_news', 'client_id', 'news_id')->withTimestamps();
+    }
+
 }
