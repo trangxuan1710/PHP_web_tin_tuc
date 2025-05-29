@@ -14,20 +14,15 @@ class DatabaseSeeder extends Seeder
      */
 //    public function run()
 //    {
-//        // \App\Models\User::factory(10)->create();
-//
-//        // \App\Models\User::factory()->create([
-//        //     'name' => 'Test User',
-//        //     'email' => 'test@example.com',
-//        // ]);
+        // \App\Models\User::factory(10)->create();
+
+        // \App\Models\User::factory()->create([
+        //     'name' => 'Test User',
+        //     'email' => 'test@example.com',
+        // ]);
 //    }
-
-    public function run(): void
+    public function run()
     {
-        $this->call([
-            CommentTestSeeder::class,
-        ]);
         $this->call(NewsSeeder::class);
-
     }
 }

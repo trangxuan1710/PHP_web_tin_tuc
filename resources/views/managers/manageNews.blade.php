@@ -10,7 +10,7 @@
                 </a>
                 <form action="{{ route('manageNews') }}" method="GET" class="m-0 flex items-center space-x-2">
                     {{-- Dropdown để chọn nhãn --}}
-                    <select name="label_id" class="py-2 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <select name="label_id" class="py-2 px-4 border w-36 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <option value="">Tất cả nhãn</option>
                         @foreach($labels as $labelOption)
                             <option value="{{ $labelOption->id }}" {{ old('label_id', $labelId ?? '') == $labelOption->id ? 'selected' : '' }}>
@@ -28,7 +28,7 @@
                         <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
                     </div>
                     {{-- Nút tìm kiếm --}}
-                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg shadow transition-colors duration-200">Tìm kiếm</button>
+                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg shadow transition-colors duration-200">Tìm</button>
                 </form>
             </div>
         </div>

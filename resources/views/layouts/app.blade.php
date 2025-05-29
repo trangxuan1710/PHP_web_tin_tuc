@@ -1,38 +1,34 @@
 <!DOCTYPE html>
-<html lang="vi">
+
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="UTF-8">
-    <title>@yield('title', 'Trang web của bạn')</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tin Tức 24/7 @yield('title')</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-
-    <!-- CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     @stack('styles')
+    <!-- Fonts (nếu muốn giữ) -->
+    <link rel="dns-prefetch" href="//fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
 
-    <!-- JS -->
-    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 </head>
-<body class="bg-gray-50 font-sans leading-relaxed">
+<body class="bg-gray-100 text-gray-800">
 
-<!-- 🔽 Header (tuỳ login) -->
-@auth
-    @include('layouts.header_loged')
-@else
-    @include('layouts.header_notloged')
-@endauth
+@include('layouts.header_loged')
+@include('partials.header')
 
-<!-- 🔽 Navbar (nếu có) -->
-@include('layouts.navbar')
-
-<!-- 🔽 Nội dung chính -->
-<main class="container mx-auto p-4">
-    @yield('content')
+<main class="py-8">
+    <div class="max-w-6xl mx-auto px-4">
+        @yield('content')
+    </div>
 </main>
 
-<!-- 🔽 Footer -->
-@include('layouts.footer')
+{{-- @include('partials.footer') --}}
 
-@stack('scripts')
+{{-- <script src="{{ asset('js/app.js') }}"></script> --}}
 </body>
 </html>

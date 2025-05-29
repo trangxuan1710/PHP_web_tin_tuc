@@ -26,6 +26,10 @@ class SaveNews extends Pivot
         'newsId',
     ];
 
+    protected $cast = [
+        'saveDate' => 'datetime',
+    ];
+
     public function client()
     {
         return $this->belongsTo(Clients::class, 'clientId');

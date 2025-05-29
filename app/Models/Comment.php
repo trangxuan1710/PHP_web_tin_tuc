@@ -21,7 +21,6 @@ class Comment extends Model
         'date',
         'like_count',
         'commentId',
-        'newsId',
     ];
 
     protected $casts = [
@@ -34,23 +33,18 @@ class Comment extends Model
     }
     public function news()
     {
-        return $this->belongsTo(News::class, 'newsId');
+        return $this->belongsTo(News::class,  'newsId');
     }
-
-    public function parent()
-    {
-        return $this->belongsTo(Comment::class, 'commentId');
-    }
+//    public function parent()
+//    {
+//        return $this->belongsTo(Comment::class, 'commentId');
+//    }
 
     // Quan hệ phản hồi
 //    public function replies()
 //    {
 //        return $this->hasMany(Comment::class, 'commentId');
 //    }
-    public function replies()
-    {
-        return $this->hasMany(Comment::class, 'commentId')->orderBy('date', 'asc');
-    }
 
 
 

@@ -11,16 +11,20 @@ class News extends Model
     protected $table = 'news';
 
     public $timestamps = false;
-
+    protected $primaryKey = 'id';
+    public $keyType = 'int';
+    public $incrementing = true;
     const UPDATED_AT = 'date';
     const CREATED_AT = null;
 
     protected $fillable = [
         'title',
+        'managerId',
+        'views',
         'userId',
         'date',
-        'tag',
         'content',
+        'status',
         'thumbNailUrl',
         'isHot',
         'labelId',
@@ -31,16 +35,26 @@ class News extends Model
         'date' => 'datetime',
     ];
 
-    public function user()
+    public function manager()
     {
-        return $this->belongsTo(Users::class, 'userId');
-    }
-    public function comments()
-    {
-        return $this->belongsToMany(Comments::class, 'comment_news', 'newsId', 'commentId');
+        return $this->belongsTo(Managers::class, 'managerId');
     }
     public function label()
     {
-        return $this->belongsTo(Labels::class, 'labelId');
+        return $this->belongsTo(Label::class, 'labelId');
     }
+    public function comments()
+    {
+        return $this->hasMany(Comment::class, 'newsId');
+    }
+    public function incrementViews()
+    {
+        $this->increment('views');
+    }
+    public function savedByClients()
+    {
+        return $this->belongsToMany(Clients::class, 'saved_news', 'news_id', 'client_id')->withTimestamps();
+    }
+
+
 }

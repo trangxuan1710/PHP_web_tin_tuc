@@ -6,8 +6,6 @@
     <title>Form - {{ isset($news) ? 'Chỉnh sửa Tin tức' : 'Tạo Tin tức mới' }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* CSS của bạn giữ nguyên */
-        /* ... */
         .file-input-hidden { display: none; }
         .ck-editor__editable_inline { min-height: 300px; max-height: 500px; overflow-y: auto; padding: 1rem; border-bottom-left-radius: 0.5rem; border-bottom-right-radius: 0.5rem; border: none;}
         .ck-editor__main {border: none !important;}
@@ -19,7 +17,34 @@
         .ck.ck-icon {color: #6b7280 !important;}
         .ck.ck-button.ck-off:hover {background-color: #e5e7eb !important;}
         .ck.ck-button.ck-on {background-color: #cbd5e0 !important;}
+        @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+        @media print {
+            body {
+                margin: 0 !important;
+            }
+        }
+
+        .main-container {
+            font-family: 'Lato';
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .ck-content {
+            font-family: 'Lato';
+            line-height: 1.6;
+            word-break: break-word;
+        }
+
+        .editor-container_classic-editor .editor-container__editor {
+            min-width: 795px;
+            max-width: 795px;
+        }
+
     </style>
+    <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/45.1.0/ckeditor5.css" crossorigin>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40j/6Pqq/VHzUfTsL7W/feV6S4q60o7N_iO1d7k4h1X7VvT8f3GjZ6zQ0U5s2M8Q2gK5W9J5m0Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
@@ -151,17 +176,296 @@
         }
     }
 </script>
-<script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js"></script>
+<script src="https://cdn.ckeditor.com/ckeditor5/45.1.0/ckeditor5.umd.js" crossorigin></script>
 
 <script>
-    // Khởi tạo CKEditor 5 (Giữ nguyên)
-    ClassicEditor
-        .create( document.querySelector( '#editor' ), {
-            toolbar: { /* ... */ }, language: 'vi',
-        } )
-        .then( editor => { console.log( 'CKEditor 5 đã sẵn sàng!', editor ); } )
-        .catch( error => { console.error( error ); } );
+    /**
+     * This configuration was generated using the CKEditor 5 Builder. You can modify it anytime using this link:
+     * https://ckeditor.com/ckeditor-5/builder/#installation/NoRgNARATAdAbDADBSIDsAWKG5xFRNKKAZhI02wE4AOLHROKdGgViuzlbhpuUgCmAOxSIwoMODHgpAXUgAjRCQCGcDADMIsoA===
+     */
 
+    const {
+        ClassicEditor,
+        Autoformat,
+        AutoImage,
+        AutoLink,
+        Autosave,
+        BalloonToolbar,
+        Base64UploadAdapter,
+        BlockQuote,
+        Bold,
+        Bookmark,
+        Code,
+        CodeBlock,
+        Essentials,
+        FindAndReplace,
+        Fullscreen,
+        GeneralHtmlSupport,
+        Heading,
+        Highlight,
+        HorizontalLine,
+        HtmlComment,
+        HtmlEmbed,
+        ImageBlock,
+        ImageCaption,
+        ImageInline,
+        ImageInsert,
+        ImageInsertViaUrl,
+        ImageResize,
+        ImageStyle,
+        ImageTextAlternative,
+        ImageToolbar,
+        ImageUpload,
+        Indent,
+        IndentBlock,
+        Italic,
+        Link,
+        LinkImage,
+        List,
+        ListProperties,
+        MediaEmbed,
+        Mention,
+        PageBreak,
+        Paragraph,
+        PasteFromOffice,
+        ShowBlocks,
+        SourceEditing,
+        SpecialCharacters,
+        SpecialCharactersArrows,
+        SpecialCharactersCurrency,
+        SpecialCharactersEssentials,
+        SpecialCharactersLatin,
+        SpecialCharactersMathematical,
+        SpecialCharactersText,
+        Strikethrough,
+        Table,
+        TableCellProperties,
+        TableProperties,
+        TableToolbar,
+        TextTransformation,
+        TodoList,
+        Underline
+    } = window.CKEDITOR;
+
+    /**
+     * This is a 24-hour evaluation key. Create a free account to use CDN: https://portal.ckeditor.com/checkout?plan=free
+     */
+    const LICENSE_KEY =
+        'eyJhbGciOiJFUzI1NiJ9.eyJleHAiOjE3NDg1NjMxOTksImp0aSI6IjhiZTYwM2U3LTUwMjAtNGZkMC1iYWY4LTliOGYzN2UyMzk1MSIsImxpY2Vuc2VkSG9zdHMiOlsiKi53ZWJjb250YWluZXIuaW8iLCIqLmpzaGVsbC5uZXQiLCIqLmNzcC5hcHAiLCJjZHBuLmlvIiwiMTI3LjAuMC4xIiwibG9jYWxob3N0IiwiMTkyLjE2OC4qLioiLCIxMC4qLiouKiIsIjE3Mi4qLiouKiIsIioudGVzdCIsIioubG9jYWxob3N0IiwiKi5sb2NhbCJdLCJkaXN0cmlidXRpb25DaGFubmVsIjpbImNsb3VkIiwiZHJ1cGFsIiwic2giXSwibGljZW5zZVR5cGUiOiJldmFsdWF0aW9uIiwidmMiOiIyYTBkNmJmNCJ9.PpEy4dIp3P4YTjsGeGf5N1eoN3iL5dpjbCiTUdbzwS-K1ojvtjFKSi-SyhdzcFLcGHcV6REQXkdTMA3DwDRT7Q';
+
+    const editorConfig = {
+        toolbar: {
+            items: [
+                'undo',
+                'redo',
+                '|',
+                'sourceEditing',
+                'showBlocks',
+                '|',
+                'heading',
+                '|',
+                'bold',
+                'italic',
+                'underline',
+                '|',
+                'link',
+                'insertImage',
+                'insertTable',
+                'highlight',
+                'blockQuote',
+                'codeBlock',
+                '|',
+                'bulletedList',
+                'numberedList',
+                'todoList',
+                'outdent',
+                'indent'
+            ],
+            shouldNotGroupWhenFull: false
+        },
+        plugins: [
+            Autoformat,
+            AutoImage,
+            AutoLink,
+            Autosave,
+            BalloonToolbar,
+            Base64UploadAdapter,
+            BlockQuote,
+            Bold,
+            Bookmark,
+            Code,
+            CodeBlock,
+            Essentials,
+            FindAndReplace,
+            Fullscreen,
+            GeneralHtmlSupport,
+            Heading,
+            Highlight,
+            HorizontalLine,
+            HtmlComment,
+            HtmlEmbed,
+            ImageBlock,
+            ImageCaption,
+            ImageInline,
+            ImageInsert,
+            ImageInsertViaUrl,
+            ImageResize,
+            ImageStyle,
+            ImageTextAlternative,
+            ImageToolbar,
+            ImageUpload,
+            Indent,
+            IndentBlock,
+            Italic,
+            Link,
+            LinkImage,
+            List,
+            ListProperties,
+            MediaEmbed,
+            Mention,
+            PageBreak,
+            Paragraph,
+            PasteFromOffice,
+            ShowBlocks,
+            SourceEditing,
+            SpecialCharacters,
+            SpecialCharactersArrows,
+            SpecialCharactersCurrency,
+            SpecialCharactersEssentials,
+            SpecialCharactersLatin,
+            SpecialCharactersMathematical,
+            SpecialCharactersText,
+            Strikethrough,
+            Table,
+            TableCellProperties,
+            TableProperties,
+            TableToolbar,
+            TextTransformation,
+            TodoList,
+            Underline
+        ],
+        balloonToolbar: ['bold', 'italic', '|', 'link', 'insertImage', '|', 'bulletedList', 'numberedList'],
+        fullscreen: {
+            onEnterCallback: container =>
+                container.classList.add(
+                    'editor-container',
+                    'editor-container_classic-editor',
+                    'editor-container_include-fullscreen',
+                    'main-container'
+                )
+        },
+        heading: {
+            options: [
+                {
+                    model: 'paragraph',
+                    title: 'Paragraph',
+                    class: 'ck-heading_paragraph'
+                },
+                {
+                    model: 'heading1',
+                    view: 'h1',
+                    title: 'Heading 1',
+                    class: 'ck-heading_heading1'
+                },
+                {
+                    model: 'heading2',
+                    view: 'h2',
+                    title: 'Heading 2',
+                    class: 'ck-heading_heading2'
+                },
+                {
+                    model: 'heading3',
+                    view: 'h3',
+                    title: 'Heading 3',
+                    class: 'ck-heading_heading3'
+                },
+                {
+                    model: 'heading4',
+                    view: 'h4',
+                    title: 'Heading 4',
+                    class: 'ck-heading_heading4'
+                },
+                {
+                    model: 'heading5',
+                    view: 'h5',
+                    title: 'Heading 5',
+                    class: 'ck-heading_heading5'
+                },
+                {
+                    model: 'heading6',
+                    view: 'h6',
+                    title: 'Heading 6',
+                    class: 'ck-heading_heading6'
+                }
+            ]
+        },
+        htmlSupport: {
+            allow: [
+                {
+                    name: /^.*$/,
+                    styles: true,
+                    attributes: true,
+                    classes: true
+                }
+            ]
+        },
+        image: {
+            toolbar: [
+                'toggleImageCaption',
+                'imageTextAlternative',
+                '|',
+                'imageStyle:inline',
+                'imageStyle:wrapText',
+                'imageStyle:breakText',
+                '|',
+                'resizeImage'
+            ]
+        },
+
+        licenseKey: LICENSE_KEY,
+        link: {
+            addTargetToExternalLinks: true,
+            defaultProtocol: 'https://',
+            decorators: {
+                toggleDownloadable: {
+                    mode: 'manual',
+                    label: 'Downloadable',
+                    attributes: {
+                        download: 'file'
+                    }
+                }
+            }
+        },
+        list: {
+            properties: {
+                styles: true,
+                startIndex: true,
+                reversed: true
+            }
+        },
+        mention: {
+            feeds: [
+                {
+                    marker: '@',
+                    feed: [
+                        /* See: https://ckeditor.com/docs/ckeditor5/latest/features/mentions.html */
+                    ]
+                }
+            ]
+        },
+        menuBar: {
+            isVisible: true
+        },
+        placeholder: 'Type or paste your content here!',
+        table: {
+            contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells', 'tableProperties', 'tableCellProperties']
+        }
+    };
+
+    ClassicEditor.create(document.querySelector('#editor'), editorConfig);
+
+</script>
+<script>
     // --- JavaScript cho Thumbnail Preview và Xóa ---
     const dropArea = document.getElementById('drop-area');
     const fileInput = document.getElementById('thumbnail-upload');
