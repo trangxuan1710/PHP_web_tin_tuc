@@ -59,6 +59,7 @@ CREATE TABLE IF NOT EXISTS news (
                                     date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                                     tag VARCHAR(255),
                                     content TEXT,
+                                    views INT DEFAULT 0,
                                     status VARCHAR(255) NOT NULL CHECK( status IN('draft','publish')),
                                     thumbNailUrl VARCHAR(255),
                                     isHot BOOLEAN DEFAULT FALSE,
@@ -194,6 +195,11 @@ CREATE TABLE IF NOT EXISTS save_news (
     FOREIGN KEY (clientId) REFERENCES clients(id) ON DELETE CASCADE,
     FOREIGN KEY (newsId) REFERENCES news(id) on delete cascade
 );
+
+INSERT INTO save_news (clientId, newsId) VALUES ('1', '1');
+INSERT INTO save_news (clientId, newsId) VALUES ('1', '2');
+INSERT INTO save_news (clientId, newsId) VALUES ('1', '3');
+
 
 -- Tạo bảng nearest_news
 CREATE TABLE IF NOT EXISTS nearest_news (

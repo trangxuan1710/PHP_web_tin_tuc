@@ -42,7 +42,7 @@ class News extends Model
     }
     public function comments()
     {
-        return $this->belongsToMany(Comments::class, 'comment_news', 'newsId', 'commentId');
+        return $this->hasMany(Comment::class, 'newsId');
     }
     public function label()
     {
@@ -52,9 +52,9 @@ class News extends Model
     {
         $this->increment('views');
     }
-    public function savedByClients()
+    public function saveByClients()
     {
-        return $this->belongsToMany(Clients::class, 'saved_news', 'news_id', 'client_id')->withTimestamps();
+        return $this->belongsToMany(Clients::class, 'saveNews', 'newsId', 'clientId')->withTimestamps();
     }
 
 
