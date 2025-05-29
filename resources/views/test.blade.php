@@ -44,17 +44,10 @@
 </head>
 
 <body class="text-gray-800">
-
-    @if(Auth::check())
-    @include('layouts.header_loged')
-    @else
-    @include('layouts.header_notloged')
-    @endif
-
     <div class="container mx-auto p-4 lg:p-8">
         <div class="flex flex-col lg:flex-row gap-8">
             <main class="w-full lg:w-2/3 bg-white rounded-lg shadow-lg p-6 md:p-8">
-                <img src="{{ $news->thumbNailUrl }}" alt="Ảnh thumbnail bài viết" class="w-full h-auto max-h-96 object-cover rounded-md mb-6 shadow">
+                <img src="https://placehold.co/800x450/3b82f6/ffffff?text=Ảnh+Thumbnail" alt="Ảnh thumbnail bài viết" class="w-full h-auto max-h-96 object-cover rounded-md mb-6 shadow">
 
                 <h1 class="text-3xl md:text-4xl font-bold text-blue-700 mb-4 leading-tight">
                     {{ $news->title }}
@@ -71,7 +64,7 @@
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 inline-block mr-1 text-blue-500">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                         </svg>
-                        Ngày đăng: <span class="font-semibold">{{ $news->date }}</span>
+                        Giờ đăng: <span class="font-semibold">{{ $news->created_at?->diffForHumans() }}</span>
                     </span>
                     <span>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 inline-block mr-1 text-blue-500">
@@ -83,7 +76,6 @@
                 </div>
 
                 <form id="save-news-form" method="POST" action="{{ route('news.save', $news->id) }}" display="none">
-                    @csrf
                 </form>
 
                 <button id="save-news-btn" class="mb-8 flex items-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow transition duration-150 ease-in-out">
@@ -98,7 +90,7 @@
                 </div>
 
                 <section class="mt-12 pt-8 border-t border-gray-200">
-                    <h2 class="text-2xl font-semibold text-blue-700 mb-6">Bình luận</h2>
+                    <h2 class="text-2xl font-semibold text-blue-700 mb-6">Bình luận ({{ $news->comments->count() }})</h2>
 
                     <form id="comment-form" method="POST" action="{{ route('comments.store', $news->id) }}" class="mb-8 p-4 bg-gray-50 rounded-lg shadow">
                         @csrf
@@ -115,15 +107,15 @@
                         @foreach($news->comments as $comment)
                         <div class="p-4 bg-white rounded-lg shadow border border-gray-100">
                             <div class="flex items-start space-x-3">
-                                <img src="{{ $comment->client->avatarUrl ?? 'https://placehold.co/40x40/a0aec0/ffffff?text=User' }}" alt="Avatar của {{ $comment->user->name ?? 'Người dùng' }}" class="w-10 h-10 rounded-full">
+                                <img src="{{ $comment->user->avatar_url ?? 'https://placehold.co/40x40/a0aec0/ffffff?text=User' }}" alt="Avatar của {{ $comment->user->name ?? 'Người dùng' }}" class="w-10 h-10 rounded-full">
                                 <div class="flex-1">
                                     <div class="flex items-center justify-between">
                                         <span class="font-semibold text-blue-600">{{ optional($comment->client)->fullName ?? 'Người dùng ẩẩn danh' }}</span>
                                         <span class="text-xs text-gray-400">{{ $comment->date?->diffForHumans() ?? 'Không rõ thời gian' }}</span>
                                     </div>
                                     <p class="text-gray-700 mt-1">{{ $comment->content }}</p>
-                                    <div class="comment-actions flex items-center space-x-3 mt-3 text-sm text-gray-500" data-id="{{ $comment->id }}">
-                                        <button onclick="react('{{ $comment->id }}', 'like')" class="like-count hover:text-blue-500 flex items-center">
+                                    <div class="comment-actions flex items-center space-x-3 mt-3 text-sm text-gray-500">
+                                        <button onclick="react('{{ $comment->id }}', 'like')" class="hover:text-blue-500 flex items-center">
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6.633 10.5c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 0 1 2.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 0 0 .322-1.672V3a.75.75 0 0 1 .75-.75A2.25 2.25 0 0 1 16.5 4.5c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 0 1-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 0 0-1.423-.23H5.904M6.633 10.5l-1.07-1.07m1.07 1.07V15m0 0H3m3.75 0v4.5m0-4.5h.75m0 0V11.25m0 0h.75m0 0V15m0 0h.75M6.633 10.5c-.636 0-1.257.074-1.844.208M10.5 15.75a.75.75 0 0 0 0 1.5h4.5a.75.75 0 0 0 0-1.5h-4.5Z" />
                                             </svg>
@@ -151,15 +143,15 @@
                             <div class="ml-10 mt-4 pl-4 border-l-2 border-blue-200 space-y-4">
                                 @foreach($comment->replies->where('commentId', $comment->id) as $reply)
                                 <div class="flex items-start space-x-3">
-                                    <img src="{{ $reply->client->avatarUrl ?? 'https://placehold.co/32x32/718096/ffffff?text=User' }}" alt="Avatar của {{ $reply->client->name ?? 'Người dùng' }}" class="w-8 h-8 rounded-full">
+                                    <img src="{{ $reply->user->avatar_url ?? 'https://placehold.co/32x32/718096/ffffff?text=User' }}" alt="Avatar của {{ $reply->user->name ?? 'Người dùng' }}" class="w-8 h-8 rounded-full">
                                     <div class="flex-1">
                                         <div class="flex items-center justify-between">
-                                            <span class="font-semibold text-blue-500">{{ optional($reply->client)->fullName ?? 'Người dùng ẩn danh' }}</span>
-                                            <span class="text-xs text-gray-400">{{ $reply->date?->diffForHumans() ?? 'Không rõ thời gian' }}</span>
+                                            <span class="font-semibold text-blue-500">{{ optional($reply->client)->fullName ?? 'Người dùng ẩẩn danh' }}</span>
+                                            <span class="text-xs text-gray-400">{{ $reply->created_at->diffForHumans() }}</span>
                                         </div>
                                         <p class="text-gray-600 mt-1 text-sm">{{ $reply->content }}</p>
-                                        <div class="comment-actions flex items-center space-x-3 mt-2 text-xs text-gray-500" data-id="{{ $reply->id }}">
-                                            <button onclick="react('{{ $reply->id }}', 'like')" class="like-count hover:text-blue-500 flex items-center">
+                                        <div class="comment-actions flex items-center space-x-3 mt-2 text-xs text-gray-500">
+                                            <button onclick="react('{{ $reply->id }}', 'like')" class="hover:text-blue-500 flex items-center">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M6.633 10.5c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 0 1 2.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 0 0 .322-1.672V3a.75.75 0 0 1 .75-.75A2.25 2.25 0 0 1 16.5 4.5c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 0 1-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 0 0-1.423-.23H5.904M6.633 10.5l-1.07-1.07m1.07 1.07V15m0 0H3m3.75 0v4.5m0-4.5h.75m0 0V11.25m0 0h.75m0 0V15m0 0h.75M6.633 10.5c-.636 0-1.257.074-1.844.208M10.5 15.75a.75.75 0 0 0 0 1.5h4.5a.75.75 0 0 0 0-1.5h-4.5Z" />
                                                 </svg>
@@ -199,17 +191,51 @@
                     <div class="bg-white rounded-lg shadow-lg p-6 latest-news-sidebar max-h-[calc(100vh-4rem)] overflow-y-auto">
                         <h2 class="text-xl font-semibold text-blue-700 mb-6 border-b pb-3">Tin tức mới nhất</h2>
                         <div class="space-y-5">
-                            @foreach($hotNews as $item)
-                            <a href="/news/{{ $item->id }}" class="block group hover:bg-blue-50 p-3 rounded-md transition duration-150">
+                            <a href="#" class="block group hover:bg-blue-50 p-3 rounded-md transition duration-150">
                                 <div class="flex items-start space-x-3">
-                                    <img src="{{ $item->thumbNailUrl }}" class="w-16 h-16 object-cover rounded-md flex-shrink-0">
+                                    <img src="https://placehold.co/80x80/3b82f6/ffffff?text=TN1" alt="Tin mới 1" class="w-16 h-16 object-cover rounded-md flex-shrink-0">
                                     <div>
-                                        <h3 class="text-md font-semibold text-gray-800 group-hover:text-blue-600 leading-tight">{{ $item->title }}</h3>
-                                        <p class="text-xs text-gray-500 mt-1">{{ $item->date?->diffForHumans() }}</p>
+                                        <h3 class="text-md font-semibold text-gray-800 group-hover:text-blue-600 leading-tight">Đây là tiêu đề của một tin tức mới rất đáng chú ý</h3>
+                                        <p class="text-xs text-gray-500 mt-1">15 phút trước</p>
                                     </div>
                                 </div>
                             </a>
-                            @endforeach
+                            <a href="#" class="block group hover:bg-blue-50 p-3 rounded-md transition duration-150">
+                                <div class="flex items-start space-x-3">
+                                    <img src="https://placehold.co/80x80/10b981/ffffff?text=TN2" alt="Tin mới 2" class="w-16 h-16 object-cover rounded-md flex-shrink-0">
+                                    <div>
+                                        <h3 class="text-md font-semibold text-gray-800 group-hover:text-blue-600 leading-tight">Một cập nhật quan trọng khác vừa được đăng tải</h3>
+                                        <p class="text-xs text-gray-500 mt-1">45 phút trước</p>
+                                    </div>
+                                </div>
+                            </a>
+                            <a href="#" class="block group hover:bg-blue-50 p-3 rounded-md transition duration-150">
+                                <div class="flex items-start space-x-3">
+                                    <img src="https://placehold.co/80x80/f59e0b/ffffff?text=TN3" alt="Tin mới 3" class="w-16 h-16 object-cover rounded-md flex-shrink-0">
+                                    <div>
+                                        <h3 class="text-md font-semibold text-gray-800 group-hover:text-blue-600 leading-tight">Khám phá những xu hướng công nghệ mới nhất năm 2025</h3>
+                                        <p class="text-xs text-gray-500 mt-1">1 giờ trước</p>
+                                    </div>
+                                </div>
+                            </a>
+                            <a href="#" class="block group hover:bg-blue-50 p-3 rounded-md transition duration-150">
+                                <div class="flex items-start space-x-3">
+                                    <img src="https://placehold.co/80x80/ec4899/ffffff?text=TN4" alt="Tin mới 4" class="w-16 h-16 object-cover rounded-md flex-shrink-0">
+                                    <div>
+                                        <h3 class="text-md font-semibold text-gray-800 group-hover:text-blue-600 leading-tight">Hướng dẫn chi tiết về phát triển ứng dụng di động</h3>
+                                        <p class="text-xs text-gray-500 mt-1">2 giờ trước</p>
+                                    </div>
+                                </div>
+                            </a>
+                            <a href="#" class="block group hover:bg-blue-50 p-3 rounded-md transition duration-150">
+                                <div class="flex items-start space-x-3">
+                                    <img src="https://placehold.co/80x80/8b5cf6/ffffff?text=TN5" alt="Tin mới 5" class="w-16 h-16 object-cover rounded-md flex-shrink-0">
+                                    <div>
+                                        <h3 class="text-md font-semibold text-gray-800 group-hover:text-blue-600 leading-tight">Sự kiện công nghệ sắp diễn ra không thể bỏ lỡ</h3>
+                                        <p class="text-xs text-gray-500 mt-1">3 giờ trước</p>
+                                    </div>
+                                </div>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -251,23 +277,11 @@
                 .then(data => {
                     const wrapper = document.querySelector(`[data-id='${commentId}']`);
                     if (wrapper) {
-                        wrapper.querySelector(`.${type}-count`).innerHTML = `
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.633 10.5c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 0 1 2.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 0 0 .322-1.672V3a.75.75 0 0 1 .75-.75A2.25 2.25 0 0 1 16.5 4.5c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 0 1-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 0 0-1.423-.23H5.904M6.633 10.5l-1.07-1.07m1.07 1.07V15m0 0H3m3.75 0v4.5m0-4.5h.75m0 0V11.25m0 0h.75m0 0V15m0 0h.75M6.633 10.5c-.636 0-1.257.074-1.844.208M10.5 15.75a.75.75 0 0 0 0 1.5h4.5a.75.75 0 0 0 0-1.5h-4.5Z" />
-                        </svg>
-                        Thích (${data[`${type}_count`]})
-                        `;
+                        wrapper.querySelector(`.${type}-count`).innerText = data[`${type}_count`];
                     }
                 })
                 .catch(() => alert(`Không thể ${type} bình luận.`));
         }
-
-        const saveNewsBtn = document.getElementById('save-news-btn');
-
-        saveNewsBtn.addEventListener('click', () => {
-            document.getElementById('save-news-form').submit();
-        })
-        
     </script>
 </body>
 

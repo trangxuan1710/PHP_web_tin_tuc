@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Mockery\Matcher\Not;
 
+use Illuminate\Support\Carbon;
+
 class ProfileController extends Controller
 {
 
@@ -42,13 +44,29 @@ class ProfileController extends Controller
                 ];
             });
 
-        $saveNews = $client->saveNews()
-            ->orderByDesc('save_news.created_at')
-            ->get()
-            ->toArray();
-        $nearestNews = $client->nearestNews()->orderByDesc('nearest_news.created_at')
-            ->get()
-            ->toArray();
+
+        $saveNewsCollection = $client->saveNews()
+            ->orderByDesc('created_at')
+            ->get();
+
+        $saveNews = $saveNewsCollection->map(function ($newsItem) {
+            $carbonDate = Carbon::parse($newsItem->created_at);
+
+            $newsItem->created_at = $carbonDate->format('Y-m-d H:i');
+
+            return $newsItem;
+        })->toArray();
+
+        $nearestNewsCollection = $client->nearestNews()
+            ->latest()
+            ->get();
+        $nearestNews = $nearestNewsCollection->map(function ($newsItem) {
+            $carbonDate = Carbon::parse($newsItem->updated_at);
+
+            $newsItem->updated_at = $carbonDate->format('Y-m-d H:i');
+
+            return $newsItem;
+        })->toArray();
 
         return view('user-profile', [
             'client' => $client,

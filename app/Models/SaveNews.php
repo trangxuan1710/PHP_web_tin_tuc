@@ -19,7 +19,7 @@ class SaveNews extends Pivot
     protected $primaryKey = ['clientId', 'newsId'];
 
     // Bảng trung gian này không có các cột timestamp
-    public $timestamps = true;
+    public $timestamps = false;
 
     protected $fillable = [
         'clientId',

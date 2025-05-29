@@ -94,23 +94,10 @@ return [
                 </a>
             </div>
         </div>
-        @php
-        if (!function_exists('getDefaultAvatarUrl')) {
-        function getDefaultAvatarUrl($name) {
-        if (!$name) return 'https://placehold.co/96x96/CCCCCC/333333?text=U';
-        $words = preg_split('/\s+/', trim($name));
-        $initials = '';
-        foreach ($words as $w) {
-        if ($w) $initials .= mb_strtoupper(mb_substr($w, 0, 1));
-        }
-        $initials = $initials ?: 'U';
-        return 'https://placehold.co/96x96/CCCCCC/333333?text=' . urlencode($initials);
-        }
-        }
-        @endphp
+
         <div id="user-profile" class="flex items-center space-x-2 cursor-pointer" aria-haspopup="true"
             aria-expanded="false">
-            <img src="{{ $client['avatarUrl'] ?? getDefaultAvatarUrl($client['fullName'])}}" alt="Avatar người dùng"
+            <img src="{{ $client['avatarUrl'] }}" alt="Avatar người dùng"
                 class="w-10 h-10 rounded-full border-2 border-blue-400 object-cover">
             <span class="font-regular font-sans text-gray-800 hidden md:block whitespace-nowrap">Chào, {{ $client['fullName'] }}!</span>
             <div class="relative">

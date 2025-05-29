@@ -18,12 +18,14 @@ class NearestNews extends Pivot
     // Khóa chính tổng hợp
     protected $primaryKey = ['clientId', 'newsId'];
 
-    // Bảng trung gian này không có các cột timestamp
-    public $timestamps = false;
-
     protected $fillable = [
         'clientId',
         'newsId',
+    ];
+
+    protected $cast = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     public function client()

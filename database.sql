@@ -12,16 +12,16 @@ CREATE TABLE IF NOT EXISTS clients (
     password VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     isMute BOOLEAN DEFAULT FALSE,
-    avatarUrl TEXT,
+    avatarUrl TEXT default 'https://placehold.co/96x96/CCCCCC/333333?text=U',
     isActive BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-INSERT INTO clients (fullName, password, email, isMute, avatarUrl, isActive) VALUES ('Nguyen Van A', '$2b$12$6xmtzoaFRg8vbTxMEpZnVOfgiLyEDUSswuehPZxO0mH3nwFriVHRm', 'a.nguyen@example.com', FALSE, null, TRUE);
-INSERT INTO clients (fullName, password, email, isMute, avatarUrl, isActive) VALUES ('Tran Thi B', '$2b$12$.KPeHWFLAEdJdFBZBVP4pexgluTP9VcvW2CkjtiMC3eEQ1wui77hS', 'b.tran@example.com', TRUE, 'url_avatar_b.png', TRUE);
-INSERT INTO clients (fullName, password, email, isMute, avatarUrl, isActive) VALUES ('Le Minh C', '$2b$12$RAN630EQ48vJeh.jfBSPfecgApI8Dot8ck/b6apNICCdywaS0GYpy', 'c.le@example.com', FALSE, NULL, FALSE);
-INSERT INTO clients (fullName, password, email, isMute, avatarUrl, isActive) VALUES ('Pham Hoang D', '$2b$12$MAkBcLQSpQEX1rAVwchIaeNpzejUbdl6AZvAIOSbWF8bqoEcAhok6', 'd.pham@example.com', FALSE, 'url_avatar_d.gif', TRUE);
+INSERT INTO clients (fullName, password, email, isMute, isActive) VALUES ('Nguyen Van A', '$2b$12$6xmtzoaFRg8vbTxMEpZnVOfgiLyEDUSswuehPZxO0mH3nwFriVHRm', 'a.nguyen@example.com', FALSE, TRUE);
+INSERT INTO clients (fullName, password, email, isMute, isActive) VALUES ('Tran Thi B', '$2b$12$.KPeHWFLAEdJdFBZBVP4pexgluTP9VcvW2CkjtiMC3eEQ1wui77hS', 'b.tran@example.com', TRUE, TRUE);
+INSERT INTO clients (fullName, password, email, isMute, isActive) VALUES ('Le Minh C', '$2b$12$RAN630EQ48vJeh.jfBSPfecgApI8Dot8ck/b6apNICCdywaS0GYpy', 'c.le@example.com', FALSE, FALSE);
+INSERT INTO clients (fullName, password, email, isMute, isActive) VALUES ('Pham Hoang D', '$2b$12$MAkBcLQSpQEX1rAVwchIaeNpzejUbdl6AZvAIOSbWF8bqoEcAhok6', 'd.pham@example.com', FALSE, TRUE);
 INSERT INTO clients (fullName, password, email, isMute, isActive) VALUES ('Trang Xuan', '123456', 'trangxuan@gmail.com', FALSE, TRUE);
 
 -- Tạo bảng managers
@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS news (
                                     id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                                     title VARCHAR(255) NOT NULL,
                                     managerId BIGINT NOT NULL,
-                                    date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                                    date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                                     tag VARCHAR(255),
                                     content TEXT,
                                     views INT DEFAULT 0,
@@ -191,7 +191,7 @@ CREATE TABLE IF NOT EXISTS save_news (
     clientId BIGINT NOT NULL,
     newsId BIGINT NOT NULL,
     PRIMARY KEY (clientId, newsId),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (clientId) REFERENCES clients(id) ON DELETE CASCADE,
     FOREIGN KEY (newsId) REFERENCES news(id) on delete cascade
 );
@@ -206,6 +206,7 @@ CREATE TABLE IF NOT EXISTS nearest_news (
     clientId BIGINT NOT NULL,
     newsId BIGINT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (clientId, newsId),
     FOREIGN KEY (clientId) REFERENCES clients(id) ON DELETE CASCADE,
     FOREIGN KEY (newsId) REFERENCES news(id) on delete cascade

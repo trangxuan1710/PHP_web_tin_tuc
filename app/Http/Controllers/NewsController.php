@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Label;
 use App\Models\Managers;
 use App\Models\News;
+use App\Models\NearestNews;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -24,11 +25,39 @@ class NewsController extends Controller
             'label',
             'comments.client',
             'comments.replies.client'
-        ])->findOrFail($id);
-        ;
+        ])->findOrFail($id);;
         $news->increment('views');
-        return view('news.show', compact('news'));
+
+        $this->saveNearestNews($id); // Pass the news ID
+
+        $hotNews = News::orderBy('date', 'desc')->take(5)->get();
+
+        return view('news.show', [
+            'news' => $news,
+            'hotNews' => $hotNews,
+        ]);
     }
+
+    protected function saveNearestNews(int $newsId): void
+    {
+
+        if (Auth::user()) { 
+            $clientId = Auth::user()->id; 
+
+            NearestNews::updateOrCreate(
+                [
+                    'clientId' => $clientId,
+                    'newsId' => $newsId
+                ],
+                [
+                ]
+            );
+            Log::info("Client ID {$clientId} viewed news ID {$newsId}. NearestNews updated/created.");
+        } else {
+            Log::info("Guest viewed news ID {$newsId}. NearestNews not updated (not logged in).");
+        }
+    }
+
     public function saveNews()
     {
         $saveNews = [];
@@ -49,6 +78,7 @@ class NewsController extends Controller
 
         return view('news.save', compact('saveNews'));
     }
+
     public function save($id)
     {
         /** @var \App\Models\Managers $user */
@@ -65,7 +95,7 @@ class NewsController extends Controller
     {
         $managerId = $request->session()->get('logged_in_manager_id');
         $manager  = Managers::find($managerId);
-        if($manager == null){
+        if ($manager == null) {
             return redirect()->route('managerLogin');
         }
         $keyword = $request->input('keyword');
@@ -75,26 +105,27 @@ class NewsController extends Controller
         $labels = Label::all();
 
         $news = News::with(['manager', 'label']) // Eager load mối quan hệ manager và label
-        ->when($keyword, function ($query, $keyword) {
-            $query->where('title', 'like', '%' . $keyword . '%');
-        })
+            ->when($keyword, function ($query, $keyword) {
+                $query->where('title', 'like', '%' . $keyword . '%');
+            })
             ->when($labelId, function ($query, $labelId) {
                 $query->where('labelId', $labelId); // Lọc theo labelId
             })
             ->orderBy('date', 'desc') // Hoặc thứ tự bạn muốn
             ->get();
 
-        return view('managers.manageNews', compact('manager','news', 'keyword', 'labelId','labels'));
+        return view('managers.manageNews', compact('manager', 'news', 'keyword', 'labelId', 'labels'));
     }
     //
-    public function formCreateNews(Request $request) {
+    public function formCreateNews(Request $request)
+    {
         $managerId = $request->session()->get('logged_in_manager_id');
         $manager  = Managers::find($managerId);
-        if($manager == null){
+        if ($manager == null) {
             return redirect()->route('managerLogin');
         }
         $labels = Label::orderBy('type')->get();
-        return view('managers.createNews', compact('manager','labels'));
+        return view('managers.createNews', compact('manager', 'labels'));
     }
     public function store(Request $request)
     {
@@ -110,7 +141,7 @@ class NewsController extends Controller
 
         $managerId = $request->session()->get('logged_in_manager_id');
         $manager  = Managers::find($managerId);
-        if($manager == null){
+        if ($manager == null) {
             return redirect()->route('managerLogin');
         }
         log::info($request);
@@ -141,7 +172,7 @@ class NewsController extends Controller
     {
         $managerId = $request->session()->get('logged_in_manager_id');
         $manager  = Managers::find($managerId);
-        if($manager == null){
+        if ($manager == null) {
             return redirect()->route('managerLogin');
         }
         // Tìm bài viết theo ID, nếu không tìm thấy sẽ tự động trả về 404
@@ -150,13 +181,13 @@ class NewsController extends Controller
         $labels = Label::orderBy('type')->get(); // Lấy danh sách labels để hiển thị dropdown
 
         // Truyền cả $news (bài viết cần chỉnh sửa) và $labels sang view
-        return view('managers.createNews', compact('manager','news', 'labels'));
+        return view('managers.createNews', compact('manager', 'news', 'labels'));
     }
     public function update(Request $request, $id)
     {
         $managerId = $request->session()->get('logged_in_manager_id');
         $manager  = Managers::find($managerId);
-        if($manager == null){
+        if ($manager == null) {
             return redirect()->route('managerLogin');
         }
         // Tìm bài viết cần cập nhật
@@ -205,7 +236,7 @@ class NewsController extends Controller
     {
         $managerId = $request->session()->get('logged_in_manager_id');
         $manager  = Managers::find($managerId);
-        if($manager == null){
+        if ($manager == null) {
             return redirect()->route('managerLogin');
         }
         $news = News::find($id);
@@ -247,7 +278,7 @@ class NewsController extends Controller
 
         // Lọc theo từ khóa (title hoặc content/description)
         if (!empty($query)) {
-            $news->where(function($q) use ($query) {
+            $news->where(function ($q) use ($query) {
                 $q->where('title', 'LIKE', '%' . $query . '%')
                     ->orWhere('content', 'LIKE', '%' . $query . '%') // Thay thế description bằng content
                     ->orWhere('tag', 'LIKE', '%' . $query . '%'); // Có thể tìm trong tag nữa

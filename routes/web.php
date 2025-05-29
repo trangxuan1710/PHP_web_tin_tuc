@@ -28,6 +28,10 @@ use App\Http\Controllers\AuthenticationController;
 |
 */
 
+Route::get('/test', function () {
+    return view('test');
+});
+
 // Route cho trang chủ mặc định (hoặc khi chưa đăng nhập)
 Route::get('/', function () {
     /*if (Auth::check()) {

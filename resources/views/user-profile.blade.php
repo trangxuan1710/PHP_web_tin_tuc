@@ -152,26 +152,12 @@
     </script>
 
     <script>
-        // Hàm tạo avatar mặc định từ tên
-        function getDefaultAvatarUrl(name) {
-            if (!name) return 'https://placehold.co/96x96/CCCCCC/333333?text=U';
-            const initials = name
-                .split(/\s+/)
-                .filter(Boolean)
-                .map(w => w[0] ? w[0].toUpperCase() : '')
-                .join('');
-            return `https://placehold.co/96x96/CCCCCC/333333?text=${encodeURIComponent(initials || 'U')}`;
-        }
-
         // Các biến trạng thái toàn cục
         let user = {
             fullName: "{{ $client->fullName ?? 'null' }}",
             email: "{{ addslashes($client->email) ?? 'null' }}",
             bio: "{{ $client->bio ?? '' }}",
-            avatarUrl: (function() {
-                const url = "{{ $client->avatarUrl ?? '' }}";
-                return url && url !== 'null' ? url : getDefaultAvatarUrl("{{ $client->fullName ?? 'null' }}");
-            })()
+            avatarUrl: '{{ $client->avatarUrl }}',
         };
 
         let saveNews = JSON.parse(document.getElementById('saveNews-data').textContent);
@@ -229,11 +215,11 @@
                     </div>
                 `;
             } else if (activeTab === 'saveNews') {
-                contentHtml = renderNews(data = saveNews, isSaveNews = true);
+                contentHtml = renderSaveNews();
             } else if (activeTab === 'accountSettings') {
                 contentHtml = renderAccountSettings();
             } else if (activeTab === 'nearestNews') {
-                contentHtml = renderNews(data = nearestNews, isSaveNews = false);
+                contentHtml = renderNearestNews();
             }
             mainContent.innerHTML = contentHtml;
             // Gắn lại các trình nghe sự kiện sau khi render HTML mới
@@ -361,38 +347,30 @@
          * @returns {string} Chuỗi HTML.
          */
 
-        function renderNews(data, isSaveNews) {
-            if (data.length === 0)
-                if (isSaveNews) {
-                    return `
+        function renderSaveNews() {
+            if (saveNews.length === 0)
+                return `
                     <div class="p-6 bg-white rounded-lg shadow-md">
                         <h2 class="text-2xl font-semibold text-blue-800 mb-6 border-b pb-2">Tin tức đã lưu</h2>
                         <p class="text-gray-600 italic">Bạn chưa lưu tin tức nào.</p>
                     </div>
                 `;
-                }
-            else return `
-                    <div class="p-6 bg-white rounded-lg shadow-md">
-                        <h2 class="text-2xl font-semibold text-blue-800 mb-6 border-b pb-2">Tin tức đã xem gần đây</h2>
-                        <p class="text-gray-600 italic">Bạn chưa xem tin tức nào.</p>
-                    </div>
-                `;
 
-            const totalPages = Math.ceil(data.length / newsPerPage);
+            const totalPages = Math.ceil(saveNews.length / newsPerPage);
             const startIndex = (currentPage - 1) * newsPerPage;
             const endIndex = startIndex + newsPerPage;
-            const currentNews = data.slice(startIndex, endIndex);
+            const currentNews = saveNews.slice(startIndex, endIndex);
 
             const newsCardsHtml = currentNews.map(news => `
                 <div class="flex flex-col bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200">
-                    <img src="${news.thumbnail}" alt="Thumbnail" class="w-full h-44 object-cover rounded-t-lg" onerror="this.onerror=null;this.src='https://placehold.co/600x200/cccccc/333333?text=No+Image';" />
+                    <img src="${news.thumbNailUrl}" alt="Thumbnail" class="w-full h-44 object-cover rounded-t-lg" onerror="this.onerror=null;this.src='https://placehold.co/600x200/cccccc/333333?text=No+Image';" />
                     <div class="p-4 flex-1">
                         <h3 class="text-xl font-semibold text-blue-700 mb-2">
-                            <a href="${news.url}" target="_blank" rel="noopener noreferrer" class="hover:underline">
+                            <a href="/news/${news.id}" rel="noopener noreferrer" class="hover:underline">
                                 ${news.title}
                             </a>    
                         </h3>
-                        <p class="text-gray-600 text-xs">Lưu ngày: ${news.date}</p>
+                        <p class="text-gray-600 text-xs">Lưu ngày: ${news.created_at}</p>
                     </div>
                     <div class="flex justify-between items-center p-4 border-t border-gray-200">
                         <button data-id=${news.id} class="news-read-more-btn px-4 py-2 bg-blue-500 text-white text-sm font-semibold rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 flex items-center space-x-2">
@@ -417,23 +395,92 @@
                         <button id="prev-page-btn" class="px-4 py-2 bg-blue-500 text-white rounded-md shadow-sm hover:bg-blue-600 ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}" ${currentPage === 1 ? 'disabled' : ''}>
                             Trước
                         </button>
-                        ${Array.from({ length: totalPages }, (_, i) => i + 1).map(page => ` <
-                    button data - page = "${page}"
-                class = "page-number-btn px-4 py-2 rounded-md shadow-sm ${
-                page === currentPage ? 'bg-blue-700 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-            }
-            ">
-            $ {
-                page
-            } <
-            /button>
-            `).join('')}
+                        ${Array.from({ length: totalPages }, (_, i) => i + 1).map(page => `
+                            <button data-page="${page}" class="page-number-btn px-4 py-2 rounded-md shadow-sm ${
+                                page === currentPage ? 'bg-blue-700 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                            }">
+                                ${page}
+                            </button>
+                        `).join('')}
                         <button id="next-page-btn" class="px-4 py-2 bg-blue-500 text-white rounded-md shadow-sm hover:bg-blue-600 ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}" ${currentPage === totalPages ? 'disabled' : ''}>
                             Sau
                         </button>
                     </div>
                 `;
+            }
+
+        return `
+                <div class="p-6 bg-white rounded-lg shadow-md">
+                    <h2 class="text-2xl font-semibold text-blue-800 mb-6 border-b pb-2">Tin tức đã lưu</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        ${newsCardsHtml}
+                    </div>
+                    ${paginationHtml}
+                </div>
+            `;
         }
+
+        function renderNearestNews() {
+            if (nearestNews.length === 0)
+                return `
+                    <div class="p-6 bg-white rounded-lg shadow-md">
+                        <h2 class="text-2xl font-semibold text-blue-800 mb-6 border-b pb-2">Tin tức đã xem gần đây</h2>
+                        <p class="text-gray-600 italic">Bạn chưa xem tin tức nào.</p>
+                    </div>
+                `;
+
+            const totalPages = Math.ceil(nearestNews.length / newsPerPage);
+            const startIndex = (currentPage - 1) * newsPerPage;
+            const endIndex = startIndex + newsPerPage;
+            const currentNews = nearestNews.slice(startIndex, endIndex);
+
+            const newsCardsHtml = currentNews.map(news => `
+                <div class="flex flex-col bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200">
+                    <img src="${news.thumbNailUrl}" alt="Thumbnail" class="w-full h-44 object-cover rounded-t-lg" onerror="this.onerror=null;this.src='https://placehold.co/600x200/cccccc/333333?text=No+Image';" />
+                    <div class="p-4 flex-1">
+                        <h3 class="text-xl font-semibold text-blue-700 mb-2">
+                            <a href="/news/${news.id}" rel="noopener noreferrer" class="hover:underline">
+                                ${news.title}
+                            </a>    
+                        </h3>
+                        <p class="text-gray-600 text-xs">Lưu ngày: ${news.updated_at}</p>
+                    </div>
+                    <div class="flex justify-between items-center p-4 border-t border-gray-200">
+                        <button data-id=${news.id} class="news-read-more-btn px-4 py-2 bg-blue-500 text-white text-sm font-semibold rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 flex items-center space-x-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.747 0-3.332.477-4.5 1.253"></path>
+                            </svg>
+                            <span>Đọc tiếp</span>
+                        </button>
+                        <button data-id="${news.id}" data-title="${news.title}" class="news-delete-btn p-2 text-red-600 rounded-full hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition duration-200">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            let paginationHtml = '';
+            if (totalPages > 1) {
+                paginationHtml = `
+                    <div class="flex justify-center items-center space-x-2 mt-6">
+                        <button id="prev-page-btn" class="px-4 py-2 bg-blue-500 text-white rounded-md shadow-sm hover:bg-blue-600 ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}" ${currentPage === 1 ? 'disabled' : ''}>
+                            Trước
+                        </button>
+                        ${Array.from({ length: totalPages }, (_, i) => i + 1).map(page => `
+                            <button data-page="${page}" class="page-number-btn px-4 py-2 rounded-md shadow-sm ${
+                                page === currentPage ? 'bg-blue-700 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                            }">
+                                ${page}
+                            </button>
+                        `).join('')}
+                        <button id="next-page-btn" class="px-4 py-2 bg-blue-500 text-white rounded-md shadow-sm hover:bg-blue-600 ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}" ${currentPage === totalPages ? 'disabled' : ''}>
+                            Sau
+                        </button>
+                    </div>
+                `;
+            }
 
         return `
                 <div class="p-6 bg-white rounded-lg shadow-md">
@@ -793,10 +840,6 @@
             }
             if (saveProfileBtn) {
                 saveProfileBtn.onclick = () => {
-
-                    if (editedUser.avatarUrl == getDefaultAvatarUrl(user.fullName)) {
-                        editedUser.avatarUrl = getDefaultAvatarUrl(editedUser.fullName);
-                    }
 
                     user = {
                         ...editedUser
