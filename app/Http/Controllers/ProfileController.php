@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Clients;
 use App\Models\Notifications;
+use App\Models\NearestNews;
+use App\Models\SaveNews;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -196,6 +198,91 @@ class ProfileController extends Controller
         $notification->delete();
 
         return response()->json(['message' => 'Thông báo đã được xóa thành công.'], 200);
+    }
+
+    public function deleteSavedNews(Request $request)
+    {
+        // 1. Xác thực dữ liệu đầu vào
+        $request->validate([
+            'id' => 'required|integer|exists:news,id',
+        ]);
+
+        if (!Auth::check()) {
+            // Trả về lỗi nếu người dùng chưa đăng nhập
+            if ($request->expectsJson()) {
+                return response()->json(['message' => 'Bạn cần đăng nhập để thực hiện thao tác này.'], 401);
+            }
+            return back()->with('error', 'Bạn cần đăng nhập để bỏ lưu bài viết.');
+        }
+
+        $clientId = Auth::user()->id; // Lấy ID của người dùng đang đăng nhập
+        $newsId = $request->input('id');
+
+        try {
+            // Tìm và xóa bản ghi trong bảng save_news
+            $deleted = SaveNews::where('client_id', $clientId)
+                ->where('news_id', $newsId)
+                ->delete();
+
+            if (!$deleted) {
+                // Trả về phản hồi thành công
+                return response()->json(['message' => 'Đã bỏ lưu bài viết thành công!']);
+            } else {
+                // Trả về lỗi nếu không tìm thấy bản ghi để xóa
+                return response()->json(['message' => 'Không tìm thấy bài viết đã lưu để bỏ lưu.'], 404);
+            }
+        } catch (\Exception $e) {
+            // Ghi log lỗi để debug
+            Log::error("Lỗi khi bỏ lưu tin tức: " . $e->getMessage(), [
+                'client_id' => $clientId,
+                'news_id' => $newsId,
+                'exception' => $e
+            ]);
+
+            // Trả về phản hồi lỗi
+            return response()->json(['message' => 'Đã xảy ra lỗi khi bỏ lưu bài viết.'], 500);
+        }
+    }
+
+    public function deleteNearestNews(Request $request)
+    {
+        // 1. Xác thực dữ liệu đầu vào
+        $request->validate([
+            'id' => 'required|integer|exists:news,id',
+        ]);
+
+        if (!Auth::check()) {
+            // Trả về lỗi nếu người dùng chưa đăng nhập
+            return response()->json(['message' => 'Bạn cần đăng nhập để thực hiện thao tác này.'], 401);
+        }
+
+        $clientId = Auth::user()->id; // Lấy ID của người dùng đang đăng nhập
+        $newsId = $request->input('id');
+
+        try {
+            // Tìm và xóa bản ghi trong bảng save_news
+            $deleted = NearestNews::where('client_id', $clientId)
+                ->where('news_id', $newsId)
+                ->delete();
+
+            if (!$deleted) {
+                // Trả về phản hồi thành công
+                return response()->json(['message' => 'Đã bỏ lưu bài viết thành công!']);
+            } else {
+                // Trả về lỗi nếu không tìm thấy bản ghi để xóa
+                return response()->json(['message' => 'Không tìm thấy bài viết đã lưu để bỏ lưu.'], 404);
+            }
+        } catch (\Exception $e) {
+            // Ghi log lỗi để debug
+            Log::error("Lỗi khi bỏ lưu tin tức: " . $e->getMessage(), [
+                'client_id' => $clientId,
+                'news_id' => $newsId,
+                'exception' => $e
+            ]);
+
+            // Trả về phản hồi lỗi
+            return response()->json(['message' => 'Đã xảy ra lỗi khi bỏ lưu bài viết.'], 500);
+        }
     }
 
 

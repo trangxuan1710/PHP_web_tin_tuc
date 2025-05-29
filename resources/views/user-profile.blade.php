@@ -379,7 +379,7 @@
                             </svg>
                             <span>Đọc tiếp</span>
                         </button>
-                        <button data-id="${news.id}" data-title="${news.title}" class="news-delete-btn p-2 text-red-600 rounded-full hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition duration-200">
+                        <button data-id="${news.id}" data-title="${news.title}" class="saveNews-delete-btn p-2 text-red-600 rounded-full hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition duration-200">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                             </svg>
@@ -452,7 +452,7 @@
                             </svg>
                             <span>Đọc tiếp</span>
                         </button>
-                        <button data-id="${news.id}" data-title="${news.title}" class="news-delete-btn p-2 text-red-600 rounded-full hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition duration-200">
+                        <button data-id="${news.id}" data-title="${news.title}" class="nearestNews-delete-btn p-2 text-red-600 rounded-full hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition duration-200">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                             </svg>
@@ -940,13 +940,66 @@
                     window.location.href = `/news/${id}`;
                 };
             });
-            document.querySelectorAll('.news-delete-btn').forEach(button => {
+            document.querySelectorAll('.saveNews-delete-btn').forEach(button => {
                 button.onclick = (e) => {
                     const id = parseInt(e.currentTarget.dataset.id);
                     const title = e.currentTarget.dataset.title;
                     if (confirm(`Bạn có chắc chắn muốn xóa tin tức "${title}"?`)) { // Sử dụng confirm theo hướng dẫn, nhưng sẽ dùng modal tùy chỉnh trong ứng dụng thực tế
                         saveNews = saveNews.filter(item => item.id !== id);
+                        fetch("{{ route('saveNews.delete') }}", {
+                        method: 'PUT',
+                            eaders: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken // Lấy CSRF token
+                        },
+                        body: JSON.stringify({ id: id })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.message) {
+                                alert(data.message); // Hiển thị thông báo
+                                // Thêm logic để xóa tin tức khỏi giao diện nếu thành công
+                                if (data.message === 'Đã bỏ lưu bài viết thành công!') {
+                                    // Ví dụ: xóa phần tử cha của nút
+                                    this.closest('div').remove();
+                                }
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('Có lỗi xảy ra khi bỏ lưu bài viết.');
+                        });
                         renderMainContent(); // Render lại tin tức đã lưu
+                        console.log(`Tin tức "${title}" đã bị xóa.`);
+                    }
+                };
+            });
+
+            document.querySelectorAll('.nearestNews-delete-btn').forEach(button => {
+                button.onclick = (e) => {
+                    const id = parseInt(e.currentTarget.dataset.id);
+                    const title = e.currentTarget.dataset.title;
+                    if (confirm(`Bạn có chắc chắn muốn xóa tin tức "${title}"?`)) { // Sử dụng confirm theo hướng dẫn, nhưng sẽ dùng modal tùy chỉnh trong ứng dụng thực tế
+                        nearestNews = nearestNews.filter(item => item.id !== id);
+                        fetch("{{ route('nearestNews.delete') }}", {
+                        method: 'PUT',
+                            eaders: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken, // Lấy CSRF token
+                        },
+                        body: JSON.stringify({ id: id })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.message) {
+                                alert(data.message); // Hiển thị thông báo
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('Có lỗi xảy ra khi xoá bài viết.');
+                        });
+                        renderMainContent(); 
                         console.log(`Tin tức "${title}" đã bị xóa.`);
                     }
                 };

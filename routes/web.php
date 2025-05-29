@@ -31,6 +31,7 @@ use App\Http\Controllers\AuthenticationController;
 Route::get('/test', function () {
     return view('test');
 });
+Route::get('/news/search', [NewsController::class, 'search'])->name('news.search');
 
 // Route cho trang chủ mặc định (hoặc khi chưa đăng nhập)
 Route::get('/', function () {
@@ -58,7 +59,6 @@ Route::get('/', function () {
                 ->take(3)
                 ->get();
         }
-
     } catch (\Exception $e) {
         // Xử lý lỗi nếu không thể kết nối database hoặc không tìm thấy bảng/dữ liệu
         // Bạn có thể log lỗi này hoặc hiển thị thông báo thân thiện hơn cho người dùng
@@ -90,12 +90,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/comments/{id}/dislike', [CommentController::class, 'dislike'])->name('comments.dislike');
     Route::post('/comments/{id}/report', [CommentController::class, 'report'])->name('comments.report');
 });
-Route::get('/news/search', [NewsController::class, 'search'])->name('news.search');
 
 Route::get('/manager/login', [ManagerController::class, 'showLoginForm'])->name('managerLogin');
 Route::post('/manager/login', [ManagerController::class, 'handleLogin']);
 Route::get('/manager/logout', [ManagerController::class, 'handleLogout'])->name('managerLogout');
-Route::get('/manager/changePassword', [ManagerController::class,'changePasswordForm'])->name('managerChangePassword');
+Route::get('/manager/changePassword', [ManagerController::class, 'changePasswordForm'])->name('managerChangePassword');
 Route::put('/manager/changePassword', [ManagerController::class, 'handleChangePassword']);
 Route::get('/manager/manageNews', [NewsController::class, 'showManageNews'])->name('manageNews');
 Route::get('/manager/manageNews/addNews', [NewsController::class, 'formCreateNews'])->name('addNews');
@@ -126,6 +125,7 @@ Route::post('/login', [AuthenticationController::class, 'login'])->name('login')
 Route::get('/profile/{id}', [ProfileController::class, 'showProfile'])->name('profile');
 Route::put('/profile/{id}/change-password', [ProfileController::class, 'changePassword'])->name('profile.changePassword');
 */
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Str; // For Str::limit
 
@@ -139,6 +139,9 @@ Route::middleware(['auth'])->group(function () {
         ->name('profile.tab');
     Route::put('/user/change-password', [ProfileController::class, 'changePassword'])->name('user.changePassword');
     Route::post('/logout', [AuthenticationController::class, 'logout'])->name('logout');
+
+    Route::put('/saveNews/delete', [ProfileController::class, 'deleteSaveNews'])->name('saveNews.delete');
+    Route::put('/nearestNews/delete', [ProfileController::class, 'deleteNearestNews'])->name('nearestNews.delete');
 
     Route::put('/notifications/read', [ProfileController::class, 'readNotifications'])->name('notifications.read');
     Route::put('/profile/update', [ProfileController::class, 'updateProfile'])->name('profile.update');
