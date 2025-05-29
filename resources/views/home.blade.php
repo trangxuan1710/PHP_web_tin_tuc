@@ -12,18 +12,6 @@
             margin: 0;
             background-color: #f0f2f5; /* Màu nền nhẹ để dễ nhìn */
         }
-        /* Đảm bảo các dropdown menu hoạt động đúng */
-        .dropdown-menu {
-            display: none;
-            opacity: 0;
-            transform: translateY(-10px);
-            transition: opacity 0.2s ease-out, transform 0.2s ease-out;
-        }
-        .dropdown-menu.active {
-            display: block;
-            opacity: 1;
-            transform: translateY(0);
-        }
 
         /* Custom styles for news layout */
         .news-section {
