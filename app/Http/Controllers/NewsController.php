@@ -315,5 +315,55 @@ class   NewsController extends Controller
             return redirect()->back()->with('error', 'Lỗi khi xóa tin tức: ' . $e->getMessage());
         }
     }
+public function showListNews(Request $request)
+    {
+        // 1. Lấy tin tức nổi bật (isHot = TRUE) - ví dụ lấy 1 bài tin hot nhất
+        // Sắp xếp theo ngày đăng mới nhất hoặc views cao nhất
+        $hotNews = News::with(['manager', 'label'])
+            ->where('isHot', true)
+            ->where('status', 'publish') // Chỉ lấy tin đã publish
+            ->orderBy('date', 'desc') // Sắp xếp theo ngày mới nhất
+            ->limit(2)
+            ->get();
 
+        // 2. Lấy các tin tức mới nhất (trừ tin nổi bật nếu chúng trùng lặp)
+        // Bạn có thể tùy chỉnh số lượng tin muốn hiển thị
+        $latestNews = News::with(['manager', 'label'])
+            ->where('status', 'publish')
+            ->orderBy('date', 'desc')
+            ->when($hotNews->count() > 0, function ($query) use ($hotNews) {
+                // Loại bỏ tin tức đã có trong hotNews để tránh trùng lặp
+                $query->whereNotIn('id', $hotNews->pluck('id'));
+            })
+            ->limit(10) // Ví dụ lấy 10 tin mới nhất
+            ->get();
+
+        // 3. Lấy tin tức cho phần "Góc nhìn" (có thể dựa vào một labelId cụ thể hoặc managerId)
+        // Giả sử có một label đặc biệt cho "Góc nhìn" hoặc một manager chuyên viết bài góc nhìn
+        // Ví dụ: Giả sử 'Đời sống' (labelId = 1) hoặc 'Kinh doanh' (labelId = 6) có thể dùng cho Góc nhìn
+        // Hoặc bạn có thể thêm một cột 'type' vào bảng news để phân loại rõ ràng hơn
+        $opinionNews = News::with(['manager', 'label'])
+            ->where('status', 'publish')
+            ->whereHas('label', function ($query) {
+                // Giả sử 'Đời sống' hoặc 'Kinh doanh' được dùng cho góc nhìn
+                $query->whereIn('type', ['Đời sống', 'Kinh doanh']);
+            })
+            ->orderBy('date', 'desc')
+            ->limit(5)
+            ->get();
+
+        // 4. Lấy tin tức cho phần "Kinh doanh"
+        $businessNews = News::with(['manager', 'label'])
+            ->where('status', 'publish')
+            ->whereHas('label', function ($query) {
+                $query->where('type', 'Kinh doanh'); // Lấy tin tức có label 'Kinh doanh'
+            })
+            ->orderBy('date', 'desc')
+            ->limit(5)
+            ->get();
+
+        // Bạn có thể thêm các truy vấn khác cho các mục như "Thể thao", "Khoa học - Công nghệ" tương tự.
+
+        return view('home', compact('hotNews', 'latestNews', 'opinionNews', 'businessNews'));
+    }
 }

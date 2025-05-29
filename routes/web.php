@@ -34,11 +34,11 @@ Route::get('/test', function () {
 Route::get('/news/search', [NewsController::class, 'search'])->name('news.search');
 
 // Route cho trang chủ mặc định (hoặc khi chưa đăng nhập)
-Route::get('/', function () {
-    /*if (Auth::check()) {
+/*Route::get('/', function () {
+    if (Auth::check()) {
         return redirect()->route('home'); // Nếu đã đăng nhập, chuyển hướng đến trang home đã đăng nhập
     }
-*/
+
     // Lấy dữ liệu tin tức từ database để hiển thị trên trang welcome
     // Đảm bảo bạn có dữ liệu trong bảng 'news' để tránh lỗi
     $featuredNews = null;
@@ -69,12 +69,20 @@ Route::get('/', function () {
 
     return view('welcome', compact('featuredNews', 'recentNews', 'businessNews')); // Truyền dữ liệu vào view
 })->name('welcome');
-
+*/
 // Các routes xác thực của Laravel (đăng nhập, đăng ký, đăng xuất)
 Auth::routes();
 
 // Route cho trang chủ khi đã đăng nhập
-Route::get('/home', [HomeController::class, 'index'])->name('home');
+Route::get('/', [NewsController::class, 'showListNews'])->name('home');
+
+Route::get('/tin-nong', [NewsController::class, 'showListNews'])->name('news.tin-nong');
+
+// Route cho "Thời sự"
+Route::get('/thoi-su', [NewsController::class, 'showListNews'])->name('news.thoi-su');
+
+// Route cho "Khoa học - Công nghệ"
+Route::get('/khoa-hoc-cong-nghe', [NewsController::class, 'showListNews'])->name('news.khoa-hoc-cong-nghe');
 
 // Route tin tức
 Route::get('/news/{id}', [NewsController::class, 'show'])->name('news.show');
