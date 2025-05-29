@@ -15,20 +15,6 @@
             /* Màu nền nhẹ để dễ nhìn */
         }
 
-        /* Đảm bảo các dropdown menu hoạt động đúng */
-        .dropdown-menu {
-            display: none;
-            opacity: 0;
-            transform: translateY(-10px);
-            transition: opacity 0.2s ease-out, transform 0.2s ease-out;
-        }
-
-        .dropdown-menu.active {
-            display: block;
-            opacity: 1;
-            transform: translateY(0);
-        }
-
         /* Custom styles for news layout */
         .news-section {
             background-color: #ffffff;
@@ -322,65 +308,6 @@
     @include('layouts.footer')
 
     <script>
-        // JavaScript cho dropdown menu (giữ nguyên từ file home.blade.php của bạn)
-        // Đảm bảo các ID này tồn tại trong header_notloged.blade.php
-        const userProfile = document.getElementById('user-profile');
-        const userDropdownMenu = document.getElementById('user-dropdown-menu');
-        const notificationBell = document.getElementById('notification-bell');
-        const notificationDropdownMenu = document.getElementById('notification-dropdown-menu');
-
-        // Hàm bật/tắt dropdown menu người dùng
-        if (userProfile) { // Kiểm tra sự tồn tại của phần tử
-            userProfile.onclick = function() {
-                const isExpanded = userDropdownMenu.classList.contains('active');
-                // Đóng dropdown thông báo nếu đang mở
-                if (notificationDropdownMenu) {
-                    notificationDropdownMenu.classList.remove('active');
-                }
-
-                if (isExpanded) {
-                    userDropdownMenu.classList.remove('active');
-                    userProfile.setAttribute('aria-expanded', 'false');
-                } else {
-                    userDropdownMenu.classList.add('active');
-                    userProfile.setAttribute('aria-expanded', 'true');
-                }
-            };
-        }
-
-        // Hàm bật/tắt dropdown menu thông báo
-        if (notificationBell) { // Kiểm tra sự tồn tại của phần tử
-            notificationBell.onclick = function() {
-                const isExpanded = notificationDropdownMenu.classList.contains('active');
-                // Đóng dropdown người dùng nếu đang mở
-                if (userDropdownMenu) {
-                    userDropdownMenu.classList.remove('active');
-                }
-
-                if (isExpanded) {
-                    notificationDropdownMenu.classList.remove('active');
-                    notificationBell.setAttribute('aria-expanded', 'false');
-                } else {
-                    notificationDropdownMenu.classList.add('active');
-                    notificationBell.setAttribute('aria-expanded', 'true');
-                }
-            };
-        }
-
-        // Đóng cả hai dropdown khi nhấp chuột ra ngoài
-        window.onclick = function(event) {
-            // Kiểm tra xem click có phải vào avatar hoặc các phần tử con của nó không
-            if (userProfile && !event.target.closest('#user-profile') && !event.target.closest('#notification-bell')) {
-                if (userDropdownMenu) {
-                    userDropdownMenu.classList.remove('active');
-                    userProfile.setAttribute('aria-expanded', 'false');
-                }
-                if (notificationDropdownMenu) {
-                    notificationDropdownMenu.classList.remove('active');
-                    notificationBell.setAttribute('aria-expanded', 'false');
-                }
-            }
-        }
 
         // JavaScript cho tab danh mục (ví dụ)
         document.addEventListener('DOMContentLoaded', function() {

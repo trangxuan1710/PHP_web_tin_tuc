@@ -14,8 +14,9 @@ use App\Models\News; // Đảm bảo đã import Model News
 use App\Models\Label; // Đảm bảo đã import Model Label nếu bạn sử dụng nó
 
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\AuthenticationController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\AuthenticationController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes

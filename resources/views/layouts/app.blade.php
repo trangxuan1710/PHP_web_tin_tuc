@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,19 +17,24 @@
 
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 </head>
+
 <body class="bg-gray-100 text-gray-800">
 
-@include('layouts.header_loged')
-@include('partials.header')
+    @if(Auth::check())
+    @include('layouts.header_loged')
+    @else
+    @include('layouts.header_notloged')
+    @endif
 
-<main class="py-8">
-    <div class="max-w-6xl mx-auto px-4">
-        @yield('content')
-    </div>
-</main>
+    <main class="py-8">
+        <div class="max-w-6xl mx-auto px-4">
+            @yield('content')
+        </div>
+    </main>
 
-{{-- @include('partials.footer') --}}
+    {{-- @include('layouts.footer') --}}
 
-{{-- <script src="{{ asset('js/app.js') }}"></script> --}}
+    {{-- <script src="{{ asset('js/app.js') }}"></script> --}}
 </body>
+
 </html>

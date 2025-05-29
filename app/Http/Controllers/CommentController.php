@@ -10,7 +10,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
-
 class CommentController extends Controller
 {
     public function __construct()
@@ -99,12 +98,14 @@ class CommentController extends Controller
         $request->validate([
             'content' => 'required|string',
             'commentId' => 'nullable|exists:comments,id',
+            'newsId' => 'required'
         ]);
 
         // Xác định người dùng (nếu chưa đăng nhập thì lấy ID 1 là ẩn danh)
         $clientId = auth()->check() ? auth()->id() : 1;
 
         $content = $request->content;
+        $news = $request->newsId;
         $commentId = null;
 
         if ($request->filled('commentId')) {
@@ -130,6 +131,7 @@ class CommentController extends Controller
             'date' => now(),
             'like_count' => 0,
             'commentId' => $commentId,
+            'newsId' => $news,
         ]);
 
         $comment->news()->attach($id);

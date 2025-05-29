@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Label;
-use App\Models\Labels;
 use App\Models\Managers;
 use App\Models\News;
 use Illuminate\Http\Request;
@@ -21,7 +20,7 @@ class NewsController extends Controller
     public function show($id)
     {
         $news = News::with([
-            'user',
+            'manager',
             'label',
             'comments.client',
             'comments.replies.client'
@@ -30,31 +29,33 @@ class NewsController extends Controller
         $news->increment('views');
         return view('news.show', compact('news'));
     }
-    public function savedNews()
+    public function saveNews()
     {
-        $savedNews = [];
+        $saveNews = [];
 
         if (Auth::check()) {
+            /** @var \App\Models\Managers $user */
             $user = Auth::user();
 
-            // Giả sử bạn có quan hệ savedNews trong model User
-            if (method_exists($user, 'savedNews')) {
-                $savedNews = $user->savedNews()->latest()->get();
+            // Giả sử bạn có quan hệ saveNews trong model User
+            if (method_exists($user, 'saveNews')) {
+                $saveNews = $user->saveNews()->latest()->get();
             }
         } else {
             // Lấy từ session nếu chưa đăng nhập
-            $savedIds = Session::get('saved_news', []);
-            $savedNews = News::whereIn('id', $savedIds)->latest()->get();
+            $saveIds = Session::get('save_news', []);
+            $saveNews = News::whereIn('id', $saveIds)->latest()->get();
         }
 
-        return view('news.saved', compact('savedNews'));
+        return view('news.save', compact('saveNews'));
     }
     public function save($id)
     {
-        $user = auth()->user();
+        /** @var \App\Models\Managers $user */
+        $user = Auth::user();
 
         if ($user) {
-            $user->savedNews()->syncWithoutDetaching([$id]); // giả sử dùng many-to-many
+            $user->saveNews()->syncWithoutDetaching([$id]); // giả sử dùng many-to-many
             return redirect()->route('news.show', $id)->with('success', 'Đã lưu bài viết!');
         }
 
@@ -121,7 +122,7 @@ class NewsController extends Controller
             $thumbNailUrl = '/storage/news_thumbnails/' . $fileName;
         }
 
-        $labelType = Labels::find($request->label_id)->type;
+        $labelType = Label::find($request->label_id)->type;
         // 3. Tạo bài viết tin tức mới trong cơ sở dữ liệu
         $news = News::create([
             'title' => $request->title,
@@ -146,7 +147,7 @@ class NewsController extends Controller
         // Tìm bài viết theo ID, nếu không tìm thấy sẽ tự động trả về 404
         $news = News::with('manager', 'label')->findOrFail($id); // Eager load manager và label
 
-        $labels = Labels::orderBy('type')->get(); // Lấy danh sách labels để hiển thị dropdown
+        $labels = Label::orderBy('type')->get(); // Lấy danh sách labels để hiển thị dropdown
 
         // Truyền cả $news (bài viết cần chỉnh sửa) và $labels sang view
         return view('managers.createNews', compact('manager','news', 'labels'));
@@ -184,7 +185,7 @@ class NewsController extends Controller
             $thumbNailUrl = '/storage/news_thumbnails/' . $fileName;
         }
 
-        $labelType = Labels::find($request->label_id)->type;
+        $labelType = Label::find($request->label_id)->type;
 
         // Cập nhật bài viết
         $news->update([

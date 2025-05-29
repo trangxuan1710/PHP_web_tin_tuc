@@ -6,11 +6,11 @@
             <div class="col-md-8">
                 {{-- BÀI VIẾT --}}
                 <div class="card mb-4">
-                    <img class="card-img-top" src="{{ $news->image_url }}" alt="{{ $news->title }}">
+                    <img class="card-img-top" src="{{ $news->thumbNailUrl }}" alt="{{ $news->title }}">
                     <div class="card-body">
                         <h2 class="card-title">{{ $news->title }}</h2>
                         <p class="card-text">{{ $news->content }}</p>
-                        <p class="text-muted">Đăng bởi: {{ optional($news->user)->name ?? 'Ẩn danh' }}
+                        <p class="text-muted">Đăng bởi: {{ optional($news->manager)->fullName ?? 'Ẩn danh' }}
                             | {{ $news->created_at?->diffForHumans() }}</p>
                         <p class="text-muted">👁 {{ $news->views }} lượt xem</p>
 
@@ -41,7 +41,7 @@
                             @break($count >= $limit)
 
                             <div class="mb-3 border-bottom pb-2">
-                                <strong>{{ optional($comment->client)->name ?? 'Ẩn danh' }}</strong> <small
+                                <strong>{{ optional($comment->client)->fullName ?? 'Ẩn danh' }}</strong> <small
                                     class="text-muted">{{ $comment->date?->diffForHumans() ?? 'Không rõ thời gian' }}</small>
                                 <p>{{ $comment->content }}</p>
                                 <div class="text-muted" data-id="{{ $comment->id }}">
@@ -52,7 +52,7 @@
                                     <button onclick="react('{{ $comment->id }}', 'report')">🚩 <span
                                             class="report-count">{{ $comment->report_count }}</span></button>
                                     <a href="#comment-form"
-                                       onclick="startReply({{ $comment->id }}, '{{ optional($comment->client)->name ?? '' }}')"
+                                       onclick="startReply('{{ $comment->id }}', '{{ optional($comment->client)->fullName }}')"
                                        class="ml-3">Phản hồi</a>
                                 </div>
                                 @php $count++; @endphp
@@ -62,7 +62,7 @@
 
                                     @break($count >= $limit)
                                     <div class="ml-4 mt-2 border-left pl-2">
-                                        <strong>{{ optional($reply->client)->name ?? 'Ẩn danh' }}</strong> <small
+                                        <strong>{{ optional($reply->client)->fullName ?? 'Ẩn danh' }}</strong> <small
                                             class="text-muted">{{ $reply->date?->diffForHumans() ?? 'Không rõ thời gian' }}</small>
                                         <p>{{ $reply->content }}</p>
                                         <div class="text-muted" data-id="{{ $reply->id }}">
@@ -73,7 +73,7 @@
                                             <button onclick="react('{{ $reply->id }}', 'report')">🚩 <span
                                                     class="report-count">{{ $reply->report_count }}</span></button>
                                             <a href="#comment-form"
-                                               onclick="startReply({{ $reply->id }}, '{{ optional($reply->client)->name ?? '' }}')"
+                                               onclick="startReply('{{ $reply->id }}', '{{ optional($reply->client)->fullName }}')"
                                                class="ml-3">Phản hồi</a>
                                         </div>
                                     </div>

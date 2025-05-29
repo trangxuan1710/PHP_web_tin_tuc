@@ -43,12 +43,12 @@ class ProfileController extends Controller
             });
 
         $saveNews = $client->saveNews()
-        ->orderByDesc('save_news.created_at')
-        ->get()
-        ->toArray();
+            ->orderByDesc('save_news.created_at')
+            ->get()
+            ->toArray();
         $nearestNews = $client->nearestNews()->orderByDesc('nearest_news.created_at')
-        ->get()
-        ->toArray();
+            ->get()
+            ->toArray();
 
         return view('user-profile', [
             'client' => $client,
@@ -60,7 +60,7 @@ class ProfileController extends Controller
 
     public function updateProfile(Request $request)
     {
-        /** @var \App\Models\Client $client */
+        /** @var \App\Models\Clients $client */
         $client = Auth::user();
 
         if (!$client) {
@@ -115,7 +115,7 @@ class ProfileController extends Controller
 
     public function readNotifications(Request $request)
     {
-        /** @var \App\Models\Client $client */
+        /** @var \App\Models\Clients $client */
         $client = Auth::user();
 
         if (!$client) {
@@ -157,7 +157,7 @@ class ProfileController extends Controller
 
     public function deleteNotifications(Request $request)
     {
-        /** @var \App\Models\Client $client */
+        /** @var \App\Models\Clients $client */
         $client = Auth::user();
 
         $notificationId = $request->input('notificationId');
@@ -183,7 +183,7 @@ class ProfileController extends Controller
 
     public function changePassword(Request $request)
     {
-        /** @var \App\Models\Client $client */
+        /** @var \App\Models\Clients $client */
         $client = Auth::user();
 
         if (!$client) {

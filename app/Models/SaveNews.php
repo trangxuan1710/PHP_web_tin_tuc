@@ -27,7 +27,7 @@ class SaveNews extends Pivot
     ];
 
     protected $cast = [
-        'saveDate' => 'datetime',
+        'created_at' => 'datetime',
     ];
 
     public function client()
