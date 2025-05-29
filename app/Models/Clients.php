@@ -4,11 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable; // Thay vì Model thông thường
-// Bạn cần import các class model khác nếu chúng ở namespace khác, ví dụ:
-// use App\Models\Notifications;
-// use App\Models\News;
-// use App\Models\SaveNews; // Nếu đây là một Eloquent model
-// use App\Models\NearestNews; // Nếu đây là một Eloquent model
+
 
 class Clients extends Authenticatable
 {

@@ -20,17 +20,9 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
-<<<<<<< HEAD
 //    }
     public function run()
     {
         $this->call(NewsSeeder::class);
-=======
-        $this->call([
-            CommentTestSeeder::class,
-        ]);
-        $this->call(NewsSeeder::class);
-
->>>>>>> 42725f4615a5c4efc65cdf65e1404bddf2978bf3
     }
 }

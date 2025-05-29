@@ -23,7 +23,6 @@ class News extends Model
         'views',
         'userId',
         'date',
-        'tag',
         'content',
         'status',
         'thumbNailUrl',
@@ -40,21 +39,21 @@ class News extends Model
     {
         return $this->belongsTo(Managers::class, 'managerId');
     }
-    public function comments()
-    {
-        return $this->hasMany(Comment::class, 'newsId');
-    }
     public function label()
     {
         return $this->belongsTo(Label::class, 'labelId');
+    }
+    public function comments()
+    {
+        return $this->hasMany(Comment::class, 'newsId');
     }
     public function incrementViews()
     {
         $this->increment('views');
     }
-    public function saveByClients()
+    public function savedByClients()
     {
-        return $this->belongsToMany(Clients::class, 'saveNews', 'newsId', 'clientId')->withTimestamps();
+        return $this->belongsToMany(Clients::class, 'saved_news', 'news_id', 'client_id')->withTimestamps();
     }
 
 

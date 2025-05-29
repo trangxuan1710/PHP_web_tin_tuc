@@ -35,10 +35,18 @@ class Comment extends Model
     {
         return $this->belongsTo(News::class,  'newsId');
     }
-    public function parent()
-    {
-        return $this->belongsTo(Comment::class, 'commentId');
-    }
+//    public function parent()
+//    {
+//        return $this->belongsTo(Comment::class, 'commentId');
+//    }
+
+    // Quan hệ phản hồi
+//    public function replies()
+//    {
+//        return $this->hasMany(Comment::class, 'commentId');
+//    }
+
+
 
     // Quan hệ phản hồi
 //    public function replies()

@@ -126,7 +126,12 @@ Route::post('/login', [AuthenticationController::class, 'login'])->name('login')
 Route::get('/profile/{id}', [ProfileController::class, 'showProfile'])->name('profile');
 Route::put('/profile/{id}/change-password', [ProfileController::class, 'changePassword'])->name('profile.changePassword');
 */
+use Illuminate\Http\Request;
+use Illuminate\Support\Str; // For Str::limit
 
+
+
+Route::get('/search', [NewsController::class, 'search'])->name('news.search');
 Route::middleware(['auth'])->group(function () {
     Route::get('/user', [ProfileController::class, 'showProfile'])->name('profile');
     Route::get('/user/{tab?}', [ProfileController::class, 'showProfile'])
@@ -134,7 +139,7 @@ Route::middleware(['auth'])->group(function () {
         ->name('profile.tab');
     Route::put('/user/change-password', [ProfileController::class, 'changePassword'])->name('user.changePassword');
     Route::post('/logout', [AuthenticationController::class, 'logout'])->name('logout');
-    
+
     Route::put('/notifications/read', [ProfileController::class, 'readNotifications'])->name('notifications.read');
     Route::put('/profile/update', [ProfileController::class, 'updateProfile'])->name('profile.update');
     Route::delete('/notifications/delete', [ProfileController::class, 'deleteNotifications'])->name('notifications.delete');

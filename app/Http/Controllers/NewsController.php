@@ -15,7 +15,7 @@ use Illuminate\Support\Str;
 use App\Models\Comment; // Để lấy số lượng comment
 use Carbon\Carbon; // Import Carbon
 
-class NewsController extends Controller
+class   NewsController extends Controller
 {
 
     public function show($id)
@@ -91,6 +91,55 @@ class NewsController extends Controller
 
         return redirect()->route('news.show', $id)->with('error', 'Bạn cần đăng nhập để lưu bài viết.');
     }
+    public function search(Request $request)
+    {
+        $query = News::query()->with('label'); // Eager load 'label' relationship
+        // 1. Keyword Search in Title
+        if ($request->filled('q')) {
+            $keyword = $request->input('q');
+            $query->where('title', 'LIKE', "%{$keyword}%");
+        }
+        log:info($request);
+        // 2. Filter by Label (Category)
+        if ($request->filled('category_filter') && $request->input('category_filter') !== 'all') {
+            $labelType = $request->input('category_filter');
+            $query->join('labels', 'news.labelId', '=', 'labels.id')
+                ->where('labels.type', $labelType);
+        }
+        // 3. Filter by Time
+        if ($request->filled('time_filter') && $request->input('time_filter') !== 'all') {
+            $timeFilter = $request->input('time_filter');
+            switch ($timeFilter) {
+                case 'today':
+                    $query->whereDate('date', today()); // 'date' là cột chứa ngày tháng trong model News
+                    break;
+                case 'this_week':
+                    $query->whereBetween('date', [now()->startOfWeek(), now()->endOfWeek()]);
+                    break;
+                case 'this_month':
+                    $query->whereBetween('date', [now()->startOfMonth(), now()->endOfMonth()]);
+                    break;
+            }
+        }
+
+        // 4. Ordering
+        $query->orderBy('date', 'desc');
+
+        // 5. Pagination
+        $results = $query->paginate(5)->withQueryString();
+
+        // 6. Fetch Labels for the filter dropdown
+        $labels = Label::all();
+        log::info($labels);
+        $hotNews = News::with('label')
+        ->where('status', 'publish')
+        ->where('isHot', '1')
+        ->orderBy('date', 'desc')
+        ->take(5)
+        ->get();
+        // 7. Return the view
+        return view('news.search', compact('labels', 'results','hotNews'));
+    }
     public function showManageNews(Request $request) // Truyền Request vào phương thức
     {
         $managerId = $request->session()->get('logged_in_manager_id');
@@ -125,7 +174,7 @@ class NewsController extends Controller
             return redirect()->route('managerLogin');
         }
         $labels = Label::orderBy('type')->get();
-        return view('managers.createNews', compact('manager', 'labels'));
+        return view('managers.createNews', compact('manager','labels'));
     }
     public function store(Request $request)
     {
@@ -176,7 +225,7 @@ class NewsController extends Controller
             return redirect()->route('managerLogin');
         }
         // Tìm bài viết theo ID, nếu không tìm thấy sẽ tự động trả về 404
-        $news = News::with('manager', 'label')->findOrFail($id); // Eager load manager và label
+        $news = News::with('manager', 'label')->findOrFail($id);
 
         $labels = Label::orderBy('type')->get(); // Lấy danh sách labels để hiển thị dropdown
 
@@ -266,85 +315,5 @@ class NewsController extends Controller
             return redirect()->back()->with('error', 'Lỗi khi xóa tin tức: ' . $e->getMessage());
         }
     }
-    public function search(Request $request)
-    {
-        $query = $request->input('q');
-        $time = $request->input('time', 'all');
-        $tag = $request->input('tag', 'all'); // Đổi từ 'category' sang 'tag'
-        $status = $request->input('status', 'all'); // Thêm bộ lọc 'status'
-        $sortBy = $request->input('sort', 'latest');
 
-        $news = News::query();
-
-        // Lọc theo từ khóa (title hoặc content/description)
-        if (!empty($query)) {
-            $news->where(function ($q) use ($query) {
-                $q->where('title', 'LIKE', '%' . $query . '%')
-                    ->orWhere('content', 'LIKE', '%' . $query . '%') // Thay thế description bằng content
-                    ->orWhere('tag', 'LIKE', '%' . $query . '%'); // Có thể tìm trong tag nữa
-            });
-        }
-
-        // Lọc theo tag
-        if ($tag !== 'all') {
-            $news->where('tag', 'LIKE', '%' . $tag . '%'); // Tìm kiếm tag chứa từ khóa
-        }
-
-        // Lọc theo status
-        if ($status !== 'all') {
-            $news->where('status', $status);
-        }
-
-        // Lọc theo thời gian (dựa trên trường 'date' của bạn)
-        switch ($time) {
-            case 'today':
-                $news->whereDate('date', Carbon::today());
-                break;
-            case 'week':
-                $news->whereBetween('date', [Carbon::now()->startOfWeek(Carbon::MONDAY), Carbon::now()->endOfWeek(Carbon::SUNDAY)]);
-                break;
-            case 'month':
-                $news->whereMonth('date', Carbon::now()->month)
-                    ->whereYear('date', Carbon::now()->year);
-                break;
-            case 'year':
-                $news->whereYear('date', Carbon::now()->year);
-                break;
-        }
-
-        // Sắp xếp
-        if ($sortBy === 'latest') {
-            $news->orderBy('date', 'desc'); // Sắp xếp theo trường 'date'
-        } elseif ($sortBy === 'relevance') {
-            // Sắp xếp theo độ liên quan
-            // Để sắp xếp theo comment_count, bạn cần join bảng comments hoặc tính toán trước
-            // Ví dụ tạm thời: sắp xếp theo isHot và date
-            $news->orderBy('isHot', 'desc')->orderBy('date', 'desc');
-
-            // Để sắp xếp theo số lượng comment THỰC TẾ:
-            // $news->withCount('comments') // Eager load và đếm số lượng comment
-            //      ->orderBy('comments_count', 'desc')
-            //      ->orderBy('date', 'desc');
-        }
-
-        // Lấy các giá trị duy nhất cho dropdown
-        // Tags có thể phức tạp hơn nếu bạn lưu nhiều tag trong 1 chuỗi.
-        // Bạn có thể cần một bảng tags riêng nếu muốn quản lý tag chặt chẽ.
-        // Tạm thời, ta lấy tất cả các tag riêng biệt từ cột 'tag' và tách ra (có thể có trùng lặp nếu 1 bài có nhiều tag)
-        $allTagsFromDb = News::distinct()->pluck('tag')->filter()->toArray();
-        $uniqueTags = [];
-        foreach ($allTagsFromDb as $tagString) {
-            $tagsArray = explode(',', $tagString);
-            foreach ($tagsArray as $tagItem) {
-                $uniqueTags[] = trim($tagItem);
-            }
-        }
-        $uniqueTags = array_values(array_unique(array_filter($uniqueTags))); // Lọc giá trị rỗng và loại bỏ trùng lặp
-
-        $statuses = News::distinct()->pluck('status')->filter()->values()->toArray(); // Lấy các trạng thái duy nhất
-
-        $results = $news->paginate(10); // Phân trang 10 bài viết mỗi trang
-
-        return view('news.search', compact('results', 'query', 'time', 'tag', 'status', 'sortBy', 'uniqueTags', 'statuses'));
-    }
 }

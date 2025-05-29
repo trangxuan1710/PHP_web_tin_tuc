@@ -162,6 +162,306 @@
         .sidebar-item a:hover {
             text-decoration: underline;
         }
+
+        /* Custom styles for news layout */
+        .news-section {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .main-article {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        @media (min-width: 768px) {
+            .main-article {
+                flex-direction: row;
+            }
+        }
+        .main-article img {
+            width: 100%;
+            height: auto;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        @media (min-width: 768px) {
+            .main-article img {
+                width: 60%;
+            }
+        }
+        .main-article-content {
+            width: 100%;
+            padding: 10px;
+        }
+        @media (min-width: 768px) {
+            .main-article-content {
+                width: 40%;
+            }
+        }
+        .small-news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .news-card {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .news-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+        .news-card-content {
+            padding: 15px;
+            flex-grow: 1;
+        }
+        .news-card h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .news-card p {
+            font-size: 0.85rem;
+            color: #666;
+            line-height: 1.4;
+        }
+        .news-card a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 10px;
+            display: block;
+        }
+        .news-card a:hover {
+            text-decoration: underline;
+        }
+        .category-section {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .category-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .category-tabs button {
+            padding: 8px 15px;
+            border-radius: 5px 5px 0 0;
+            background-color: #f8f8f8;
+            border: 1px solid #e2e8f0;
+            border-bottom: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: #555;
+            transition: all 0.2s ease;
+        }
+        .category-tabs button.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+            border-bottom: 1px solid white;
+        }
+        .category-tabs button:hover:not(.active) {
+            background-color: #e2e8f0;
+        }
+        .sidebar {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        .sidebar-item {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+        .sidebar-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .sidebar-item h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .sidebar-item p {
+            font-size: 0.8rem;
+            color: #888;
+        }
+        .sidebar-item a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .sidebar-item a:hover {
+            text-decoration: underline;
+        }
+
+        /* Custom styles for news layout */
+        .news-section {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .main-article {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        @media (min-width: 768px) {
+            .main-article {
+                flex-direction: row;
+            }
+        }
+        .main-article img {
+            width: 100%;
+            height: auto;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        @media (min-width: 768px) {
+            .main-article img {
+                width: 60%;
+            }
+        }
+        .main-article-content {
+            width: 100%;
+            padding: 10px;
+        }
+        @media (min-width: 768px) {
+            .main-article-content {
+                width: 40%;
+            }
+        }
+        .small-news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .news-card {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .news-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+        .news-card-content {
+            padding: 15px;
+            flex-grow: 1;
+        }
+        .news-card h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .news-card p {
+            font-size: 0.85rem;
+            color: #666;
+            line-height: 1.4;
+        }
+        .news-card a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 10px;
+            display: block;
+        }
+        .news-card a:hover {
+            text-decoration: underline;
+        }
+        .category-section {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .category-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .category-tabs button {
+            padding: 8px 15px;
+            border-radius: 5px 5px 0 0;
+            background-color: #f8f8f8;
+            border: 1px solid #e2e8f0;
+            border-bottom: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: #555;
+            transition: all 0.2s ease;
+        }
+        .category-tabs button.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+            border-bottom: 1px solid white;
+        }
+        .category-tabs button:hover:not(.active) {
+            background-color: #e2e8f0;
+        }
+        .sidebar {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        .sidebar-item {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+        .sidebar-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .sidebar-item h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .sidebar-item p {
+            font-size: 0.8rem;
+            color: #888;
+        }
+        .sidebar-item a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .sidebar-item a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body class="bg-gray-100">
