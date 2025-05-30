@@ -6,17 +6,18 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class NearestNews extends Pivot
+class NearestNews extends Model
 {
     use HasFactory;
 
     protected $table = 'nearest_news';
 
     // Bảng trung gian không có khóa chính tự tăng
-    public $incrementing = false;
+    public $incrementing = true;
 
-    // Khóa chính tổng hợp
-    protected $primaryKey = ['clientId', 'newsId'];
+    public $keyType = 'int';
+
+    protected $primaryKey = 'id';
 
     protected $fillable = [
         'clientId',

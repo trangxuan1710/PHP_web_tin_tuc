@@ -6,17 +6,19 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class SaveNews extends Pivot
+class SaveNews extends Model
 {
     use HasFactory;
 
     protected $table = 'save_news';
 
     // Bảng trung gian không có khóa chính tự tăng
-    public $incrementing = false;
+    public $incrementing = true;
 
     // Khóa chính tổng hợp
-    protected $primaryKey = ['clientId', 'newsId'];
+    protected $primaryKey = ['id'];
+
+    public $keyType = 'int';
 
     // Bảng trung gian này không có các cột timestamp
     public $timestamps = false;

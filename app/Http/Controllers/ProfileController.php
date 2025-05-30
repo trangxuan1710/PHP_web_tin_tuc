@@ -6,7 +6,6 @@ use App\Models\Clients;
 use App\Models\Notifications;
 use App\Models\NearestNews;
 use App\Models\SaveNews;
-use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
@@ -48,26 +47,41 @@ class ProfileController extends Controller
 
 
         $saveNewsCollection = $client->saveNews()
-            ->orderByDesc('created_at')
+            ->orderByDesc('pivot_created_at') // Already defined in the relationship, but good to keep if you want to override
             ->get();
 
         $saveNews = $saveNewsCollection->map(function ($newsItem) {
-            $carbonDate = Carbon::parse($newsItem->created_at);
+            $formattedCreatedAt = $newsItem->pivot->created_at->format('Y-m-d H:i');
+            $timeAgo = $newsItem->pivot->created_at->diffForHumans();
 
-            $newsItem->created_at = $carbonDate->format('Y-m-d H:i');
-
-            return $newsItem;
+            return [
+                'id' => $newsItem->id,
+                'clientId' => $newsItem->pivot->clientId,
+                'newsId' => $newsItem->pivot->newsId,
+                'title' => $newsItem->title,
+                'thumbNailUrl' => $newsItem->thumbNailUrl,
+                'created_at' => $formattedCreatedAt,
+                'saved_time_ago' => $timeAgo,
+            ];
         })->toArray();
 
         $nearestNewsCollection = $client->nearestNews()
-            ->latest()
+            ->orderByDesc('pivot_updated_at') // Already defined in the relationship, but good to keep if you want to override
             ->get();
+
         $nearestNews = $nearestNewsCollection->map(function ($newsItem) {
-            $carbonDate = Carbon::parse($newsItem->updated_at);
+            $formattedUpdatedAt = $newsItem->pivot->updated_at->format('Y-m-d H:i');
+            $timeAgo = $newsItem->pivot->created_at->diffForHumans();
 
-            $newsItem->updated_at = $carbonDate->format('Y-m-d H:i');
-
-            return $newsItem;
+            return [
+                'id' => $newsItem->id,
+                'clientId' => $newsItem->pivot->clientId,
+                'newsId' => $newsItem->pivot->newsId,
+                'title' => $newsItem->title,
+                'thumbNailUrl' => $newsItem->thumbNailUrl,
+                'updated_at' => $formattedUpdatedAt,
+                'saved_time_ago' => $timeAgo,
+            ];
         })->toArray();
 
         return view('user-profile', [
@@ -200,72 +214,65 @@ class ProfileController extends Controller
         return response()->json(['message' => 'Thông báo đã được xóa thành công.'], 200);
     }
 
-    public function deleteSavedNews(Request $request)
+    public function deleteSaveNews(Request $request)
     {
-        // 1. Xác thực dữ liệu đầu vào
-        $request->validate([
-            'id' => 'required|integer|exists:news,id',
-        ]);
 
         if (!Auth::check()) {
-            // Trả về lỗi nếu người dùng chưa đăng nhập
-            if ($request->expectsJson()) {
-                return response()->json(['message' => 'Bạn cần đăng nhập để thực hiện thao tác này.'], 401);
-            }
-            return back()->with('error', 'Bạn cần đăng nhập để bỏ lưu bài viết.');
+            return response()->json(['message' => 'Bạn cần đăng nhập để thực hiện thao tác này.'], 401);
         }
 
-        $clientId = Auth::user()->id; // Lấy ID của người dùng đang đăng nhập
+        $clientId = Auth::user()->id;
         $newsId = $request->input('id');
+        $request->validate([
+            'id' => 'required|integer|exists:news,id', // news_id phải là số nguyên và phải tồn tại trong bảng 'news'
+        ]);
+        Log::info(json_encode($newsId));
 
         try {
             // Tìm và xóa bản ghi trong bảng save_news
-            $deleted = SaveNews::where('client_id', $clientId)
-                ->where('news_id', $newsId)
-                ->delete();
+            $deleted = SaveNews::where('clientId', $clientId)
+                ->where('newsId', $newsId);
 
-            if (!$deleted) {
+            Log::info(json_encode($clientId));
+            Log::info(json_encode($newsId));
+            Log::info(json_encode($deleted));
+
+            if ($deleted) {
                 // Trả về phản hồi thành công
+                $deleted->delete();
                 return response()->json(['message' => 'Đã bỏ lưu bài viết thành công!']);
             } else {
                 // Trả về lỗi nếu không tìm thấy bản ghi để xóa
                 return response()->json(['message' => 'Không tìm thấy bài viết đã lưu để bỏ lưu.'], 404);
             }
         } catch (\Exception $e) {
-            // Ghi log lỗi để debug
-            Log::error("Lỗi khi bỏ lưu tin tức: " . $e->getMessage(), [
-                'client_id' => $clientId,
-                'news_id' => $newsId,
-                'exception' => $e
-            ]);
 
             // Trả về phản hồi lỗi
-            return response()->json(['message' => 'Đã xảy ra lỗi khi bỏ lưu bài viết.'], 500);
+            return response()->json(['message' =>  $e->getMessage()], 500);
         }
     }
 
     public function deleteNearestNews(Request $request)
     {
-        // 1. Xác thực dữ liệu đầu vào
-        $request->validate([
-            'id' => 'required|integer|exists:news,id',
-        ]);
 
         if (!Auth::check()) {
             // Trả về lỗi nếu người dùng chưa đăng nhập
             return response()->json(['message' => 'Bạn cần đăng nhập để thực hiện thao tác này.'], 401);
         }
 
-        $clientId = Auth::user()->id; // Lấy ID của người dùng đang đăng nhập
+        $clientId = Auth::user()->id;
         $newsId = $request->input('id');
+        $request->validate([
+            'id' => 'required|integer|exists:news,id', // news_id phải là số nguyên và phải tồn tại trong bảng 'news'
+        ]);
 
         try {
             // Tìm và xóa bản ghi trong bảng save_news
-            $deleted = NearestNews::where('client_id', $clientId)
-                ->where('news_id', $newsId)
-                ->delete();
+            $deleted = NearestNews::where('clientId', $clientId)
+                ->where('newsId', $newsId);
 
-            if (!$deleted) {
+            if ($deleted) {
+                $deleted->delete();
                 // Trả về phản hồi thành công
                 return response()->json(['message' => 'Đã bỏ lưu bài viết thành công!']);
             } else {
@@ -273,12 +280,6 @@ class ProfileController extends Controller
                 return response()->json(['message' => 'Không tìm thấy bài viết đã lưu để bỏ lưu.'], 404);
             }
         } catch (\Exception $e) {
-            // Ghi log lỗi để debug
-            Log::error("Lỗi khi bỏ lưu tin tức: " . $e->getMessage(), [
-                'client_id' => $clientId,
-                'news_id' => $newsId,
-                'exception' => $e
-            ]);
 
             // Trả về phản hồi lỗi
             return response()->json(['message' => 'Đã xảy ra lỗi khi bỏ lưu bài viết.'], 500);

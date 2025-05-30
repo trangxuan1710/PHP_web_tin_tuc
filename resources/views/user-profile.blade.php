@@ -366,20 +366,20 @@
                     <img src="${news.thumbNailUrl}" alt="Thumbnail" class="w-full h-44 object-cover rounded-t-lg" onerror="this.onerror=null;this.src='https://placehold.co/600x200/cccccc/333333?text=No+Image';" />
                     <div class="p-4 flex-1">
                         <h3 class="text-xl font-semibold text-blue-700 mb-2">
-                            <a href="/news/${news.id}" rel="noopener noreferrer" class="hover:underline">
+                            <a href="/news/${news.newsId}" rel="noopener noreferrer" class="hover:underline">
                                 ${news.title}
                             </a>    
                         </h3>
                         <p class="text-gray-600 text-xs">Lưu ngày: ${news.created_at}</p>
                     </div>
                     <div class="flex justify-between items-center p-4 border-t border-gray-200">
-                        <button data-id=${news.id} class="news-read-more-btn px-4 py-2 bg-blue-500 text-white text-sm font-semibold rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 flex items-center space-x-2">
+                        <button data-id=${news.newsId} class="news-read-more-btn px-4 py-2 bg-blue-500 text-white text-sm font-semibold rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 flex items-center space-x-2">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.747 0-3.332.477-4.5 1.253"></path>
                             </svg>
                             <span>Đọc tiếp</span>
                         </button>
-                        <button data-id="${news.id}" data-title="${news.title}" class="saveNews-delete-btn p-2 text-red-600 rounded-full hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition duration-200">
+                        <button data-id="${news.newsId}" data-title="${news.title}" class="saveNews-delete-btn p-2 text-red-600 rounded-full hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition duration-200">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                             </svg>
@@ -395,19 +395,23 @@
                         <button id="prev-page-btn" class="px-4 py-2 bg-blue-500 text-white rounded-md shadow-sm hover:bg-blue-600 ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}" ${currentPage === 1 ? 'disabled' : ''}>
                             Trước
                         </button>
-                        ${Array.from({ length: totalPages }, (_, i) => i + 1).map(page => `
-                            <button data-page="${page}" class="page-number-btn px-4 py-2 rounded-md shadow-sm ${
-                                page === currentPage ? 'bg-blue-700 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                            }">
-                                ${page}
-                            </button>
-                        `).join('')}
+                        ${Array.from({ length: totalPages }, (_, i) => i + 1).map(page => ` <
+                    button data - page = "${page}"
+                class = "page-number-btn px-4 py-2 rounded-md shadow-sm ${
+                page === currentPage ? 'bg-blue-700 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            }
+            ">
+            $ {
+                page
+            } <
+            /button>
+            `).join('')}
                         <button id="next-page-btn" class="px-4 py-2 bg-blue-500 text-white rounded-md shadow-sm hover:bg-blue-600 ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}" ${currentPage === totalPages ? 'disabled' : ''}>
                             Sau
                         </button>
                     </div>
                 `;
-            }
+        }
 
         return `
                 <div class="p-6 bg-white rounded-lg shadow-md">
@@ -468,19 +472,23 @@
                         <button id="prev-page-btn" class="px-4 py-2 bg-blue-500 text-white rounded-md shadow-sm hover:bg-blue-600 ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}" ${currentPage === 1 ? 'disabled' : ''}>
                             Trước
                         </button>
-                        ${Array.from({ length: totalPages }, (_, i) => i + 1).map(page => `
-                            <button data-page="${page}" class="page-number-btn px-4 py-2 rounded-md shadow-sm ${
-                                page === currentPage ? 'bg-blue-700 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                            }">
-                                ${page}
-                            </button>
-                        `).join('')}
+                        ${Array.from({ length: totalPages }, (_, i) => i + 1).map(page => ` <
+                    button data - page = "${page}"
+                class = "page-number-btn px-4 py-2 rounded-md shadow-sm ${
+                page === currentPage ? 'bg-blue-700 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            }
+            ">
+            $ {
+                page
+            } <
+            /button>
+            `).join('')}
                         <button id="next-page-btn" class="px-4 py-2 bg-blue-500 text-white rounded-md shadow-sm hover:bg-blue-600 ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}" ${currentPage === totalPages ? 'disabled' : ''}>
                             Sau
                         </button>
                     </div>
                 `;
-            }
+        }
 
         return `
                 <div class="p-6 bg-white rounded-lg shadow-md">
@@ -735,12 +743,13 @@
                     return; // Người dùng đã hủy
                 }
 
-                notifications = notifications.map(n =>
+                notifications = notifications.filter(n =>
                     n.id === notificationId ? {
                         ...n,
                         isRead: true
                     } : n
                 );
+                notifications = notifications.filter(n => n.id !== notificationId);
 
                 try {
                     // URL API để xóa thông báo
@@ -801,6 +810,68 @@
                     console.error('Lỗi mạng hoặc server:', error);
                 }
             }
+        }
+
+        async function deleteSaveNews(newsId) {
+            try {
+                    const deleteUrl = "{{ route('saveNews.delete') }}";
+
+                    console.log(newsId);
+
+                    const response = await fetch(deleteUrl, {
+                        method: 'DELETE', // Sử dụng phương thức DELETE
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken, // Gửi CSRF token
+                            'Accept': 'application/json', // Chấp nhận phản hồi JSON
+                        },
+                        body: JSON.stringify({
+                            id: newsId
+                        }),
+                    });
+
+                    const data = await response.json(); // Phân tích phản hồi JSON
+
+                    if (response.ok) { // Mã trạng thái 2xx (ví dụ: 200 OK, 204 No Content)
+                        console.log(`Tin tức ${newsId} đã bị xóa.`);
+
+                    } else { // Mã trạng thái lỗi (4xx, 5xx)
+                        console.error('Lỗi khi xoá tin tức:', data.message || 'Đã xảy ra lỗi không xác định.');
+                    }
+
+                } catch (error) {
+                    console.error('Lỗi mạng hoặc server:', error);
+                }     
+        }
+        
+        async function deleteNearestNews(newsId) {
+            try {
+                    const deleteUrl = "{{ route('nearestNews.delete') }}";
+
+                    const response = await fetch(deleteUrl, {
+                        method: 'DELETE', // Sử dụng phương thức DELETE
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken, // Gửi CSRF token
+                            'Accept': 'application/json', // Chấp nhận phản hồi JSON
+                        },
+                        body: JSON.stringify({
+                            id: newsId
+                        }),
+                    });
+
+                    const data = await response.json(); // Phân tích phản hồi JSON
+
+                    if (response.ok) { // Mã trạng thái 2xx (ví dụ: 200 OK, 204 No Content)
+                        console.log(`Tin tức ${newsId} đã bị xóa.`);
+
+                    } else { // Mã trạng thái lỗi (4xx, 5xx)
+                        console.error('Lỗi khi xoá tin tức:', data.message || 'Đã xảy ra lỗi không xác định.');
+                    }
+
+                } catch (error) {
+                    console.error('Lỗi mạng hoặc server:', error);
+                }     
         }
 
         // Hiển thị và ẩn modal đổi mật khẩu
@@ -945,32 +1016,9 @@
                     const id = parseInt(e.currentTarget.dataset.id);
                     const title = e.currentTarget.dataset.title;
                     if (confirm(`Bạn có chắc chắn muốn xóa tin tức "${title}"?`)) { // Sử dụng confirm theo hướng dẫn, nhưng sẽ dùng modal tùy chỉnh trong ứng dụng thực tế
-                        saveNews = saveNews.filter(item => item.id !== id);
-                        fetch("{{ route('saveNews.delete') }}", {
-                        method: 'PUT',
-                            eaders: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': csrfToken // Lấy CSRF token
-                        },
-                        body: JSON.stringify({ id: id })
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.message) {
-                                alert(data.message); // Hiển thị thông báo
-                                // Thêm logic để xóa tin tức khỏi giao diện nếu thành công
-                                if (data.message === 'Đã bỏ lưu bài viết thành công!') {
-                                    // Ví dụ: xóa phần tử cha của nút
-                                    this.closest('div').remove();
-                                }
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            alert('Có lỗi xảy ra khi bỏ lưu bài viết.');
-                        });
+                        saveNews = saveNews.filter(item => item.newsId !== id);
+                        deleteSaveNews(id);
                         renderMainContent(); // Render lại tin tức đã lưu
-                        console.log(`Tin tức "${title}" đã bị xóa.`);
                     }
                 };
             });
@@ -978,28 +1026,12 @@
             document.querySelectorAll('.nearestNews-delete-btn').forEach(button => {
                 button.onclick = (e) => {
                     const id = parseInt(e.currentTarget.dataset.id);
+                    console.log(id);
                     const title = e.currentTarget.dataset.title;
                     if (confirm(`Bạn có chắc chắn muốn xóa tin tức "${title}"?`)) { // Sử dụng confirm theo hướng dẫn, nhưng sẽ dùng modal tùy chỉnh trong ứng dụng thực tế
-                        nearestNews = nearestNews.filter(item => item.id !== id);
-                        fetch("{{ route('nearestNews.delete') }}", {
-                        method: 'PUT',
-                            eaders: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': csrfToken, // Lấy CSRF token
-                        },
-                        body: JSON.stringify({ id: id })
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.message) {
-                                alert(data.message); // Hiển thị thông báo
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            alert('Có lỗi xảy ra khi xoá bài viết.');
-                        });
-                        renderMainContent(); 
+                        nearestNews = nearestNews.filter(item => item.newsId !== id);
+                        deleteNearestNews(id);
+                        renderMainContent();
                         console.log(`Tin tức "${title}" đã bị xóa.`);
                     }
                 };

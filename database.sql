@@ -66,17 +66,17 @@ INSERT INTO clients (fullName, password, email, isMute, isActive) VALUES ('Trang
                                         FOREIGN KEY (managerId) REFERENCES managers(id),
                                         FOREIGN KEY (labelId) REFERENCES labels(id)
     );
-    INSERT INTO news (title, managerId, date, tag, content, thumbNailUrl, isHot, status, labelId) VALUES
-                                                                                                      ('Tech Conference 2025 Highlights', 1, '2025-05-20 10:00:00', 'Technology', 'Detailed summary of the major announcements and discussions from the annual tech conference. Keynotes included advancements in AI and quantum computing.', 'https://placehold.co/300x200/A7C7E7/333333?text=Tech+Conf', TRUE, 'publish', 1),
-                                                                                                      ('Global Economic Outlook Q3', 2, '2025-05-21 11:30:00', 'Economy', 'An in-depth analysis of the global economic trends for the third quarter. Experts predict steady growth despite regional challenges.', 'https://placehold.co/300x200/B2D8B2/333333?text=Economy+Q3', FALSE, 'publish', 2),
-                                                                                                      ('New Environmental Policies Announced', 3, '2025-05-22 14:15:00', 'Environment', 'The government has unveiled a new set of policies aimed at reducing carbon emissions and promoting renewable energy sources.', 'https://placehold.co/300x200/FFDAB9/333333?text=Eco+Policy', TRUE, 'draft', 3),
-                                                                                                      ('Healthcare Advances in Gene Therapy', 1, '2025-05-23 09:00:00', 'Health', 'Recent breakthroughs in gene therapy offer new hope for treating previously incurable genetic disorders. Clinical trials show promising results.', 'https://placehold.co/300x200/E6E6FA/333333?text=Gene+Therapy', FALSE, 'publish', 4),
-                                                                                                      ('Upcoming Arts Festival Preview', 1, '2025-05-24 16:45:00', 'Arts', 'A sneak peek into the upcoming international arts festival, featuring renowned artists and diverse cultural performances. This article is still under review.', 'https://placehold.co/300x200/FFFACD/333333?text=Arts+Fest', TRUE, 'draft', 5),
-                                                                                                      ('Sports Championship Finals Recap', 2, '2025-05-25 18:00:00', 'Sports', 'A thrilling recap of the national sports championship finals, including highlights, player interviews, and expert commentary.', 'https://placehold.co/300x200/F0E68C/333333?text=Sports+Finals', TRUE, 'publish', 1),
-                                                                                                      ('DIY Home Improvement Trends', 3, '2025-05-26 13:20:00', 'Lifestyle', 'Discover the latest trends in DIY home improvement, with tips and tricks for easy and affordable upgrades to your living space.', 'https://placehold.co/300x200/D8BFD8/333333?text=DIY+Home', FALSE, 'publish', 2),
-                                                                                                      ('Travel Guide: Summer Destinations', 1, '2025-05-27 10:50:00', 'Travel', 'Explore the top summer travel destinations for 2025. This guide covers everything from exotic beaches to mountain retreats. Awaiting final approval.', 'https://placehold.co/300x200/ADD8E6/333333?text=Summer+Travel', FALSE, 'draft', 3),
-                                                                                                      ('Startup Success Stories of the Year', 1, NOW() - INTERVAL 1 DAY, 'Business', 'Inspiring stories from the most successful startups of the past year, highlighting their journeys and innovations.', 'https://placehold.co/300x200/98FB98/333333?text=Startups', TRUE, 'publish', 4),
-                                                                                                      ('Culinary Delights: New Recipes to Try', 2, NOW(), 'Food', 'A collection of exciting new recipes from top chefs around the world. Perfect for home cooks looking to spice up their meals.', 'https://placehold.co/300x200/FFB6C1/333333?text=New+Recipes', FALSE, 'publish', 5);
+    INSERT INTO news (title, managerId, date, content, thumbNailUrl, isHot, status, labelId) VALUES
+                                                                                                      ('Tech Conference 2025 Highlights', 1, '2025-05-20 10:00:00', 'Detailed summary of the major announcements and discussions from the annual tech conference. Keynotes included advancements in AI and quantum computing.', 'https://placehold.co/300x200/A7C7E7/333333?text=Tech+Conf', TRUE, 'publish', 1),
+                                                                                                      ('Global Economic Outlook Q3', 2, '2025-05-21 11:30:00', 'An in-depth analysis of the global economic trends for the third quarter. Experts predict steady growth despite regional challenges.', 'https://placehold.co/300x200/B2D8B2/333333?text=Economy+Q3', FALSE, 'publish', 2),
+                                                                                                      ('New Environmental Policies Announced', 3, '2025-05-22 14:15:00', 'The government has unveiled a new set of policies aimed at reducing carbon emissions and promoting renewable energy sources.', 'https://placehold.co/300x200/FFDAB9/333333?text=Eco+Policy', TRUE, 'draft', 3),
+                                                                                                      ('Healthcare Advances in Gene Therapy', 1, '2025-05-23 09:00:00', 'Recent breakthroughs in gene therapy offer new hope for treating previously incurable genetic disorders. Clinical trials show promising results.', 'https://placehold.co/300x200/E6E6FA/333333?text=Gene+Therapy', FALSE, 'publish', 4),
+                                                                                                      ('Upcoming Arts Festival Preview', 1, '2025-05-24 16:45:00', 'A sneak peek into the upcoming international arts festival, featuring renowned artists and diverse cultural performances. This article is still under review.', 'https://placehold.co/300x200/FFFACD/333333?text=Arts+Fest', TRUE, 'draft', 5),
+                                                                                                      ('Sports Championship Finals Recap', 2, '2025-05-25 18:00:00', 'A thrilling recap of the national sports championship finals, including highlights, player interviews, and expert commentary.', 'https://placehold.co/300x200/F0E68C/333333?text=Sports+Finals', TRUE, 'publish', 1),
+                                                                                                      ('DIY Home Improvement Trends', 3, '2025-05-26 13:20:00', 'Discover the latest trends in DIY home improvement, with tips and tricks for easy and affordable upgrades to your living space.', 'https://placehold.co/300x200/D8BFD8/333333?text=DIY+Home', FALSE, 'publish', 2),
+                                                                                                      ('Travel Guide: Summer Destinations', 1, '2025-05-27 10:50:00', 'Explore the top summer travel destinations for 2025. This guide covers everything from exotic beaches to mountain retreats. Awaiting final approval.', 'https://placehold.co/300x200/ADD8E6/333333?text=Summer+Travel', FALSE, 'draft', 3),
+                                                                                                      ('Startup Success Stories of the Year', 1, NOW() - INTERVAL 1 DAY, 'Inspiring stories from the most successful startups of the past year, highlighting their journeys and innovations.', 'https://placehold.co/300x200/98FB98/333333?text=Startups', TRUE, 'publish', 4),
+                                                                                                      ('Culinary Delights: New Recipes to Try', 2, NOW(), 'A collection of exciting new recipes from top chefs around the world. Perfect for home cooks looking to spice up their meals.', 'https://placehold.co/300x200/FFB6C1/333333?text=New+Recipes', FALSE, 'publish', 5);
     -- Tạo bảng comments
     CREATE TABLE IF NOT EXISTS comments (
         id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -187,10 +187,11 @@ INSERT INTO clients (fullName, password, email, isMute, isActive) VALUES ('Trang
 
 -- Tạo bảng save_news
 CREATE TABLE IF NOT EXISTS save_news (
+	id INT primary key auto_increment,
     clientId BIGINT NOT NULL,
     newsId BIGINT NOT NULL,
-    PRIMARY KEY (clientId, newsId),
-    create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (clientId) REFERENCES clients(id) ON DELETE CASCADE,
     FOREIGN KEY (newsId) REFERENCES news(id) on delete cascade
 );
@@ -201,12 +202,12 @@ INSERT INTO save_news (clientId, newsId) VALUES ('1', '3');
 
 
 -- Tạo bảng nearest_news
-CREATE TABLE IF NOT EXISTS nearest_news (
+CREATE TABLE IF NOT EXISTS nearest_news (	
+	id INT primary key auto_increment,
     clientId BIGINT NOT NULL,
     newsId BIGINT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (clientId, newsId),
     FOREIGN KEY (clientId) REFERENCES clients(id) ON DELETE CASCADE,
     FOREIGN KEY (newsId) REFERENCES news(id) on delete cascade
 );

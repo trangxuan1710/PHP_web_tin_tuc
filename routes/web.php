@@ -148,8 +148,8 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/user/change-password', [ProfileController::class, 'changePassword'])->name('user.changePassword');
     Route::post('/logout', [AuthenticationController::class, 'logout'])->name('logout');
 
-    Route::put('/saveNews/delete', [ProfileController::class, 'deleteSaveNews'])->name('saveNews.delete');
-    Route::put('/nearestNews/delete', [ProfileController::class, 'deleteNearestNews'])->name('nearestNews.delete');
+    Route::delete('/saveNews/delete', [ProfileController::class, 'deleteSaveNews'])->name('saveNews.delete');
+    Route::delete('/nearestNews/delete', [ProfileController::class, 'deleteNearestNews'])->name('nearestNews.delete');
 
     Route::put('/notifications/read', [ProfileController::class, 'readNotifications'])->name('notifications.read');
     Route::put('/profile/update', [ProfileController::class, 'updateProfile'])->name('profile.update');

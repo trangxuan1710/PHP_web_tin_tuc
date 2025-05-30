@@ -53,14 +53,12 @@ class Clients extends Authenticatable
 
     public function saveNews()
     {
-        return $this->belongsToMany(News::class, 'save_news', 'clientId', 'newsId')
-            ->using(SaveNews::class); // SaveNews phải là một Pivot model
+        return $this->belongsToMany(News::class, 'save_news', 'clientId', 'newsId')->withTimestamps();
     }
 
     public function nearestNews()
     {
-        return $this->belongsToMany(News::class, 'nearest_news', 'clientId', 'newsId')
-            ->using(NearestNews::class); // NearestNews phải là một Pivot model
+        return $this->belongsToMany(News::class, 'nearest_news', 'clientId', 'newsId')->withTimestamps();
     }
 
 }
