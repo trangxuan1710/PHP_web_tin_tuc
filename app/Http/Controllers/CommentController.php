@@ -169,7 +169,6 @@ class CommentController extends Controller
                 'clientId' => $client->getAuthIdentifier(),
                 'content' => $content,
                 'date' => now(),
-                'like_count' => 0,
                 'commentId' => $commentId,
                 'newsId' => $id,
             ]);

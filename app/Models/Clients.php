@@ -62,13 +62,13 @@ class Clients extends Authenticatable
 
     public function commentLikes()
     {
-        return $this->hasMany(CommentLike::class);
+        return $this->hasMany(CommentLike::class, 'clientId');
     }
 
     /**
      * Kiểm tra xem người dùng đã like một comment cụ thể chưa.
      */
-    public function hasLikedComment(Comment $comment): bool
+    public function hasLikedComment(Comment $comment)
     {
         return $this->commentLikes()->where('commentId', $comment->id)->exists();
     }

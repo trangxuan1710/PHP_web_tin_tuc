@@ -38,7 +38,7 @@ class Comment extends Model
     }
     public function commentLikes()
     {
-        return $this->hasMany(CommentLike::class);
+        return $this->hasMany(CommentLike::class, 'commentId');
     }
 
     /**

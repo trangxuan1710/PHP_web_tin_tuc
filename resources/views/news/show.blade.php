@@ -146,7 +146,7 @@
                         @if($news->comments && $news->comments->count() > 0)
                         @foreach($news->comments as $comment)
                         @if (is_null($comment->commentId))
-                        <div id="comment-{{ $comment->id }}" class="p-4 bg-white rounded-lg shadow border border-gray-100">
+                        <div id="comment-{{ $comment->id }}" data-comment-id="{{ $comment->id }}" class="comment-item p-4 bg-white rounded-lg shadow border border-gray-100">
                             <div class="flex items-start space-x-3">
                                 <img src="{{ $comment->client->avatarUrl ?? 'https://placehold.co/40x40/a0aec0/ffffff?text=User' }}" alt="Avatar của {{ $comment->client->fullName ?? 'Người dùng' }}" class="w-10 h-10 rounded-full">
                                 <div class="flex-1">
@@ -155,13 +155,23 @@
                                         <span class="text-xs text-gray-400">{{ $comment->date?->diffForHumans() ?? 'Không rõ thời gian' }}</span>
                                     </div>
                                     <p class="text-gray-700 mt-1">{{ $comment->content }}</p>
-                                    <div class="comment-actions flex items-center space-x-3 mt-3 text-sm text-gray-500" data-id="{{ $comment->id }}">
-                                        <button onclick="react('{{ $reply->id }}')" class="like-count flex items-center {{ Auth::user()->hasLikedComment($comment) ? 'bg-blue-500 text-white border-blue-500' : 'bg-gray-100 text-gray-700 hover:bg-blue-100 hover:text-blue-600' }}">
+                                    <div class="flex items-center space-x-3 mt-3 text-sm text-gray-500">
+                                        @auth
+                                        <button class="like-button flex items-center {{ Auth::user()->hasLikedComment($comment) ? 'text-blue-500 hover:text-gray-500' : 'text-gray-500 hover:text-blue-500' }}">
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3 h-3 mr-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6.633 10.5c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 0 1 2.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 0 0 .322-1.672V3a.75.75 0 0 1 .75-.75A2.25 2.25 0 0 1 16.5 4.5c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 0 1-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 0 0-1.423-.23H5.904M6.633 10.5l-1.07-1.07m1.07 1.07V15m0 0H3m3.75 0v4.5m0-4.5h.75m0 0V11.25m0 0h.75m0 0V15m0 0h.75M6.633 10.5c-.636 0-1.257.074-1.844.208M10.5 15.75a.75.75 0 0 0 0 1.5h4.5a.75.75 0 0 0 0-1.5h-4.5Z" />
                                             </svg>
-                                            {{ Auth::user()->hasLikedComment($comment) ? 'Đã thích' : 'Thích' }} (<span class="like-count-value">{{ $comment->likesCount() }}</span>)
+                                            <span class="like-type">{{ Auth::user()->hasLikedComment($comment) ? 'Đã thích ' : 'Thích ' }}</span> (<span class="like-count">{{ $comment->likesCount() }}</span>)
                                         </button>
+                                        @endauth
+                                        @guest
+                                        <button class="like-button flex items-center hover:text-blue-500">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3 h-3 mr-1">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M6.633 10.5c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 0 1 2.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 0 0 .322-1.672V3a.75.75 0 0 1 .75-.75A2.25 2.25 0 0 1 16.5 4.5c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 0 1-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 0 0-1.423-.23H5.904M6.633 10.5l-1.07-1.07m1.07 1.07V15m0 0H3m3.75 0v4.5m0-4.5h.75m0 0V11.25m0 0h.75m0 0V15m0 0h.75M6.633 10.5c-.636 0-1.257.074-1.844.208M10.5 15.75a.75.75 0 0 0 0 1.5h4.5a.75.75 0 0 0 0-1.5h-4.5Z" />
+                                            </svg>
+                                            Thích (<span id="{{ $comment->id }}">{{ $comment->likesCount() }}</span>)
+                                        </button>
+                                        @endguest
                                         <button
                                             type="button"
                                             class="reply-button hover:text-blue-500 flex items-center" {{-- Xóa onclick --}}
@@ -187,7 +197,7 @@
                             <div class="replies-container ml-10 mt-4 pl-4 border-l-2 border-blue-200 space-y-4">
                                 @if($comment->replies && $comment->replies->count() > 0)
                                 @foreach($comment->replies as $reply)
-                                <div id="comment-{{ $reply->id }}" class="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg shadow-sm">
+                                <div id="comment-{{ $reply->id }}" data-comment-id="{{ $reply->id }}" class="comment-item flex items-start space-x-3 p-3 bg-gray-50 rounded-lg shadow-sm">
                                     <img src="{{ $reply->client->avatarUrl ?? 'https://placehold.co/32x32/718096/ffffff?text=User' }}" alt="Avatar của {{ $reply->client->fullName ?? 'Người dùng' }}" class="w-8 h-8 rounded-full">
                                     <div class="flex-1">
                                         <div class="flex items-center justify-between">
@@ -195,13 +205,23 @@
                                             <span class="text-xs text-gray-400">{{ $reply->date?->diffForHumans() ?? 'Không rõ thời gian' }}</span>
                                         </div>
                                         <p class="text-gray-600 mt-1 text-sm">{{ $reply->content }}</p>
-                                        <div class="comment-actions flex items-center space-x-3 mt-2 text-xs text-gray-500" data-id="{{ $reply->id }}">
-                                            <button onclick="react('{{ $reply->id }}')" class="like-count flex items-center {{ Auth::user()->hasLikedComment($comment) ? 'bg-blue-500 text-white border-blue-500' : 'bg-gray-100 text-gray-700 hover:bg-blue-100 hover:text-blue-600' }}">
+                                        <div class="flex items-center space-x-3 mt-2 text-xs text-gray-500">
+                                            @auth
+                                            <button class="like-button flex items-center {{ Auth::user()->hasLikedComment($reply) ? 'text-blue-500 hover:text-gray-500' : 'text-gray-500 hover:text-blue-500' }}">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3 h-3 mr-1">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M6.633 10.5c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 0 1 2.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 0 0 .322-1.672V3a.75.75 0 0 1 .75-.75A2.25 2.25 0 0 1 16.5 4.5c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 0 1-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 0 0-1.423-.23H5.904M6.633 10.5l-1.07-1.07m1.07 1.07V15m0 0H3m3.75 0v4.5m0-4.5h.75m0 0V11.25m0 0h.75m0 0V15m0 0h.75M6.633 10.5c-.636 0-1.257.074-1.844.208M10.5 15.75a.75.75 0 0 0 0 1.5h4.5a.75.75 0 0 0 0-1.5h-4.5Z" />
                                                 </svg>
-                                                {{ Auth::user()->hasLikedComment($reply) ? 'Đã thích' : 'Thích' }} (<span class="like-count-value">{{ $reply->likesCount() }}</span>)
+                                                <span class="like-type">{{ Auth::user()->hasLikedComment($reply) ? 'Đã thích ' : 'Thích ' }}</span> (<span class="like-count">{{ $reply->likesCount() }}</span>)
                                             </button>
+                                            @endauth
+                                            @guest
+                                            <button class="like-button flex items-center hover:text-blue-500">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3 h-3 mr-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.633 10.5c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 0 1 2.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 0 0 .322-1.672V3a.75.75 0 0 1 .75-.75A2.25 2.25 0 0 1 16.5 4.5c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 0 1-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 0 0-1.423-.23H5.904M6.633 10.5l-1.07-1.07m1.07 1.07V15m0 0H3m3.75 0v4.5m0-4.5h.75m0 0V11.25m0 0h.75m0 0V15m0 0h.75M6.633 10.5c-.636 0-1.257.074-1.844.208M10.5 15.75a.75.75 0 0 0 0 1.5h4.5a.75.75 0 0 0 0-1.5h-4.5Z" />
+                                                </svg>
+                                                Thích (<span id="{{ $comment->id }}">{{ $reply->likesCount() }}</span>)
+                                            </button>
+                                            @endguest
                                             <button
                                                 type="button"
                                                 class="reply-button hover:text-blue-500 flex items-center" {{-- Xóa onclick --}}
@@ -284,21 +304,63 @@
             });
         }
 
-        function react(commentId) {
-            fetch(`/comments/${commentId}/like`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    }
-                })
-                .then(res => res.json())
-                .then(data => {
-                    likeCount = document.getElementById('like-count-value');
-                    
-                })
-                .catch(() => alert(`Không thể ${type} bình luận.`));
-        }
+        document.addEventListener('DOMContentLoaded', function() {
+            const likeButtons = document.querySelectorAll('.like-button');
+
+
+            likeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Lấy comment ID từ phần tử cha (comment-item)
+                    const commentItem = this.closest('.comment-item');
+                    const commentId = commentItem.dataset.commentId;
+
+                    // Lấy trạng thái like hiện tại từ data attribute
+                    let isLiked = this.dataset.liked === 'true';
+
+
+                    fetch(`/comments/${commentId}/like`, { // Sử dụng route API
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}' // Gửi CSRF token
+                            },
+                            // Body không cần thiết vì ID đã có trong URL
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                // Xử lý lỗi HTTP (ví dụ: 401 Unauthorized nếu không đăng nhập)
+                                if (response.status === 401) {
+                                    alert('Bạn cần đăng nhập để thực hiện hành động này!');
+                                    window.location.href = '/login'; // Chuyển hướng đến trang đăng nhập
+                                }
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            // Cập nhật trạng thái nút và số lượng like trên giao diện
+                            this.dataset.liked = data.liked ? 'true' : 'false';
+                            this.querySelector('.like-count').textContent = data.likes_count;
+
+                            if (data.liked) {
+                                this.querySelector('.like-type').textContent = 'Đã thích ';
+                                this.classList.remove('text-gray-500', 'hover:text-blue-500');
+                                this.classList.add('text-blue-500', 'hover:text-gray-500');
+                            } else {
+                                this.querySelector('.like-type').textContent = 'Thích ';
+                                this.classList.remove('text-blue-500', 'hover:text-gray-500');
+                                this.classList.add('text-gray-500', 'hover:text-blue-500');
+                            }
+                            // Có thể hiển thị thông báo toast/snackbar: console.log(data.message);
+                        })
+                        .catch(error => {
+                            console.error('There was a problem with the fetch operation:', error);
+                            alert('Có lỗi xảy ra, vui lòng thử lại!');
+                        });
+                });
+            });
+        });
 
         document.addEventListener('DOMContentLoaded', function() {
             const saveNewsBtn = document.getElementById('save-news-btn');
@@ -399,7 +461,7 @@
                 }
 
                 let contentDisplay = commentData.content;
-                const avatarUrl = "{{ $client->avatarUrl }}";
+                const avatarUrl = "{{ $client->avatarUrl ?? '' }}";
 
                 return `
                 <div id="comment-${commentData.id}" class="${mainDivClasses}">
@@ -536,6 +598,8 @@
                                 errorMessage += `\n- ${data.errors[field].join(', ')}`;
                             }
                         }
+                        const loginUrl = "{{ route('login') }}";
+                        window.location.href = loginUrl;
                         alert(errorMessage);
                         console.error('Lỗi khi gửi bình luận:', data);
                     }
@@ -573,8 +637,7 @@
 
                     const formData = new FormData(reportCommentForm);
                     // Action URL points to the dedicated comment report route
-                    const actionUrl = '{{ route('
-                    reports.comments.store ') }}';
+                    const actionUrl = "{{ route('reports.comments.store') }}";
                     try {
                         const response = await fetch(actionUrl, {
                             method: 'POST',
@@ -597,6 +660,8 @@
                                     errorMessage += `\n- ${field}: ${data.errors[field].join(', ')}`;
                                 }
                             }
+                            const loginUrl = "{{ route('login') }}";
+                            window.location.href = loginUrl;
                             alert(errorMessage);
                             console.error('Lỗi khi gửi báo cáo:', data);
                         }

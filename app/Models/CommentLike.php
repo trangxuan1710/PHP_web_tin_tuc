@@ -12,6 +12,13 @@ class CommentLike extends Model
 {
     use HasFactory;
 
+    protected $table = 'comment_like';
+    protected $primaryKey = 'id';
+    public $keyType = 'int';
+    public $incrementing = true;
+
+    public $timestamps = false;
+
     protected $fillable = [
         'clientId',
         'commentId',
@@ -20,16 +27,16 @@ class CommentLike extends Model
     /**
      * Lấy người dùng đã like.
      */
-    public function user(): BelongsTo
+    public function client()
     {
-        return $this->belongsTo(Clients::class);
+        return $this->belongsTo(Clients::class, 'clientId');
     }
 
     /**
      * Lấy comment được like.
      */
-    public function comment(): BelongsTo
+    public function comment()
     {
-        return $this->belongsTo(Comment::class);
+        return $this->belongsTo(Comment::class, 'commentId');
     }
 }
