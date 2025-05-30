@@ -6,6 +6,7 @@ use App\Models\Label;
 use App\Models\Managers;
 use App\Models\News;
 use App\Models\NearestNews;
+use App\Models\SaveNews;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -23,6 +24,12 @@ class   NewsController extends Controller
         $news = News::with([
             'manager',
             'label',
+            'comments' => function ($query) {
+                $query->orderBy('date', 'desc');
+            },
+            'comments.replies' => function ($query) {
+                $query->orderBy('date', 'desc');
+            },
             'comments.client',
             'comments.replies.client'
         ])->findOrFail($id);;
@@ -32,7 +39,17 @@ class   NewsController extends Controller
 
         $hotNews = News::orderBy('date', 'desc')->take(5)->get();
 
+        $isSave = false;
+        if (Auth::check()) {
+            $clientId = Auth::user()->id;
+            // Kiểm tra xem có bản ghi nào trong bảng save_news với clientId và newsId này không
+            $isSave = SaveNews::where('clientId', $clientId)
+                ->where('newsId', $news->id)
+                ->exists(); // exists() trả về true/false rất hiệu quả
+        }
+
         return view('news.show', [
+            'isSave' => $isSave,
             'news' => $news,
             'hotNews' => $hotNews,
         ]);
@@ -41,16 +58,15 @@ class   NewsController extends Controller
     protected function saveNearestNews(int $newsId): void
     {
 
-        if (Auth::user()) { 
-            $clientId = Auth::user()->id; 
+        if (Auth::user()) {
+            $clientId = Auth::user()->id;
 
             NearestNews::updateOrCreate(
                 [
                     'clientId' => $clientId,
                     'newsId' => $newsId
                 ],
-                [
-                ]
+                []
             );
             Log::info("Client ID {$clientId} viewed news ID {$newsId}. NearestNews updated/created.");
         } else {
@@ -58,39 +74,58 @@ class   NewsController extends Controller
         }
     }
 
-    public function saveNews()
+    public function saveNews(Request $request)
     {
-        $saveNews = [];
+        // Lấy news_id từ route parameter (nếu có) hoặc từ request body
+        $newsId = $request->input('newsId');
 
-        if (Auth::check()) {
-            /** @var \App\Models\Managers $user */
-            $user = Auth::user();
+        // 1. Xác thực dữ liệu đầu vào
+        $request->validate([
+            'newsId' => 'integer|exists:news,id',
+        ]);
 
-            // Giả sử bạn có quan hệ saveNews trong model User
-            if (method_exists($user, 'saveNews')) {
-                $saveNews = $user->saveNews()->latest()->get();
+        // Nếu ID vẫn không có, trả về lỗi
+        if (empty($newsId)) {
+            Log::error('Save news: News ID is missing in the request.');
+            if ($request->expectsJson()) {
+                return response()->json(['message' => 'ID bài viết không được cung cấp.'], 400);
+            }
+        }
+        log::info($request);
+        // 2. Kiểm tra người dùng đã đăng nhập hay chưa
+        if (Auth::check()) { // Sử dụng guard 'client' cho người dùng front-end
+            /** @var \App\Models\Client $client */
+            $client = Auth::user();
+            log::info("hehehehhe");
+
+            try {
+                $client->saveNews()->syncWithoutDetaching([$newsId]);
+                // Để cập nhật updated_at cho bản ghi đã tồn tại khi người dùng nhấn lưu lại:
+                // Bạn có thể tìm bản ghi SaveNews cụ thể và gọi save() trên nó.
+                $savedRecord = SaveNews::where('clientId', $client->id)
+                    ->where('newsId', $newsId)
+                    ->first();
+                if ($savedRecord) {
+                    $savedRecord->touch(); // Cập nhật updated_at
+                }
+
+                Log::info("Client ID {$client->id} saved news ID {$newsId}.");
+                if ($request->expectsJson()) {
+                    return response()->json(['message' => 'Đã lưu bài viết thành công!'], 200);
+                }
+                return redirect()->route('news.show', $newsId)->with('success', 'Đã lưu bài viết thành công!');
+            } catch (\Exception $e) {
+                Log::error("Error saving news for Client ID {$client->id}, News ID {$newsId}: " . $e->getMessage());
+                if ($request->expectsJson()) {
+                    return response()->json(['message' => 'Lỗi khi lưu bài viết: ' . $e->getMessage()], 500);
+                }
+                return back()->with('error', 'Lỗi khi lưu bài viết. Vui lòng thử lại.');
             }
         } else {
-            // Lấy từ session nếu chưa đăng nhập
-            $saveIds = Session::get('save_news', []);
-            $saveNews = News::whereIn('id', $saveIds)->latest()->get();
+            return response()->json(['message' => 'Bạn cần đăng nhập'], 500);
         }
-
-        return view('news.save', compact('saveNews'));
     }
 
-    public function save($id)
-    {
-        /** @var \App\Models\Managers $user */
-        $user = Auth::user();
-
-        if ($user) {
-            $user->saveNews()->syncWithoutDetaching([$id]); // giả sử dùng many-to-many
-            return redirect()->route('news.show', $id)->with('success', 'Đã lưu bài viết!');
-        }
-
-        return redirect()->route('news.show', $id)->with('error', 'Bạn cần đăng nhập để lưu bài viết.');
-    }
     public function search(Request $request)
     {
         $query = News::query()->with('label'); // Eager load 'label' relationship
@@ -99,7 +134,7 @@ class   NewsController extends Controller
             $keyword = $request->input('q');
             $query->where('title', 'LIKE', "%{$keyword}%");
         }
-        log:info($request);
+        Log::info($request);
         // 2. Filter by Label (Category)
         if ($request->filled('category_filter') && $request->input('category_filter') !== 'all') {
             $labelType = $request->input('category_filter');
@@ -132,13 +167,13 @@ class   NewsController extends Controller
         $labels = Label::all();
         log::info($labels);
         $hotNews = News::with('label')
-        ->where('status', 'publish')
-        ->where('isHot', '1')
-        ->orderBy('date', 'desc')
-        ->take(5)
-        ->get();
+            ->where('status', 'publish')
+            ->where('isHot', '1')
+            ->orderBy('date', 'desc')
+            ->take(5)
+            ->get();
         // 7. Return the view
-        return view('news.search', compact('labels', 'results','hotNews'));
+        return view('news.search', compact('labels', 'results', 'hotNews'));
     }
     public function showManageNews(Request $request) // Truyền Request vào phương thức
     {
@@ -174,7 +209,7 @@ class   NewsController extends Controller
             return redirect()->route('managerLogin');
         }
         $labels = Label::orderBy('type')->get();
-        return view('managers.createNews', compact('manager','labels'));
+        return view('managers.createNews', compact('manager', 'labels'));
     }
     public function store(Request $request)
     {
@@ -184,7 +219,7 @@ class   NewsController extends Controller
             'label_id' => 'required|exists:labels,id',
             'content' => 'required|string',
             'action_type' => 'required|in:draft,publish',
-            'thumbnail' => 'nullable|image|mimes:jpeg,png,gif|max:2048', // max 2MB
+            'thumbnail' => 'required|image|mimes:jpeg,png,gif|max:20480', // max 2MB
             'isHot' => 'required|in:0,1|boolean',
         ]);
 
@@ -315,55 +350,75 @@ class   NewsController extends Controller
             return redirect()->back()->with('error', 'Lỗi khi xóa tin tức: ' . $e->getMessage());
         }
     }
-public function showListNews(Request $request)
+    public function showListNews(Request $request, $tab = null)
     {
-        // 1. Lấy tin tức nổi bật (isHot = TRUE) - ví dụ lấy 1 bài tin hot nhất
-        // Sắp xếp theo ngày đăng mới nhất hoặc views cao nhất
-        $hotNews = News::with(['manager', 'label'])
-            ->where('isHot', true)
-            ->where('status', 'publish') // Chỉ lấy tin đã publish
-            ->orderBy('date', 'desc') // Sắp xếp theo ngày mới nhất
-            ->limit(2)
+        $hotNews = News::where('isHot', true)
+            ->latest('date') // Order by latest creation date
             ->get();
 
-        // 2. Lấy các tin tức mới nhất (trừ tin nổi bật nếu chúng trùng lặp)
-        // Bạn có thể tùy chỉnh số lượng tin muốn hiển thị
-        $latestNews = News::with(['manager', 'label'])
-            ->where('status', 'publish')
-            ->orderBy('date', 'desc')
-            ->when($hotNews->count() > 0, function ($query) use ($hotNews) {
-                // Loại bỏ tin tức đã có trong hotNews để tránh trùng lặp
-                $query->whereNotIn('id', $hotNews->pluck('id'));
-            })
-            ->limit(10) // Ví dụ lấy 10 tin mới nhất
+        $featuredHotNews = $hotNews->first(); // The very first hot news for the main feature
+
+        // 2. Fetch other hot news for the "Tin nóng" sidebar
+        // Exclude the featured one by ID if it exists
+        $otherHotNews = collect([]);
+        if ($hotNews->count() > 1) {
+            $otherHotNews = $hotNews->slice(1); // Skip the first one, take up to 5 others
+        }
+
+
+        // 3. Fetch latest news for the "Tin mới nhất" sidebar
+        // We'll take 10 latest news items, and the view will display the first 5.
+        $latestNews = News::latest('date') // Order by latest creation date
+            ->take(10)
             ->get();
 
-        // 3. Lấy tin tức cho phần "Góc nhìn" (có thể dựa vào một labelId cụ thể hoặc managerId)
-        // Giả sử có một label đặc biệt cho "Góc nhìn" hoặc một manager chuyên viết bài góc nhìn
-        // Ví dụ: Giả sử 'Đời sống' (labelId = 1) hoặc 'Kinh doanh' (labelId = 6) có thể dùng cho Góc nhìn
-        // Hoặc bạn có thể thêm một cột 'type' vào bảng news để phân loại rõ ràng hơn
-        $opinionNews = News::with(['manager', 'label'])
-            ->where('status', 'publish')
-            ->whereHas('label', function ($query) {
-                // Giả sử 'Đời sống' hoặc 'Kinh doanh' được dùng cho góc nhìn
-                $query->whereIn('type', ['Đời sống', 'Kinh doanh']);
-            })
-            ->orderBy('date', 'desc')
-            ->limit(5)
+        // 4. Fetch opinion news for the "Góc nhìn" sidebar
+        // You'll need to define how 'opinion' news is identified.
+        // For example, if you have a specific labelId for 'Góc nhìn' (let's assume it's 7 for this example, or a specific field)
+        // Or if 'opinion' is a status or a tag in the content.
+        // For now, let's assume a specific labelId for 'Góc nhìn' (e.g., labelId = 7) or just take some random news.
+        // If 'Góc nhìn' is a specific label, make sure to add it to your `labels` table and data.
+        // For demonstration, let's pick a label, e.g., 'Đời sống' (labelId 1) or just random news for 'Góc nhìn'
+        $opinionNews = News::inRandomOrder() // Get random articles
+            ->take(5) // Take 5 random articles
             ->get();
 
-        // 4. Lấy tin tức cho phần "Kinh doanh"
-        $businessNews = News::with(['manager', 'label'])
-            ->where('status', 'publish')
-            ->whereHas('label', function ($query) {
-                $query->where('type', 'Kinh doanh'); // Lấy tin tức có label 'Kinh doanh'
-            })
-            ->orderBy('date', 'desc')
-            ->limit(5)
-            ->get();
+        // 5. Handle the dynamic category section (main content area)
+        // Get the requested label_id from the URL query parameter. Default to 6 ('Kinh doanh') if not provided.
+        $requestedLabelId = 1;
 
-        // Bạn có thể thêm các truy vấn khác cho các mục như "Thể thao", "Khoa học - Công nghệ" tương tự.
+        if ($tab == 'tin-nong') $requestedLabelId = 1;
+        else if ($tab == 'doi-song') $requestedLabelId = 2;
+        else if ($tab == 'the-thao') $requestedLabelId = 3;
+        else if ($tab == 'khoa-hoc-cong-nghe') $requestedLabelId = 4;
+        else if ($tab == 'suc-khoe') $requestedLabelId = 5;
+        else if ($tab == 'giai-tri') $requestedLabelId = 6;
+        else if ($tab == 'kinh-doanh') $requestedLabelId = 7;
 
-        return view('home', compact('hotNews', 'latestNews', 'opinionNews', 'businessNews'));
+        $label = Label::find($requestedLabelId);
+
+        if ($label) {
+            $dynamicCategoryTitle = $label->type;
+        }
+
+        $isHome = true;
+        if($tab) $isHome = false;
+
+        // Fetch news for the dynamic category.
+        // Using whereJsonContains for the 'labelId' JSON column to match single or array labels.
+        $dynamicCategoryNews = News::whereJsonContains('labelId', $requestedLabelId)
+            ->latest('date')
+            ->get(); // The view will take(10)
+
+        // Pass data to the view
+        return view('home', [
+            'hotNews' => $featuredHotNews, // Pass only the single featured hot news
+            'otherHotNews' => $otherHotNews, // Pass other hot news for the sidebar
+            'latestNews' => $latestNews,
+            'opinionNews' => $opinionNews,
+            'dynamicCategoryTitle' => $dynamicCategoryTitle,
+            'dynamicCategoryNews' => $dynamicCategoryNews,
+            'isHome' => $isHome,
+        ]);
     }
 }

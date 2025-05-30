@@ -94,7 +94,7 @@
                                 {{ Str::limit($comment->client->fullName ?? 'Người dùng', 15) }}
                             </td>
                             <td class="px-1 py-1 whitespace-nowrap text-gray-500 text-center sm:table-cell hidden w-24">
-                                <a href="" class="text-blue-600 hover:text-blue-900" target="_blank">
+                                <a href="{{ route('news.show', ['id' => $comment->news->id]) }} " class="text-blue-600 hover:text-blue-900" target="_blank">
                                     {{ $comment->news->id ?? 'Xóa' }}
                                 </a>
                             </td>
@@ -105,7 +105,7 @@
                                 {{ Str::limit($comment->content, 30) }}
                             </td>
                             <td class="px-1 py-1 whitespace-nowrap text-gray-500 text-center md:table-cell hidden w-16">
-                                {{ $comment->like_count }}
+                                {{ $comment->likesCount() }}
 
                             </td>
                             <td class="px-1 py-1 whitespace-nowrap text-gray-500 text-center lg:table-cell hidden w-28">

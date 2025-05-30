@@ -2,13 +2,14 @@
 $client = Auth::user();
 $notifications = $client->receivedNotifications()
 ->orderByDesc('created_at')
+->take(3)
 ->get()
 ->map(function ($notification) {
 return [
 'id' => $notification->id,
 'replierId' => $notification->replierId,
 'replierName' => $notification->replierName,
-'newsURL' => $notification->newsURL,
+'newsId' => $notification->newsId,
 'content' => $notification->content,
 'date' => $notification->created_at->format('Y-m-d H:i'),
 'isRead' => $notification->isRead,
@@ -75,7 +76,7 @@ return [
                 class="hidden dropdown-menu absolute right-0 mt-3 w-64 bg-white border border-gray-200 rounded-md shadow-lg z-10 overflow-hidden">
                 <div class="px-4 py-2 text-sm font-semibold text-gray-700 border-b border-gray-100">Thông báo mới</div>
                 @forelse($notifications as $notification)
-                <a href="{{ $notification->data['newsUrl'] ?? '#' }}"
+                <a href="/news/{{ $notification['newsId'] }}"
                     class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200 text-sm notification-item"
                     data-replier-name="{{ $notification['replierName'] ?? '' }}"
                     data-content="{{ $notification['content'] ?? '' }}">

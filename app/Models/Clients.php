@@ -34,7 +34,6 @@ class Clients extends Authenticatable
 
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'isMute' => 'boolean',
         'isActive' => 'boolean',
     ];
 
@@ -59,6 +58,19 @@ class Clients extends Authenticatable
     public function nearestNews()
     {
         return $this->belongsToMany(News::class, 'nearest_news', 'clientId', 'newsId')->withTimestamps();
+    }
+
+    public function commentLikes()
+    {
+        return $this->hasMany(CommentLike::class, 'clientId');
+    }
+
+    /**
+     * Kiểm tra xem người dùng đã like một comment cụ thể chưa.
+     */
+    public function hasLikedComment(Comment $comment)
+    {
+        return $this->commentLikes()->where('commentId', $comment->id)->exists();
     }
 
 }

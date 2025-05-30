@@ -38,7 +38,7 @@ class ProfileController extends Controller
                     'id' => $notification->id,
                     'replierId' => $notification->replierId,
                     'replierName' => $notification->replierName, // Sử dụng accessor để lấy tên người gửi
-                    'newsURL' => $notification->newsURL,
+                    'newsId' => $notification->newsId,
                     'content' => $notification->content,
                     'date' => $notification->created_at->format('Y-m-d H:i'),
                     'isRead' => $notification->isRead,

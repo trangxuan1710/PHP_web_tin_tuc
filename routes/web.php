@@ -76,24 +76,21 @@ Auth::routes();
 // Route cho trang chủ khi đã đăng nhập
 Route::get('/', [NewsController::class, 'showListNews'])->name('home');
 
-Route::get('/tin-nong', [NewsController::class, 'showListNews'])->name('news.tin-nong');
-
-// Route cho "Thời sự"
-Route::get('/thoi-su', [NewsController::class, 'showListNews'])->name('news.thoi-su');
-
-// Route cho "Khoa học - Công nghệ"
-Route::get('/khoa-hoc-cong-nghe', [NewsController::class, 'showListNews'])->name('news.khoa-hoc-cong-nghe');
+Route::get('/{tab?}', [NewsController::class, 'showListNews'])
+        ->where('tab', 'tin-nong|doi-song|the-thao|khoa-hoc-cong-nghe|suc-khoe|giai-tri|kinh-doanh')
+        ->name('tab');
 
 // Route tin tức
 Route::get('/news/{id}', [NewsController::class, 'show'])->name('news.show');
-Route::post('/news/{id}/save', [NewsController::class, 'save'])->name('news.save');
-Route::get('/saved-news', [NewsController::class, 'savedNews'])->name('news.saved');
+Route::post('/save-news', [NewsController::class, 'saveNews'])->name('news.save');
 
 // Route bình luận
-Route::get('/news/{newsId}/comments', [CommentController::class, 'index'])->name('comments.index');
-Route::post('/news/{id}/comments', [CommentController::class, 'store'])->name('comments.store');
+
+Route::post('/report/send', [ReportController::class, 'sendReport'])->name('reports.comments.store');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/news/{newsId}/comments', [CommentController::class, 'index'])->name('comments.index');
+    Route::post('/news/{id}/comments', [CommentController::class, 'store'])->name('comments.store');
     Route::post('/comments/{id}/like', [CommentController::class, 'like'])->name('comments.like');
     Route::post('/comments/{id}/dislike', [CommentController::class, 'dislike'])->name('comments.dislike');
     Route::post('/comments/{id}/report', [CommentController::class, 'report'])->name('comments.report');
@@ -118,15 +115,15 @@ Route::delete('comments/{commentId}', [CommentController::class, 'delete'])->nam
 
 Route::get('/manager/manageReports', [ReportController::class, 'index'])->name('managerManageReports');
 Route::post('/manager/processReport/{id}', [ReportController::class, 'processReport'])->name('processReport');
+
+// Đăng nhập, đăng ký
 Route::get('/signup', function () {
     return view('auth.user-signup');
-});
-
+})->name('signup');
 Route::get('/login', function () {
     return view('auth.user-login');
-});
-
-Route::post('/signup', [AuthenticationController::class, 'register'])->name('login');
+})->name('login');
+Route::post('/signup', [AuthenticationController::class, 'register'])->name('signup');
 Route::post('/login', [AuthenticationController::class, 'login'])->name('login');
 
 /*
@@ -136,8 +133,6 @@ Route::put('/profile/{id}/change-password', [ProfileController::class, 'changePa
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Str; // For Str::limit
-
-
 
 Route::get('/search', [NewsController::class, 'search'])->name('news.search');
 Route::middleware(['auth'])->group(function () {

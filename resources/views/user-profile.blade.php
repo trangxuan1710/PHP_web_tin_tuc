@@ -1040,6 +1040,8 @@
                                 isRead: true
                             } : n
                         );
+                        window.location.href = `/news/${id}`;
+
                         readNotifications(id); // Cập nhật trạng thái đã đọc trên server
                         renderMainContent();
                         console.log(`Thông báo ID: ${id} đã được đọc.`);
