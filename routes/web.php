@@ -86,8 +86,7 @@ Route::get('/khoa-hoc-cong-nghe', [NewsController::class, 'showListNews'])->name
 
 // Route tin tức
 Route::get('/news/{id}', [NewsController::class, 'show'])->name('news.show');
-Route::post('/news/{id}/save', [NewsController::class, 'save'])->name('news.save');
-Route::get('/saved-news', [NewsController::class, 'savedNews'])->name('news.saved');
+Route::post('/save-news', [NewsController::class, 'saveNews'])->name('news.save');
 
 // Route bình luận
 Route::get('/news/{newsId}/comments', [CommentController::class, 'index'])->name('comments.index');

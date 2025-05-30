@@ -82,15 +82,15 @@
                     </span>
                 </div>
 
-                <form id="save-news-form" method="POST" action="{{ route('news.save', $news->id) }}" display="none">
-                    @csrf
-                </form>
-
-                <button id="save-news-btn" class="mb-8 flex items-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow transition duration-150 ease-in-out">
+                <button
+                    id="save-news-btn"
+                    class="mb-8 flex items-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow transition duration-150 ease-in-out"
+                    data-news-id="{{ $news->id }}" {{-- Lấy ID của bài viết --}}
+                    data-is-save="{{ $isSave ? 'true' : 'false' }}" {{-- Truyền trạng thái đã lưu --}}>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.5 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z" />
                     </svg>
-                    Lưu bài viết
+                    <span>Lưu bài viết</span>
                 </button>
 
                 <div class="prose prose-lg max-w-none text-gray-700 leading-relaxed">
@@ -262,12 +262,62 @@
                 .catch(() => alert(`Không thể ${type} bình luận.`));
         }
 
-        const saveNewsBtn = document.getElementById('save-news-btn');
+        document.addEventListener('DOMContentLoaded', function() {
+            const saveNewsBtn = document.getElementById('save-news-btn');
+            const newsId = saveNewsBtn.dataset.newsId;
+            let isSave = saveNewsBtn.dataset.isSave === 'true'; // Chuyển đổi chuỗi 'true'/'false' thành boolean
+            const buttonTextSpan = saveNewsBtn.querySelector('span'); // Thêm một span để dễ thay đổi text
 
-        saveNewsBtn.addEventListener('click', () => {
-            document.getElementById('save-news-form').submit();
-        })
-        
+            // Hàm cập nhật trạng thái UI của nút
+            function updateSaveButtonUI() {
+                if (isSave) {
+                    saveNewsBtn.classList.remove('bg-blue-500', 'hover:bg-blue-600');
+                    saveNewsBtn.classList.add('bg-gray-400', 'cursor-not-allowed'); // Màu xám và không cho phép click
+                    saveNewsBtn.disabled = true; // Vô hiệu hóa nút
+                    buttonTextSpan.textContent = 'Bài viết đã lưu';
+                } else {
+                    saveNewsBtn.classList.add('bg-blue-500', 'hover:bg-blue-600');
+                    saveNewsBtn.classList.remove('bg-gray-400', 'cursor-not-allowed');
+                    saveNewsBtn.disabled = false;
+                    buttonTextSpan.textContent = 'Lưu bài viết';
+                }
+            }
+
+            // Gọi hàm lần đầu khi trang tải xong
+            updateSaveButtonUI();
+
+            // Xử lý sự kiện click để lưu bài viết
+            // Giả sử bạn có hàm `save()` để gửi request lưu bài viết
+            saveNewsBtn.addEventListener('click', async () => {
+                if (!isSave) { // Chỉ thực hiện nếu chưa lưu
+                    try {
+                        const response = await fetch('/save-news', { // Thay đổi URL này thành route của bạn
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}', // Đảm bảo có CSRF token
+                            },
+                            body: JSON.stringify({
+                                newsId: newsId
+                            }) 
+                        });
+                        const data = await response.json();
+
+                        if (response.ok) {
+                            isSave = true; // Cập nhật trạng thái
+                            updateSaveButtonUI(); // Cập nhật UI
+                            alert(data.message || 'Bài viết đã được lưu thành công!');
+                        } else {
+                            alert(data.message || 'Có lỗi xảy ra khi lưu bài viết.');
+                        }
+                    } catch (error) {
+                        console.error('Lỗi khi gửi yêu cầu lưu:', error);
+                        alert('Lỗi kết nối hoặc server. Vui lòng thử lại.');
+                    }
+                }
+            });
+        });
     </script>
 </body>
 
