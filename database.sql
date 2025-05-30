@@ -1,4 +1,4 @@
-    drop database if exists hrm;
+drop database if exists hrm;
 
     create database hrm;
 
@@ -6,8 +6,8 @@
 
 -- Tạo bảng clients
 CREATE TABLE IF NOT EXISTS clients (
-    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    fullName VARCHAR(255) NOT NULL,
+                                       id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                                       fullName VARCHAR(255) NOT NULL,
     bio TEXT(255),
     password VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS clients (
     isActive BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
+    );
 
 INSERT INTO clients (fullName, password, email, isActive) VALUES ('Nguyen Van A', '$2b$12$6xmtzoaFRg8vbTxMEpZnVOfgiLyEDUSswuehPZxO0mH3nwFriVHRm', 'a.nguyen@example.com', TRUE);
 INSERT INTO clients (fullName, password, email, isActive) VALUES ('Tran Thi B', '$2b$12$.KPeHWFLAEdJdFBZBVP4pexgluTP9VcvW2CkjtiMC3eEQ1wui77hS', 'b.tran@example.com', TRUE);
@@ -24,31 +24,31 @@ INSERT INTO clients (fullName, password, email, isActive) VALUES ('Le Minh C', '
 INSERT INTO clients (fullName, password, email, isActive) VALUES ('Pham Hoang D', '$2b$12$MAkBcLQSpQEX1rAVwchIaeNpzejUbdl6AZvAIOSbWF8bqoEcAhok6', 'd.pham@example.com', TRUE);
 INSERT INTO clients (fullName, password, email, isActive) VALUES ('Trang Xuan', '123456', 'trangxuan@gmail.com', TRUE);
 
-    -- Tạo bảng managers
-    CREATE TABLE IF NOT EXISTS managers (
-        id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-        fullName VARCHAR(255) NOT NULL,
-        password VARCHAR(255) NOT NULL,
-        email VARCHAR(255) UNIQUE NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+-- Tạo bảng managers
+CREATE TABLE IF NOT EXISTS managers (
+                                        id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                                        fullName VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     );
 
-    INSERT INTO managers (fullName, password, email) VALUES ('Trang Xuân', '$2b$12$4.FthDpDH0mmetIANiges.7vk59.gW2DNMzjJmrEkToPMQNI7c8Tq', 'trang@gmail.com');
-    INSERT INTO managers (fullName, password, email) VALUES ('Phạm Vân Anh', '$2b$12$k2qIfnDDFEunC6kWQOmq1OYsKQbF6cIrCmsy/NspM3rWHLpneOt1G', 'vananh@gmail.com');
-    INSERT INTO managers (fullName, password, email) VALUES ('Thảo Nhi', '$2b$12$70fqwwm6c.2i2qDeLI.XZO6CiKRyKZ5yZb9rEurGbf3jI3qWpQG5q', 'thaonhi@gmail.com');
-    INSERT INTO managers (fullName, password,email) VALUES ('Chau', '$2y$10$9qIC/5I3PnlaCq9EkRdOIeCjiFV37owCPUisIT7VLLdkIdRCexR0u', 'chau@gmail.com');
-    -- Tạo bảng label
-    CREATE TABLE IF NOT EXISTS labels (
-        id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-        type VARCHAR(255) NOT NULL
+INSERT INTO managers (fullName, password, email) VALUES ('Trang Xuân', '$2b$12$4.FthDpDH0mmetIANiges.7vk59.gW2DNMzjJmrEkToPMQNI7c8Tq', 'trang@gmail.com');
+INSERT INTO managers (fullName, password, email) VALUES ('Phạm Vân Anh', '$2b$12$k2qIfnDDFEunC6kWQOmq1OYsKQbF6cIrCmsy/NspM3rWHLpneOt1G', 'vananh@gmail.com');
+INSERT INTO managers (fullName, password, email) VALUES ('Thảo Nhi', '$2b$12$70fqwwm6c.2i2qDeLI.XZO6CiKRyKZ5yZb9rEurGbf3jI3qWpQG5q', 'thaonhi@gmail.com');
+INSERT INTO managers (fullName, password,email) VALUES ('Chau', '$2y$10$9qIC/5I3PnlaCq9EkRdOIeCjiFV37owCPUisIT7VLLdkIdRCexR0u', 'chau@gmail.com');
+-- Tạo bảng label
+CREATE TABLE IF NOT EXISTS labels (
+                                      id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                                      type VARCHAR(255) NOT NULL
     );
-    INSERT INTO labels (type) VALUES ('Đời sống');
-    INSERT INTO labels (type) VALUES ('Thể thao');
-    INSERT INTO labels (type) VALUES ('Khoa học - Công nghệ');
-    INSERT INTO labels (type) VALUES ('Sức khoẻ');
-    INSERT INTO labels (type) VALUES ('Giải trí');
-    INSERT INTO labels (type) VALUES ('Kinh doanh');
+INSERT INTO labels (type) VALUES ('Đời sống');
+INSERT INTO labels (type) VALUES ('Thể thao');
+INSERT INTO labels (type) VALUES ('Khoa học - Công nghệ');
+INSERT INTO labels (type) VALUES ('Sức khoẻ');
+INSERT INTO labels (type) VALUES ('Giải trí');
+INSERT INTO labels (type) VALUES ('Kinh doanh');
 
 
     -- Tạo bảng News
@@ -290,25 +290,25 @@ INSERT INTO News (title, managerId, content, thumbNailUrl, isHot, status, labelI
         FOREIGN KEY (commentId) REFERENCES comments(id) ON DELETE CASCADE,
         FOREIGN KEY (newsId) REFERENCES news(id) ON DELETE CASCADE
     );
-    -- Giả sử bảng 'clients' có các id 1, 2, 3, 4
-    -- Giả sử bảng 'news' có các id 1, 2, 3, ..., 10 (dựa trên dữ liệu mẫu trước đó)
+-- Giả sử bảng 'clients' có các id 1, 2, 3, 4
+-- Giả sử bảng 'news' có các id 1, 2, 3, ..., 10 (dựa trên dữ liệu mẫu trước đó)
 
-    -- Dữ liệu mẫu cho bảng 'comments'
-    INSERT INTO comments (clientId, content, date, like_count, commentId, newsId) VALUES
-    -- Bình luận cho newsId = 1 (Tech Conference 2025 Highlights)
-    (1, 'Great summary of the tech conference! I was particularly interested in the AI advancements.', '2025-05-20 12:00:00', 15, NULL, 1),
-    (2, 'Does anyone have more details on the quantum computing talks?', '2025-05-20 12:30:00', 8, NULL, 1),
-    (3, 'Reply to comment 2: I found a link to the slides here: [link_to_slides.com]', '2025-05-20 13:00:00', 5, 2, 1), -- Giả sử bình luận có id 2 tồn tại cho newsId 1
-    (4, 'This was a fantastic event. Looking forward to next year.', '2025-05-21 09:00:00', 12, NULL, 1),
+-- Dữ liệu mẫu cho bảng 'comments'
+INSERT INTO comments (clientId, content, date, like_count, commentId, newsId) VALUES
+                                                                                  -- Bình luận cho newsId = 1 (Tech Conference 2025 Highlights)
+                                                                                  (1, 'Great summary of the tech conference! I was particularly interested in the AI advancements.', '2025-05-20 12:00:00', 15, NULL, 1),
+                                                                                  (2, 'Does anyone have more details on the quantum computing talks?', '2025-05-20 12:30:00', 8, NULL, 1),
+                                                                                  (3, 'Reply to comment 2: I found a link to the slides here: [link_to_slides.com]', '2025-05-20 13:00:00', 5, 2, 1), -- Giả sử bình luận có id 2 tồn tại cho newsId 1
+                                                                                  (4, 'This was a fantastic event. Looking forward to next year.', '2025-05-21 09:00:00', 12, NULL, 1),
 
-    -- Bình luận cho newsId = 2 (Global Economic Outlook Q3)
-    (4, 'Interesting analysis. The regional challenges part is concerning.', '2025-05-21 14:00:00', 7, NULL, 2), -- clientId cập nhật từ 5 thành 4
-    (1, 'I agree, the outlook seems cautiously optimistic.', '2025-05-21 14:30:00', 9, NULL, 2),
+                                                                                  -- Bình luận cho newsId = 2 (Global Economic Outlook Q3)
+                                                                                  (4, 'Interesting analysis. The regional challenges part is concerning.', '2025-05-21 14:00:00', 7, NULL, 2), -- clientId cập nhật từ 5 thành 4
+                                                                                  (1, 'I agree, the outlook seems cautiously optimistic.', '2025-05-21 14:30:00', 9, NULL, 2),
 
-    -- Bình luận cho newsId = 3 (New Environmental Policies Announced)
-    (2, 'These new policies are a step in the right direction!', '2025-05-22 16:00:00', 22, NULL, 3),
-    (3, 'I hope they are implemented effectively. Enforcement will be key.', '2025-05-22 16:45:00', 18, NULL, 3),
-    (1, 'Reply to comment 8: Absolutely, without proper enforcement, these policies won\'t mean much.', '2025-05-22 17:00:00', 6, 8, 3), -- Giả sử bình luận có id 8 tồn tại cho newsId 3
+                                                                                  -- Bình luận cho newsId = 3 (New Environmental Policies Announced)
+                                                                                  (2, 'These new policies are a step in the right direction!', '2025-05-22 16:00:00', 22, NULL, 3),
+                                                                                  (3, 'I hope they are implemented effectively. Enforcement will be key.', '2025-05-22 16:45:00', 18, NULL, 3),
+                                                                                  (1, 'Reply to comment 8: Absolutely, without proper enforcement, these policies won\'t mean much.', '2025-05-22 17:00:00', 6, 8, 3), -- Giả sử bình luận có id 8 tồn tại cho newsId 3
 
     -- Bình luận cho newsId = 4 (Healthcare Advances in Gene Therapy)
     (4, 'Incredible news for genetic disorders! This is life-changing.', '2025-05-23 10:00:00', 30, NULL, 4),
@@ -317,12 +317,12 @@ INSERT INTO News (title, managerId, content, thumbNailUrl, isHot, status, labelI
     -- Bình luận cho newsId = 5 (Upcoming Arts Festival Preview)
     (1, 'Can\'t wait for the arts festival! The lineup looks amazing.', '2025-05-24 18:00:00', 19, NULL, 5),
 
-    -- Bình luận cho newsId = 6 (Sports Championship Finals Recap)
-    (2, 'What a game! The highlights were epic.', '2025-05-25 20:00:00', 25, NULL, 6),
-    (3, 'Reply to comment 13: That last goal was unbelievable!', '2025-05-25 20:15:00', 10, 13, 6), -- Giả sử bình luận có id 13 tồn tại cho newsId 6
+                                                                                  -- Bình luận cho newsId = 6 (Sports Championship Finals Recap)
+                                                                                  (2, 'What a game! The highlights were epic.', '2025-05-25 20:00:00', 25, NULL, 6),
+                                                                                  (3, 'Reply to comment 13: That last goal was unbelievable!', '2025-05-25 20:15:00', 10, 13, 6), -- Giả sử bình luận có id 13 tồn tại cho newsId 6
 
-    -- Bình luận cho newsId = 7 (DIY Home Improvement Trends)
-    (4, 'Thanks for the DIY tips! I\'m planning a weekend project now.', '2025-05-26 15:00:00', 14, NULL, 7),
+                                                                                  -- Bình luận cho newsId = 7 (DIY Home Improvement Trends)
+                                                                                  (4, 'Thanks for the DIY tips! I\'m planning a weekend project now.', '2025-05-26 15:00:00', 14, NULL, 7),
 
     -- Bình luận cho newsId = 8 (Travel Guide: Summer Destinations)
     (2, 'The summer destinations guide is just what I needed. So many great ideas!', '2025-05-27 12:00:00', 17, NULL, 8), -- clientId cập nhật từ 5 thành 2
@@ -332,69 +332,69 @@ INSERT INTO News (title, managerId, content, thumbNailUrl, isHot, status, labelI
 
     -- Bình luận cho newsId = 10 (Culinary Delights: New Recipes to Try)
     (2, 'The new recipes look delicious! I\'m trying the pasta one tonight.', NOW(), 23, NULL, 10),
-    (3, 'Any recommendations for a good dessert recipe from the list?', NOW() - INTERVAL 1 HOUR, 9, NULL, 10),
-    (4, 'Reply to comment 19: The chocolate lava cake is a must-try!', NOW() - INTERVAL 30 MINUTE, 7, 19, 10); -- Giả sử bình luận có id 19 tồn tại cho newsId 10
+                                                                                  (3, 'Any recommendations for a good dessert recipe from the list?', NOW() - INTERVAL 1 HOUR, 9, NULL, 10),
+                                                                                  (4, 'Reply to comment 19: The chocolate lava cake is a must-try!', NOW() - INTERVAL 30 MINUTE, 7, 19, 10); -- Giả sử bình luận có id 19 tồn tại cho newsId 10
 
-    -- Tạo bảng reports
-    CREATE TABLE IF NOT EXISTS reports (
-        id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-        reason VARCHAR(255) NOT NULL CHECK (reason IN('spam', 'harassment', 'inappropriate_content')),
-        content TEXT,
-        clientId BIGINT NOT NULL,
-        commentId BIGINT NOT NULL,
-        created_at TIMESTAMP default current_timestamp,
-        FOREIGN KEY (clientId) REFERENCES clients(id) ON DELETE CASCADE,
-        FOREIGN KEY (commentId) REFERENCES comments(id) ON DELETE CASCADE
+-- Tạo bảng reports
+CREATE TABLE IF NOT EXISTS reports (
+                                       id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                                       reason VARCHAR(255) NOT NULL CHECK (reason IN('spam', 'harassment', 'inappropriate_content')),
+    content TEXT,
+    clientId BIGINT NOT NULL,
+    commentId BIGINT NOT NULL,
+    created_at TIMESTAMP default current_timestamp,
+    FOREIGN KEY (clientId) REFERENCES clients(id) ON DELETE CASCADE,
+    FOREIGN KEY (commentId) REFERENCES comments(id) ON DELETE CASCADE
     );
-    -- Assuming 'clients' table has ids 1, 2, 3, 4
-    -- Assuming 'comments' table has ids 1, 2, 3, ..., 20 (based on previous sample data for comments)
+-- Assuming 'clients' table has ids 1, 2, 3, 4
+-- Assuming 'comments' table has ids 1, 2, 3, ..., 20 (based on previous sample data for comments)
 
-    -- Sample Data for 'reports' table
+-- Sample Data for 'reports' table
 
 
-    INSERT INTO reports (reason, content, clientId, commentId) VALUES
-    -- Report for commentId = 3 (Reply to comment 2 on newsId = 1)
-    ('spam', 'The link provided looks suspicious and might be spam.', 1, 3),
+INSERT INTO reports (reason, content, clientId, commentId) VALUES
+                                                               -- Report for commentId = 3 (Reply to comment 2 on newsId = 1)
+                                                               ('spam', 'The link provided looks suspicious and might be spam.', 1, 3),
 
-    -- Report for commentId = 9 (Reply to comment 8 on newsId = 3)
-    ('harassment', 'This user is being aggressive in their replies.', 2, 9),
+                                                               -- Report for commentId = 9 (Reply to comment 8 on newsId = 3)
+                                                               ('harassment', 'This user is being aggressive in their replies.', 2, 9),
 
-    -- Report for commentId = 10 (Comment on newsId = 4)
-    ('inappropriate_content', 'The language used in this comment is not suitable for the platform.', 3, 10),
+                                                               -- Report for commentId = 10 (Comment on newsId = 4)
+                                                               ('inappropriate_content', 'The language used in this comment is not suitable for the platform.', 3, 10),
 
-    -- Report for commentId = 1 (Comment on newsId = 1)
-    ('spam', 'This comment seems like a generic advertisement.', 4, 1),
+                                                               -- Report for commentId = 1 (Comment on newsId = 1)
+                                                               ('spam', 'This comment seems like a generic advertisement.', 4, 1),
 
-    -- Report for commentId = 14 (Reply to comment 13 on newsId = 6)
-    ('harassment', 'User is repeatedly targeting another user in the sports discussion.', 1, 14),
+                                                               -- Report for commentId = 14 (Reply to comment 13 on newsId = 6)
+                                                               ('harassment', 'User is repeatedly targeting another user in the sports discussion.', 1, 14),
 
-    -- Report for commentId = 5 (Comment on newsId = 2)
-    ('inappropriate_content', NULL, 2, 5), -- No specific content, just the reason
+                                                               -- Report for commentId = 5 (Comment on newsId = 2)
+                                                               ('inappropriate_content', NULL, 2, 5), -- No specific content, just the reason
 
-    -- Report for commentId = 18 (Comment on newsId = 10)
-    ('spam', 'This looks like a bot comment trying to promote something unrelated.', 3, 18),
+                                                               -- Report for commentId = 18 (Comment on newsId = 10)
+                                                               ('spam', 'This looks like a bot comment trying to promote something unrelated.', 3, 18),
 
-    -- Report for commentId = 7 (Comment on newsId = 3)
-    ('inappropriate_content', 'The comment contains offensive terms.', 4, 7),
+                                                               -- Report for commentId = 7 (Comment on newsId = 3)
+                                                               ('inappropriate_content', 'The comment contains offensive terms.', 4, 7),
 
-    -- Report for commentId = 12 (Comment on newsId = 5)
-    ('harassment', 'The user is making personal attacks.', 1, 12),
+                                                               -- Report for commentId = 12 (Comment on newsId = 5)
+                                                               ('harassment', 'The user is making personal attacks.', 1, 12),
 
-    -- Report for commentId = 20 (Reply to comment 19 on newsId = 10)
-    ('spam', NULL, 2, 20);
+                                                               -- Report for commentId = 20 (Reply to comment 19 on newsId = 10)
+                                                               ('spam', NULL, 2, 20);
 
 
 
 -- Tạo bảng save_news
 CREATE TABLE IF NOT EXISTS save_news (
-	id INT primary key auto_increment,
-    clientId BIGINT NOT NULL,
-    newsId BIGINT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (clientId) REFERENCES clients(id) ON DELETE CASCADE,
+                                         id INT primary key auto_increment,
+                                         clientId BIGINT NOT NULL,
+                                         newsId BIGINT NOT NULL,
+                                         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                                         FOREIGN KEY (clientId) REFERENCES clients(id) ON DELETE CASCADE,
     FOREIGN KEY (newsId) REFERENCES news(id) on delete cascade
-);
+    );
 
 INSERT INTO save_news (clientId, newsId) VALUES ('1', '1');
 INSERT INTO save_news (clientId, newsId) VALUES ('1', '2');
@@ -402,27 +402,27 @@ INSERT INTO save_news (clientId, newsId) VALUES ('1', '3');
 
 
 -- Tạo bảng nearest_news
-CREATE TABLE IF NOT EXISTS nearest_news (	
-	id INT primary key auto_increment,
-    clientId BIGINT NOT NULL,
-    newsId BIGINT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (clientId) REFERENCES clients(id) ON DELETE CASCADE,
+CREATE TABLE IF NOT EXISTS nearest_news (
+                                            id INT primary key auto_increment,
+                                            clientId BIGINT NOT NULL,
+                                            newsId BIGINT NOT NULL,
+                                            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                                            FOREIGN KEY (clientId) REFERENCES clients(id) ON DELETE CASCADE,
     FOREIGN KEY (newsId) REFERENCES news(id) on delete cascade
-);
+    );
 
 -- Tạo bảng notifications
 CREATE TABLE notifications (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    clientId BIGINT NOT NULL,
-    replierId BIGINT NOT NULL,
-    newsURL TEXT NOT NULL,
-    content TEXT NOT NULL,
-    isRead BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (clientId) REFERENCES clients(id) on DELETE CASCADE,
-    FOREIGN KEY (replierId) REFERENCES clients(id)
+                               id INT PRIMARY KEY AUTO_INCREMENT,
+                               clientId BIGINT NOT NULL,
+                               replierId BIGINT NOT NULL,
+                               newsURL TEXT NOT NULL,
+                               content TEXT NOT NULL,
+                               isRead BOOLEAN DEFAULT FALSE,
+                               created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                               FOREIGN KEY (clientId) REFERENCES clients(id) on DELETE CASCADE,
+                               FOREIGN KEY (replierId) REFERENCES clients(id)
 );
 
 INSERT INTO notifications (id, clientId, replierId, newsURL, content) VALUES ('1', '1', '2', 'example.com', 'like');
