@@ -13,14 +13,14 @@ class Notifications extends Model
 
     protected $primaryKey = 'id';
 
-    public $keyType = 'int';    
+    public $keyType = 'int';
 
     public $incrementing = true;
 
     protected $fillable = [
         'clientId',
         'replierId',
-        'newsURL',
+        'newsId',
         'content',
         'isRead',
     ];

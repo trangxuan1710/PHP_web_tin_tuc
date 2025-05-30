@@ -21,6 +21,7 @@ class Comment extends Model
         'date',
         'like_count',
         'commentId',
+        'newsId',
     ];
 
     protected $casts = [
@@ -33,7 +34,7 @@ class Comment extends Model
     }
     public function news()
     {
-        return $this->belongsTo(News::class,  'newsId');
+        return $this->belongsTo(News::class, 'newsId');
     }
 //    public function parent()
 //    {

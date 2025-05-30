@@ -336,16 +336,16 @@ INSERT INTO News (title, managerId, content, thumbNailUrl, isHot, status, labelI
     (3, 'Any recommendations for a good dessert recipe from the list?', NOW() - INTERVAL 1 HOUR, 9, NULL, 10),
     (4, 'Reply to comment 19: The chocolate lava cake is a must-try!', NOW() - INTERVAL 30 MINUTE, 7, 19, 10); -- Giả sử bình luận có id 19 tồn tại cho newsId 10
 
-    -- Tạo bảng reports
-    CREATE TABLE IF NOT EXISTS reports (
-        id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-        reason VARCHAR(255) NOT NULL CHECK (reason IN('spam', 'harassment', 'inappropriate_content')),
-        content TEXT,
-        clientId BIGINT NOT NULL,
-        commentId BIGINT NOT NULL,
-        created_at TIMESTAMP default current_timestamp,
-        FOREIGN KEY (clientId) REFERENCES clients(id) ON DELETE CASCADE,
-        FOREIGN KEY (commentId) REFERENCES comments(id) ON DELETE CASCADE
+-- Tạo bảng reports
+CREATE TABLE IF NOT EXISTS reports (
+                                       id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                                       reason VARCHAR(255) NOT NULL CHECK (reason IN('Tin rác', 'Quấy rối', 'Nội dung không phù hợp','Khác')),
+    content TEXT,
+    clientId BIGINT NOT NULL,
+    commentId BIGINT NOT NULL,
+    created_at TIMESTAMP default current_timestamp,
+    FOREIGN KEY (clientId) REFERENCES clients(id) ON DELETE CASCADE,
+    FOREIGN KEY (commentId) REFERENCES comments(id) ON DELETE CASCADE
     );
     -- Assuming 'clients' table has ids 1, 2, 3, 4
     -- Assuming 'comments' table has ids 1, 2, 3, ..., 20 (based on previous sample data for comments)
@@ -353,36 +353,18 @@ INSERT INTO News (title, managerId, content, thumbNailUrl, isHot, status, labelI
     -- Sample Data for 'reports' table
 
 
-    INSERT INTO reports (reason, content, clientId, commentId) VALUES
-    -- Report for commentId = 3 (Reply to comment 2 on newsId = 1)
-    ('spam', 'The link provided looks suspicious and might be spam.', 1, 3),
+INSERT INTO reports (reason, content, clientId, commentId, created_at) VALUES
+                                                                           ('Tin rác', 'The link provided looks suspicious and might be spam.', 1, 3, NOW()),
+                                                                           ('Quấy rối', 'This user is being aggressive in their replies.', 2, 9, NOW()),
+                                                                           ('Nội dung không phù hợp', 'The language used in this comment is not suitable for the platform.', 3, 10, NOW()),
+                                                                           ('Tin rác', 'This comment seems like a generic advertisement.', 4, 1, NOW()),
+                                                                           ('Quấy rối', 'User is repeatedly targeting another user in the sports discussion.', 1, 14, NOW()),
+                                                                           ('Nội dung không phù hợp', NULL, 2, 5, NOW()),
+                                                                           ('Tin rác', 'This looks like a bot comment trying to promote something unrelated.', 3, 18, NOW()),
+                                                                           ('Nội dung không phù hợp', 'The comment contains offensive terms.', 4, 7, NOW()),
+                                                                           ('Quấy rối', 'The user is making personal attacks.', 1, 12, NOW()),
+                                                                           ('Khác', NULL, 2, 20, NOW());
 
-    -- Report for commentId = 9 (Reply to comment 8 on newsId = 3)
-    ('harassment', 'This user is being aggressive in their replies.', 2, 9),
-
-    -- Report for commentId = 10 (Comment on newsId = 4)
-    ('inappropriate_content', 'The language used in this comment is not suitable for the platform.', 3, 10),
-
-    -- Report for commentId = 1 (Comment on newsId = 1)
-    ('spam', 'This comment seems like a generic advertisement.', 4, 1),
-
-    -- Report for commentId = 14 (Reply to comment 13 on newsId = 6)
-    ('harassment', 'User is repeatedly targeting another user in the sports discussion.', 1, 14),
-
-    -- Report for commentId = 5 (Comment on newsId = 2)
-    ('inappropriate_content', NULL, 2, 5), -- No specific content, just the reason
-
-    -- Report for commentId = 18 (Comment on newsId = 10)
-    ('spam', 'This looks like a bot comment trying to promote something unrelated.', 3, 18),
-
-    -- Report for commentId = 7 (Comment on newsId = 3)
-    ('inappropriate_content', 'The comment contains offensive terms.', 4, 7),
-
-    -- Report for commentId = 12 (Comment on newsId = 5)
-    ('harassment', 'The user is making personal attacks.', 1, 12),
-
-    -- Report for commentId = 20 (Reply to comment 19 on newsId = 10)
-    ('spam', NULL, 2, 20);
 
 
 
@@ -415,13 +397,17 @@ CREATE TABLE IF NOT EXISTS nearest_news (
 
 -- Tạo bảng notifications
 CREATE TABLE notifications (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    clientId BIGINT NOT NULL,
-    replierId BIGINT NOT NULL,
-    newsId TEXT NOT NULL,
-    content TEXT NOT NULL,
-    isRead BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (clientId) REFERENCES clients(id) on DELETE CASCADE,
-    FOREIGN KEY (replierId) REFERENCES clients(id)
+                               id INT PRIMARY KEY AUTO_INCREMENT,
+                               clientId BIGINT NOT NULL,
+                               replierId BIGINT NOT NULL,
+                               newsId BIGINT NOT NULL,
+                               content TEXT NOT NULL,
+                               isRead BOOLEAN DEFAULT FALSE,
+                               created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                               FOREIGN KEY (clientId) REFERENCES clients(id) on DELETE CASCADE,
+                               FOREIGN KEY (newsId) REFERENCES news(id) on DELETE CASCADE,
+                               FOREIGN KEY (replierId) REFERENCES clients(id)
 );
+
+INSERT INTO notifications (id, clientId, replierId, newsId, content) VALUES ('1', '1', '2', 1, 'like');
+INSERT INTO notifications (id, clientId, replierId, newsId, content) VALUES ('2', '1', '3', 2, 'comment');

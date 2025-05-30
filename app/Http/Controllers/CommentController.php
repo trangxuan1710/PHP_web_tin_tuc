@@ -6,9 +6,11 @@ use App\Models\Comment;
 use App\Models\Clients; // Import Clients model if not already (for clarity, though not directly used here)
 use App\Models\Managers;
 use App\Models\News;    // Import News model if not already (for clarity, though not directly used here)
+use App\Models\Notifications;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 
 class CommentController extends Controller
@@ -96,47 +98,74 @@ class CommentController extends Controller
     }
     public function store(Request $request, $id)
     {
+        log::info($id);
         $request->validate([
             'content' => 'required|string',
             'commentId' => 'nullable|exists:comments,id',
-            'newsId' => 'required'
         ]);
-
-        // Xác định người dùng (nếu chưa đăng nhập thì lấy ID 1 là ẩn danh)
-        $clientId = auth()->check() ? auth()->id() : 1;
-
-        $content = $request->content;
-        $news = $request->newsId;
+        if(!Auth::check()){
+            return response()->json([
+                'success' => false,
+                'message' => 'Bạn vui lòng đăng nhập để bình luận.',
+            ]);
+        }
+        $client = Auth::user();
+        log::info($client);
+        $content = $request->input('content');
         $commentId = null;
 
         if ($request->filled('commentId')) {
             $parent = Comment::find($request->commentId);
 
+            $notifications   = Notifications::create([
+                    'clientId' =>  $parent->client->id,
+                    'content' =>  'comment',
+                    'replierId' =>  $client->getAuthIdentifier(),
+                    'newsId' =>  $id,
+            ]);
             if ($parent) {
-                // Nếu parent là phản hồi (cấp con), thì commentId phải là cha gốc (1 cấp thôi)
+                // If parent is a reply (child level), then commentId must be the original parent (only 1 level)
                 $commentId = $parent->commentId ?? $parent->id;
-
-                // Gắn @username nếu có
+                // Attach @username if available
                 if ($parent->client) {
-                    $tag = '@' . $parent->client->name;
+                    $parentCommentClientName = $parent->client->name;
+                    $tag = '@' . $parentCommentClientName;
                     if (!str_starts_with($content, $tag)) {
                         $content = "$tag $content";
                     }
                 }
             }
         }
-
-        $comment = Comment::create([
-            'clientId' => $clientId,
-            'content' => $content,
-            'date' => now(),
-            'like_count' => 0,
-            'commentId' => $commentId,
-            'newsId' => $news,
-        ]);
-
-        $comment->news()->attach($id);
-
-        return redirect()->route('news.show', $id)->with('scroll_to_comment', true);
+        try {
+            $comment = Comment::create([
+                'clientId' => $client->getAuthIdentifier(),
+                'content' => $content,
+                'date' => now(),
+                'like_count' => 0,
+                'commentId' => $commentId,
+                'newsId' => $id,
+            ]);
+            $comment->load('client');
+            return response()->json([
+                'success' => true,
+                'message' => 'Comment created successfully.',
+                'comment' => [
+                    'id' => $comment->id,
+                    'client_id' => $comment->clientId,
+                    'client_name' => $comment->client->fullName ?? 'Ẩn danh', // Cung cấp tên client
+                    'content' => $comment->content,
+                    'date' => $comment->date->toDateTimeString(),
+                    'like_count' => $comment->like_count,
+                    'comment_id' => $comment->commentId,
+                    'news_id' => $comment->newsId,
+                ]
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to create comment.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }

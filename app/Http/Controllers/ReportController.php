@@ -6,6 +6,7 @@ use App\Models\Managers;
 use App\Models\Reports;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 class ReportController extends Controller
 {
@@ -25,7 +26,48 @@ class ReportController extends Controller
         return view('managers.manageReports', compact('manager','reports'));
     }
 
+    public function sendReport(Request $request)
+    {
+        // 1. Validate the incoming request data
+        $request->validate([
+            'commentId' => 'required|integer|exists:comments,id', // Validate that commentId exists
+            'reason'    => 'required|string|in:Tin rác,Quấy rối,Nội dung không phù hợp,Khác', // Your Vietnamese reasons
+            'content'   => 'nullable|string|max:500',
+        ]);
 
+        if(!Auth::check()){
+            return response()->json([
+                'success' => false,
+                'message' => 'Bạn vui lòng đăng nhập để bình luận.',
+            ]);
+        }
+        // 2. Get the reporter's ID from authentication, or use anonymous ID
+        $client = Auth::user();
+
+        try {
+            // 3. Create the report record
+            Reports::create([
+                'reason'    => $request->input('reason'),
+                'content'   => $request->input('content'),
+                'clientId'  => $client->getAuthIdentifier(),
+                'commentId' => $request->commentId, // Use commentId directly from the request
+                'date'      => now(),               // Manually set the 'date' field
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Báo cáo bình luận đã được gửi thành công. Cảm ơn phản hồi của bạn!',
+            ], 200);
+
+        } catch (\Exception $e) {
+            Log::error('Lỗi khi gửi báo cáo bình luận: ' . $e->getMessage(), ['exception' => $e, 'request' => $request->all()]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra khi gửi báo cáo. Vui lòng thử lại.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
     public function processReport(Request $request, $id)
     {
         $managerId = $request->session()->get('logged_in_manager_id');
