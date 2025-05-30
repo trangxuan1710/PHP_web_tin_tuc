@@ -391,25 +391,21 @@
             let paginationHtml = '';
             if (totalPages > 1) {
                 paginationHtml = `
-                    <div class="flex justify-center items-center space-x-2 mt-6">
-                        <button id="prev-page-btn" class="px-4 py-2 bg-blue-500 text-white rounded-md shadow-sm hover:bg-blue-600 ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}" ${currentPage === 1 ? 'disabled' : ''}>
-                            Trước
+                <div class="flex justify-center items-center space-x-2 mt-6">
+                    <button id="prev-page-btn" class="px-4 py-2 bg-blue-500 text-white rounded-md shadow-sm hover:bg-blue-600 ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}" ${currentPage === 1 ? 'disabled' : ''}>
+                        Trước
+                    </button>
+                    ${Array.from({ length: totalPages }, (_, i) => i + 1).map(page => `
+                        <button data-page="${page}" class="page-number-btn px-4 py-2 rounded-md shadow-sm ${
+                            page === currentPage ? 'bg-blue-700 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                        }">
+                            ${page}
                         </button>
-                        ${Array.from({ length: totalPages }, (_, i) => i + 1).map(page => ` <
-                    button data - page = "${page}"
-                class = "page-number-btn px-4 py-2 rounded-md shadow-sm ${
-                page === currentPage ? 'bg-blue-700 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-            }
-            ">
-            $ {
-                page
-            } <
-            /button>
-            `).join('')}
-                        <button id="next-page-btn" class="px-4 py-2 bg-blue-500 text-white rounded-md shadow-sm hover:bg-blue-600 ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}" ${currentPage === totalPages ? 'disabled' : ''}>
-                            Sau
-                        </button>
-                    </div>
+                    `).join('')}
+                    <button id="next-page-btn" class="px-4 py-2 bg-blue-500 text-white rounded-md shadow-sm hover:bg-blue-600 ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}" ${currentPage === totalPages ? 'disabled' : ''}>
+                        Sau
+                    </button>
+                </div>
                 `;
         }
 
@@ -447,7 +443,7 @@
                                 ${news.title}
                             </a>    
                         </h3>
-                        <p class="text-gray-600 text-xs">Lưu ngày: ${news.updated_at}</p>
+                        <p class="text-gray-600 text-xs">Xem ngày: ${news.updated_at}</p>
                     </div>
                     <div class="flex justify-between items-center p-4 border-t border-gray-200">
                         <button data-id=${news.id} class="news-read-more-btn px-4 py-2 bg-blue-500 text-white text-sm font-semibold rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 flex items-center space-x-2">
@@ -469,24 +465,20 @@
             if (totalPages > 1) {
                 paginationHtml = `
                     <div class="flex justify-center items-center space-x-2 mt-6">
-                        <button id="prev-page-btn" class="px-4 py-2 bg-blue-500 text-white rounded-md shadow-sm hover:bg-blue-600 ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}" ${currentPage === 1 ? 'disabled' : ''}>
-                            Trước
+                    <button id="prev-page-btn" class="px-4 py-2 bg-blue-500 text-white rounded-md shadow-sm hover:bg-blue-600 ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}" ${currentPage === 1 ? 'disabled' : ''}>
+                        Trước
+                    </button>
+                    ${Array.from({ length: totalPages }, (_, i) => i + 1).map(page => `
+                        <button data-page="${page}" class="page-number-btn px-4 py-2 rounded-md shadow-sm ${
+                            page === currentPage ? 'bg-blue-700 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                        }">
+                            ${page}
                         </button>
-                        ${Array.from({ length: totalPages }, (_, i) => i + 1).map(page => ` <
-                    button data - page = "${page}"
-                class = "page-number-btn px-4 py-2 rounded-md shadow-sm ${
-                page === currentPage ? 'bg-blue-700 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-            }
-            ">
-            $ {
-                page
-            } <
-            /button>
-            `).join('')}
-                        <button id="next-page-btn" class="px-4 py-2 bg-blue-500 text-white rounded-md shadow-sm hover:bg-blue-600 ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}" ${currentPage === totalPages ? 'disabled' : ''}>
-                            Sau
-                        </button>
-                    </div>
+                    `).join('')}
+                    <button id="next-page-btn" class="px-4 py-2 bg-blue-500 text-white rounded-md shadow-sm hover:bg-blue-600 ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}" ${currentPage === totalPages ? 'disabled' : ''}>
+                        Sau
+                    </button>
+                </div>
                 `;
         }
 

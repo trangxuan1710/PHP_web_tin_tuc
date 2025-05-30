@@ -11,14 +11,6 @@ body {
 /* public/css/app.css */
 
 /* --- Base Styles & Typography --- */
-body {
-    font-family: Arial, sans-serif;
-    line-height: 1.6;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f4;
-    color: #333;
-}
 
 .container {
     max-width: 1200px; /* Adjust as needed */
@@ -26,12 +18,12 @@ body {
     padding: 0 15px;
 }
 
-a {
+.contactainer a {
     color: #007bff;
     text-decoration: none;
 }
 
-a:hover {
+.container a:hover {
     text-decoration: underline;
 }
 
@@ -40,102 +32,10 @@ h1, h2, h3, h4, h5, h6 {
     margin-bottom: 10px;
 }
 
-ul {
+.container ul {
     list-style: none;
     padding: 0;
     margin: 0;
-}
-
-/* --- Header Styles --- */
-.main-header {
-    background-color: #fff;
-    border-bottom: 1px solid #ddd;
-    padding: 15px 0;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-
-.header-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-}
-
-.logo a {
-    font-size: 28px;
-    font-weight: bold;
-    color: #007bff; /* Blue similar to the image */
-    text-decoration: none;
-}
-
-.search-bar {
-    display: flex;
-    border: 1px solid #ccc;
-    border-radius: 20px;
-    overflow: hidden;
-    flex-grow: 0.5; /* Allow it to grow, but not too much */
-    margin: 0 20px;
-}
-
-.search-bar input {
-    border: none;
-    padding: 8px 15px;
-    outline: none;
-    flex-grow: 1;
-    font-size: 16px;
-}
-
-.search-bar button {
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    padding: 8px 15px;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-.user-info {
-    font-size: 14px;
-    white-space: nowrap; /* Keep it on one line */
-}
-
-.user-info a {
-    margin-left: 10px;
-    color: #555;
-}
-
-.main-nav ul {
-    display: flex;
-    justify-content: center;
-    gap: 25px; /* Spacing between navigation items */
-}
-
-.main-nav li a {
-    color: #555;
-    font-weight: bold;
-    padding: 5px 0;
-    position: relative;
-    transition: color 0.3s ease;
-}
-
-.main-nav li a:hover {
-    color: #007bff;
-    text-decoration: none;
-}
-
-.main-nav li a:after {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: -5px; /* Adjust if needed */
-    width: 0;
-    height: 2px;
-    background-color: #007bff;
-    transition: width 0.3s ease;
-}
-
-.main-nav li a:hover:after {
-    width: 100%;
 }
 
 /* --- Main Content Layout --- */

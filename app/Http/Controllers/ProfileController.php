@@ -71,7 +71,7 @@ class ProfileController extends Controller
 
         $nearestNews = $nearestNewsCollection->map(function ($newsItem) {
             $formattedUpdatedAt = $newsItem->pivot->updated_at->format('Y-m-d H:i');
-            $timeAgo = $newsItem->pivot->created_at->diffForHumans();
+            $timeAgo = $newsItem->pivot->updated_at->diffForHumans();
 
             return [
                 'id' => $newsItem->id,

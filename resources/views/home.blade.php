@@ -12,7 +12,6 @@
 </head>
 
 <body>
-
     @if(Auth::check())
     @include('layouts.header_loged')
     @else
@@ -20,6 +19,7 @@
     @endif
 
     @include('layouts.navbar')
+    
 
     <main class="container main-content">
         <section class="featured-news">
