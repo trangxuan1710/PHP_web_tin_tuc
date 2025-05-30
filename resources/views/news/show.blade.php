@@ -93,8 +93,8 @@
                     <span>Lưu bài viết</span>
                 </button>
 
-                <div class="prose prose-lg max-w-none text-gray-700 leading-relaxed">
-                    {{ $news->content }}
+                <div class="text-md prose prose-lg max-w-none text-gray-700 leading-relaxed">
+                    {!! $news->content !!}
                 </div>
 
                 <section class="mt-12 pt-8 border-t border-gray-200">
@@ -304,11 +304,15 @@
                         });
                         const data = await response.json();
 
+                        console.log(response);
+
                         if (response.ok) {
                             isSave = true; // Cập nhật trạng thái
                             updateSaveButtonUI(); // Cập nhật UI
                             alert(data.message || 'Bài viết đã được lưu thành công!');
                         } else {
+                            const loginUrl = "{{ route('login') }}";
+                            window.location.href = loginUrl;
                             alert(data.message || 'Có lỗi xảy ra khi lưu bài viết.');
                         }
                     } catch (error) {

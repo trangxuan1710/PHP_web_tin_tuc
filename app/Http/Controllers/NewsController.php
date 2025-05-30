@@ -118,7 +118,7 @@ class   NewsController extends Controller
                 return back()->with('error', 'Lỗi khi lưu bài viết. Vui lòng thử lại.');
             }
         } else {
-            return redirect()->route('login')->with('error', 'Bạn cần phải đăng nhập để lưu bài viết.');
+            return response()->json(['message' => 'Bạn cần đăng nhập'], 500);
         }
     }
 
@@ -346,55 +346,75 @@ class   NewsController extends Controller
             return redirect()->back()->with('error', 'Lỗi khi xóa tin tức: ' . $e->getMessage());
         }
     }
-    public function showListNews(Request $request)
+    public function showListNews(Request $request, $tab = null)
     {
-        // 1. Lấy tin tức nổi bật (isHot = TRUE) - ví dụ lấy 1 bài tin hot nhất
-        // Sắp xếp theo ngày đăng mới nhất hoặc views cao nhất
-        $hotNews = News::with(['manager', 'label'])
-            ->where('isHot', true)
-            ->where('status', 'publish') // Chỉ lấy tin đã publish
-            ->orderBy('date', 'desc') // Sắp xếp theo ngày mới nhất
-            ->limit(2)
+        $hotNews = News::where('isHot', true)
+            ->latest('date') // Order by latest creation date
             ->get();
 
-        // 2. Lấy các tin tức mới nhất (trừ tin nổi bật nếu chúng trùng lặp)
-        // Bạn có thể tùy chỉnh số lượng tin muốn hiển thị
-        $latestNews = News::with(['manager', 'label'])
-            ->where('status', 'publish')
-            ->orderBy('date', 'desc')
-            ->when($hotNews->count() > 0, function ($query) use ($hotNews) {
-                // Loại bỏ tin tức đã có trong hotNews để tránh trùng lặp
-                $query->whereNotIn('id', $hotNews->pluck('id'));
-            })
-            ->limit(10) // Ví dụ lấy 10 tin mới nhất
+        $featuredHotNews = $hotNews->first(); // The very first hot news for the main feature
+
+        // 2. Fetch other hot news for the "Tin nóng" sidebar
+        // Exclude the featured one by ID if it exists
+        $otherHotNews = collect([]);
+        if ($hotNews->count() > 1) {
+            $otherHotNews = $hotNews->slice(1); // Skip the first one, take up to 5 others
+        }
+
+
+        // 3. Fetch latest news for the "Tin mới nhất" sidebar
+        // We'll take 10 latest news items, and the view will display the first 5.
+        $latestNews = News::latest('date') // Order by latest creation date
+            ->take(10)
             ->get();
 
-        // 3. Lấy tin tức cho phần "Góc nhìn" (có thể dựa vào một labelId cụ thể hoặc managerId)
-        // Giả sử có một label đặc biệt cho "Góc nhìn" hoặc một manager chuyên viết bài góc nhìn
-        // Ví dụ: Giả sử 'Đời sống' (labelId = 1) hoặc 'Kinh doanh' (labelId = 6) có thể dùng cho Góc nhìn
-        // Hoặc bạn có thể thêm một cột 'type' vào bảng news để phân loại rõ ràng hơn
-        $opinionNews = News::with(['manager', 'label'])
-            ->where('status', 'publish')
-            ->whereHas('label', function ($query) {
-                // Giả sử 'Đời sống' hoặc 'Kinh doanh' được dùng cho góc nhìn
-                $query->whereIn('type', ['Đời sống', 'Kinh doanh']);
-            })
-            ->orderBy('date', 'desc')
-            ->limit(5)
+        // 4. Fetch opinion news for the "Góc nhìn" sidebar
+        // You'll need to define how 'opinion' news is identified.
+        // For example, if you have a specific labelId for 'Góc nhìn' (let's assume it's 7 for this example, or a specific field)
+        // Or if 'opinion' is a status or a tag in the content.
+        // For now, let's assume a specific labelId for 'Góc nhìn' (e.g., labelId = 7) or just take some random news.
+        // If 'Góc nhìn' is a specific label, make sure to add it to your `labels` table and data.
+        // For demonstration, let's pick a label, e.g., 'Đời sống' (labelId 1) or just random news for 'Góc nhìn'
+        $opinionNews = News::inRandomOrder() // Get random articles
+            ->take(5) // Take 5 random articles
             ->get();
 
-        // 4. Lấy tin tức cho phần "Kinh doanh"
-        $businessNews = News::with(['manager', 'label'])
-            ->where('status', 'publish')
-            ->whereHas('label', function ($query) {
-                $query->where('type', 'Kinh doanh'); // Lấy tin tức có label 'Kinh doanh'
-            })
-            ->orderBy('date', 'desc')
-            ->limit(5)
-            ->get();
+        // 5. Handle the dynamic category section (main content area)
+        // Get the requested label_id from the URL query parameter. Default to 6 ('Kinh doanh') if not provided.
+        $requestedLabelId = 1;
 
-        // Bạn có thể thêm các truy vấn khác cho các mục như "Thể thao", "Khoa học - Công nghệ" tương tự.
+        if ($tab == 'tin-nong') $requestedLabelId = 1;
+        else if ($tab == 'doi-song') $requestedLabelId = 2;
+        else if ($tab == 'the-thao') $requestedLabelId = 3;
+        else if ($tab == 'khoa-hoc-cong-nghe') $requestedLabelId = 4;
+        else if ($tab == 'suc-khoe') $requestedLabelId = 5;
+        else if ($tab == 'giai-tri') $requestedLabelId = 6;
+        else if ($tab == 'kinh-doanh') $requestedLabelId = 7;
 
-        return view('home', compact('hotNews', 'latestNews', 'opinionNews', 'businessNews'));
+        $label = Label::find($requestedLabelId);
+
+        if ($label) {
+            $dynamicCategoryTitle = $label->type;
+        }
+
+        $isHome = true;
+        if($tab) $isHome = false;
+
+        // Fetch news for the dynamic category.
+        // Using whereJsonContains for the 'labelId' JSON column to match single or array labels.
+        $dynamicCategoryNews = News::whereJsonContains('labelId', $requestedLabelId)
+            ->latest('date')
+            ->get(); // The view will take(10)
+
+        // Pass data to the view
+        return view('home', [
+            'hotNews' => $featuredHotNews, // Pass only the single featured hot news
+            'otherHotNews' => $otherHotNews, // Pass other hot news for the sidebar
+            'latestNews' => $latestNews,
+            'opinionNews' => $opinionNews,
+            'dynamicCategoryTitle' => $dynamicCategoryTitle,
+            'dynamicCategoryNews' => $dynamicCategoryNews,
+            'isHome' => $isHome,
+        ]);
     }
 }

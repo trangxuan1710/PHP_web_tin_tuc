@@ -76,13 +76,9 @@ Auth::routes();
 // Route cho trang chủ khi đã đăng nhập
 Route::get('/', [NewsController::class, 'showListNews'])->name('home');
 
-Route::get('/tin-nong', [NewsController::class, 'showListNews'])->name('news.tin-nong');
-
-// Route cho "Thời sự"
-Route::get('/thoi-su', [NewsController::class, 'showListNews'])->name('news.thoi-su');
-
-// Route cho "Khoa học - Công nghệ"
-Route::get('/khoa-hoc-cong-nghe', [NewsController::class, 'showListNews'])->name('news.khoa-hoc-cong-nghe');
+Route::get('/{tab?}', [NewsController::class, 'showListNews'])
+        ->where('tab', 'tin-nong|doi-song|the-thao|khoa-hoc-cong-nghe|suc-khoe|giai-tri|kinh-doanh')
+        ->name('tab');
 
 // Route tin tức
 Route::get('/news/{id}', [NewsController::class, 'show'])->name('news.show');
@@ -117,15 +113,15 @@ Route::delete('comments/{commentId}', [CommentController::class, 'delete'])->nam
 
 Route::get('/manager/manageReports', [ReportController::class, 'index'])->name('managerManageReports');
 Route::post('/manager/processReport/{id}', [ReportController::class, 'processReport'])->name('processReport');
+
+// Đăng nhập, đăng ký
 Route::get('/signup', function () {
     return view('auth.user-signup');
-});
-
+})->name('signup');
 Route::get('/login', function () {
     return view('auth.user-login');
-});
-
-Route::post('/signup', [AuthenticationController::class, 'register'])->name('login');
+})->name('login');
+Route::post('/signup', [AuthenticationController::class, 'register'])->name('signup');
 Route::post('/login', [AuthenticationController::class, 'login'])->name('login');
 
 /*
@@ -135,8 +131,6 @@ Route::put('/profile/{id}/change-password', [ProfileController::class, 'changePa
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Str; // For Str::limit
-
-
 
 Route::get('/search', [NewsController::class, 'search'])->name('news.search');
 Route::middleware(['auth'])->group(function () {

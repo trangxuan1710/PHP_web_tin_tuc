@@ -18,18 +18,9 @@ body {
     padding: 0 15px;
 }
 
-.contactainer a {
-    color: #007bff;
-    text-decoration: none;
-}
-
-.container a:hover {
-    text-decoration: underline;
-}
-
 h1, h2, h3, h4, h5, h6 {
     margin-top: 0;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 
 .container ul {
