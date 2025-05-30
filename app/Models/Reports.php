@@ -12,17 +12,16 @@ class Reports extends Model
     protected $primaryKey = 'id';
     protected $keyType = 'int';
     public $timestamps = false;
-    const CREATED_AT = 'date';
 
     protected $fillable = [
         'reason',
         'content',
         'clientId',
         'commentId',
+        'create_at',
     ];
 
     protected $casts = [
-
         'created_at' => 'datetime',
 
     ];

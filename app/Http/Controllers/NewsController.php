@@ -24,6 +24,12 @@ class   NewsController extends Controller
         $news = News::with([
             'manager',
             'label',
+            'comments' => function ($query) {
+                $query->orderBy('date', 'desc');
+            },
+            'comments.replies' => function ($query) {
+                $query->orderBy('date', 'desc');
+            },
             'comments.client',
             'comments.replies.client'
         ])->findOrFail($id);;
@@ -34,7 +40,7 @@ class   NewsController extends Controller
         $hotNews = News::orderBy('date', 'desc')->take(5)->get();
 
         $isSave = false;
-        if (Auth::check()) { // Kiểm tra nếu Client đã đăng nhập
+        if (Auth::check()) {
             $clientId = Auth::user()->id;
             // Kiểm tra xem có bản ghi nào trong bảng save_news với clientId và newsId này không
             $isSave = SaveNews::where('clientId', $clientId)
@@ -85,16 +91,15 @@ class   NewsController extends Controller
                 return response()->json(['message' => 'ID bài viết không được cung cấp.'], 400);
             }
         }
-
+        log::info($request);
         // 2. Kiểm tra người dùng đã đăng nhập hay chưa
         if (Auth::check()) { // Sử dụng guard 'client' cho người dùng front-end
             /** @var \App\Models\Client $client */
             $client = Auth::user();
+            log::info("hehehehhe");
 
             try {
-
                 $client->saveNews()->syncWithoutDetaching([$newsId]);
-
                 // Để cập nhật updated_at cho bản ghi đã tồn tại khi người dùng nhấn lưu lại:
                 // Bạn có thể tìm bản ghi SaveNews cụ thể và gọi save() trên nó.
                 $savedRecord = SaveNews::where('clientId', $client->id)
@@ -103,7 +108,6 @@ class   NewsController extends Controller
                 if ($savedRecord) {
                     $savedRecord->touch(); // Cập nhật updated_at
                 }
-
 
                 Log::info("Client ID {$client->id} saved news ID {$newsId}.");
                 if ($request->expectsJson()) {
@@ -118,7 +122,8 @@ class   NewsController extends Controller
                 return back()->with('error', 'Lỗi khi lưu bài viết. Vui lòng thử lại.');
             }
         } else {
-            return redirect()->route('login')->with('error', 'Bạn cần phải đăng nhập để lưu bài viết.');
+            log::info("hahahahaha");
+            return redirect()->route('login1')->with('error', 'Bạn cần phải đăng nhập để lưu bài viết.');
         }
     }
 

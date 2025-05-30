@@ -43,6 +43,7 @@ class News extends Model
     {
         return $this->belongsTo(Label::class, 'labelId');
     }
+
     public function comments()
     {
         return $this->hasMany(Comment::class, 'newsId');
