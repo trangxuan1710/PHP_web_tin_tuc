@@ -250,9 +250,7 @@
     /**
      * This is a 24-hour evaluation key. Create a free account to use CDN: https://portal.ckeditor.com/checkout?plan=free
      */
-    const LICENSE_KEY =
-        'eyJhbGciOiJFUzI1NiJ9.eyJleHAiOjE3NDg1NjMxOTksImp0aSI6IjhiZTYwM2U3LTUwMjAtNGZkMC1iYWY4LTliOGYzN2UyMzk1MSIsImxpY2Vuc2VkSG9zdHMiOlsiKi53ZWJjb250YWluZXIuaW8iLCIqLmpzaGVsbC5uZXQiLCIqLmNzcC5hcHAiLCJjZHBuLmlvIiwiMTI3LjAuMC4xIiwibG9jYWxob3N0IiwiMTkyLjE2OC4qLioiLCIxMC4qLiouKiIsIjE3Mi4qLiouKiIsIioudGVzdCIsIioubG9jYWxob3N0IiwiKi5sb2NhbCJdLCJkaXN0cmlidXRpb25DaGFubmVsIjpbImNsb3VkIiwiZHJ1cGFsIiwic2giXSwibGljZW5zZVR5cGUiOiJldmFsdWF0aW9uIiwidmMiOiIyYTBkNmJmNCJ9.PpEy4dIp3P4YTjsGeGf5N1eoN3iL5dpjbCiTUdbzwS-K1ojvtjFKSi-SyhdzcFLcGHcV6REQXkdTMA3DwDRT7Q';
-
+    const LICENSE_KEY = 'eyJhbGciOiJFUzI1NiJ9.eyJleHAiOjE3NDk4NTkxOTksImp0aSI6IjdlOTAzMjQwLTY0NjMtNDE2Ni1iYzgzLTdhZjA2ZWE5YmIzYiIsInVzYWdlRW5kcG9pbnQiOiJodHRwczovL3Byb3h5LWV2ZW50LmNrZWRpdG9yLmNvbSIsImRpc3RyaWJ1dGlvbkNoYW5uZWwiOlsiY2xvdWQiLCJkcnVwYWwiLCJzaCJdLCJ3aGl0ZUxhYmVsIjp0cnVlLCJsaWNlbnNlVHlwZSI6InRyaWFsIiwiZmVhdHVyZXMiOlsiKiJdLCJ2YyI6ImU5OTFlM2VmIn0.ItMutfMgOFuxH6T3xfHPZbIgAACGop_yMuIk4J0ARHmZpXED7cL2Aw16q2P-pTORB_GI1Y59NPYUoPPy0B4njA'
     const editorConfig = {
         toolbar: {
             items: [

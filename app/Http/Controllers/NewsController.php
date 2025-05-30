@@ -215,7 +215,7 @@ class   NewsController extends Controller
             'label_id' => 'required|exists:labels,id',
             'content' => 'required|string',
             'action_type' => 'required|in:draft,publish',
-            'thumbnail' => 'nullable|image|mimes:jpeg,png,gif|max:2048', // max 2MB
+            'thumbnail' => 'required|image|mimes:jpeg,png,gif|max:20480', // max 2MB
             'isHot' => 'required|in:0,1|boolean',
         ]);
 
