@@ -257,6 +257,10 @@
         </div>
     </div>
 
+    @php
+    $client = Auth::user();
+    @endphp
+
     @if(session('scroll_to_comment'))
     <script>
         window.onload = () => {
@@ -383,7 +387,7 @@
 
             // Helper function to create comment HTML (kept as is)
             function createCommentHtml(commentData, isReply = false) {
-                let mainDivClasses = 'p-4 bg-white rounded-lg shadow border border-gray-100';
+                let mainDivClasses = 'flex p-4 bg-white rounded-lg shadow border border-gray-100';
                 let imgSize = 'w-10 h-10';
                 let contentClasses = 'text-gray-700 mt-1';
                 let userTextClasses = 'font-semibold text-blue-600';
@@ -400,11 +404,11 @@
                 }
 
                 let contentDisplay = commentData.content;
-                const avatarUrl = commentData.client_avatar_url || 'https://placehold.co/' + (isReply ? '32x32' : '40x40') + '/a0aec0/ffffff?text=User';
+                const avatarUrl = "{{ $client->avatarUrl }}";
 
                 return `
                 <div id="comment-${commentData.id}" class="${mainDivClasses}">
-                    <div class="flex items-start space-x-3">
+                    <div class="flex items-start space-x-3 w-full">
                         <img src="${avatarUrl}"
                              alt="Avatar của ${commentData.client_name}" class="${imgSize} rounded-full">
                         <div class="flex-1">
