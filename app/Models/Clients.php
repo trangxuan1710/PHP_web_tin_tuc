@@ -60,4 +60,17 @@ class Clients extends Authenticatable
         return $this->belongsToMany(News::class, 'nearest_news', 'clientId', 'newsId')->withTimestamps();
     }
 
+    public function commentLikes()
+    {
+        return $this->hasMany(CommentLike::class);
+    }
+
+    /**
+     * Kiểm tra xem người dùng đã like một comment cụ thể chưa.
+     */
+    public function hasLikedComment(Comment $comment): bool
+    {
+        return $this->commentLikes()->where('commentId', $comment->id)->exists();
+    }
+
 }

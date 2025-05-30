@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Comment;
 use App\Models\Clients; // Import Clients model if not already (for clarity, though not directly used here)
 use App\Models\Managers;
+use App\Models\CommentLike;
 use App\Models\News;    // Import News model if not already (for clarity, though not directly used here)
 use App\Models\Notifications;
 use Illuminate\Http\Request;
@@ -64,11 +65,38 @@ class CommentController extends Controller
             return redirect()->route('manageCommentsIndex')->with('error', 'Không thể xóa bình luận: ' . $e->getMessage());
         }
     }
-    public function like($id)
+    public function like($commentId)
     {
-        $comment = Comment::findOrFail($id);
-        $comment->increment('like_count');
-        return response()->json(['like_count' => $comment->like_count]);
+        // Lấy người dùng hiện tại đã đăng nhập
+        $client = Auth::user();
+        $comment = Comment::find($commentId);
+
+        // Kiểm tra xem người dùng đã like comment này chưa
+        $existingLike = CommentLike::where('clientId', $client->id)
+                                    ->where('commentId', $commentId)
+                                    ->first();
+
+        if ($existingLike) {
+            // Nếu đã like, hủy like (xóa bản ghi)
+            $existingLike->delete();
+            $message = 'Comment đã được hủy like.';
+            $liked = false; // Trạng thái sau hành động
+        } else {
+            // Nếu chưa like, thêm like (tạo bản ghi mới)
+            CommentLike::create([
+                'clientId' => $client->id,
+                'commentId' => $commentId,
+            ]);
+            $message = 'Comment đã được like.';
+            $liked = true; // Trạng thái sau hành động
+        }
+
+        // Trả về phản hồi JSON
+        return response()->json([
+            'message' => $message,
+            'liked' => $liked,
+            'likes_count' => $comment->likesCount(), // Lấy số lượng like mới nhất
+        ]);
     }
 
     public function dislike($id)

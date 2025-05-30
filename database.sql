@@ -284,7 +284,6 @@ INSERT INTO News (title, managerId, content, thumbNailUrl, isHot, status, labelI
         clientId BIGINT NOT NULL,
         content TEXT NOT NULL,
         date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        like_count INT DEFAULT 0,
         commentId BIGINT,
         newsId BIGINT NOT NULL,
         FOREIGN KEY (clientId) REFERENCES clients(id) ON DELETE CASCADE,
@@ -295,46 +294,46 @@ INSERT INTO News (title, managerId, content, thumbNailUrl, isHot, status, labelI
     -- Giả sử bảng 'news' có các id 1, 2, 3, ..., 10 (dựa trên dữ liệu mẫu trước đó)
 
     -- Dữ liệu mẫu cho bảng 'comments'
-    INSERT INTO comments (clientId, content, date, like_count, commentId, newsId) VALUES
+    INSERT INTO comments (clientId, content, date, commentId, newsId) VALUES
     -- Bình luận cho newsId = 1 (Tech Conference 2025 Highlights)
-    (1, 'Great summary of the tech conference! I was particularly interested in the AI advancements.', '2025-05-20 12:00:00', 15, NULL, 1),
-    (2, 'Does anyone have more details on the quantum computing talks?', '2025-05-20 12:30:00', 8, NULL, 1),
-    (3, 'Reply to comment 2: I found a link to the slides here: [link_to_slides.com]', '2025-05-20 13:00:00', 5, 2, 1), -- Giả sử bình luận có id 2 tồn tại cho newsId 1
-    (4, 'This was a fantastic event. Looking forward to next year.', '2025-05-21 09:00:00', 12, NULL, 1),
+    (1, 'Great summary of the tech conference! I was particularly interested in the AI advancements.', '2025-05-20 12:00:00', NULL, 1),
+    (2, 'Does anyone have more details on the quantum computing talks?', '2025-05-20 12:30:00', NULL, 1),
+    (3, 'Reply to comment 2: I found a link to the slides here: [link_to_slides.com]', '2025-05-20 13:00:00', 2, 1), -- Giả sử bình luận có id 2 tồn tại cho newsId 1
+    (4, 'This was a fantastic event. Looking forward to next year.', '2025-05-21 09:00:00', NULL, 1),
 
     -- Bình luận cho newsId = 2 (Global Economic Outlook Q3)
-    (4, 'Interesting analysis. The regional challenges part is concerning.', '2025-05-21 14:00:00', 7, NULL, 2), -- clientId cập nhật từ 5 thành 4
-    (1, 'I agree, the outlook seems cautiously optimistic.', '2025-05-21 14:30:00', 9, NULL, 2),
+    (4, 'Interesting analysis. The regional challenges part is concerning.', '2025-05-21 14:00:00', NULL, 2), -- clientId cập nhật từ 5 thành 4
+    (1, 'I agree, the outlook seems cautiously optimistic.', '2025-05-21 14:30:00', NULL, 2),
 
     -- Bình luận cho newsId = 3 (New Environmental Policies Announced)
-    (2, 'These new policies are a step in the right direction!', '2025-05-22 16:00:00', 22, NULL, 3),
-    (3, 'I hope they are implemented effectively. Enforcement will be key.', '2025-05-22 16:45:00', 18, NULL, 3),
-    (1, 'Reply to comment 8: Absolutely, without proper enforcement, these policies won\'t mean much.', '2025-05-22 17:00:00', 6, 8, 3), -- Giả sử bình luận có id 8 tồn tại cho newsId 3
+    (2, 'These new policies are a step in the right direction!', '2025-05-22 16:00:00', NULL, 3),
+    (3, 'I hope they are implemented effectively. Enforcement will be key.', '2025-05-22 16:45:00', NULL, 3),
+    (1, 'Reply to comment 8: Absolutely, without proper enforcement, these policies won\'t mean much.', '2025-05-22 17:00:00', 8, 3), -- Giả sử bình luận có id 8 tồn tại cho newsId 3
 
     -- Bình luận cho newsId = 4 (Healthcare Advances in Gene Therapy)
-    (4, 'Incredible news for genetic disorders! This is life-changing.', '2025-05-23 10:00:00', 30, NULL, 4),
-    (1, 'What is the timeline for these therapies to become widely available?', '2025-05-23 10:30:00', 11, NULL, 4), -- clientId cập nhật từ 5 thành 1
+    (4, 'Incredible news for genetic disorders! This is life-changing.', '2025-05-23 10:00:00', NULL, 4),
+    (1, 'What is the timeline for these therapies to become widely available?', '2025-05-23 10:30:00', NULL, 4), -- clientId cập nhật từ 5 thành 1
 
     -- Bình luận cho newsId = 5 (Upcoming Arts Festival Preview)
-    (1, 'Can\'t wait for the arts festival! The lineup looks amazing.', '2025-05-24 18:00:00', 19, NULL, 5),
+    (1, 'Can\'t wait for the arts festival! The lineup looks amazing.', '2025-05-24 18:00:00', NULL, 5),
 
     -- Bình luận cho newsId = 6 (Sports Championship Finals Recap)
-    (2, 'What a game! The highlights were epic.', '2025-05-25 20:00:00', 25, NULL, 6),
-    (3, 'Reply to comment 13: That last goal was unbelievable!', '2025-05-25 20:15:00', 10, 13, 6), -- Giả sử bình luận có id 13 tồn tại cho newsId 6
+    (2, 'What a game! The highlights were epic.', '2025-05-25 20:00:00', NULL, 6),
+    (3, 'Reply to comment 13: That last goal was unbelievable!', '2025-05-25 20:15:00', 13, 6), -- Giả sử bình luận có id 13 tồn tại cho newsId 6
 
     -- Bình luận cho newsId = 7 (DIY Home Improvement Trends)
-    (4, 'Thanks for the DIY tips! I\'m planning a weekend project now.', '2025-05-26 15:00:00', 14, NULL, 7),
+    (4, 'Thanks for the DIY tips! I\'m planning a weekend project now.', '2025-05-26 15:00:00', NULL, 7),
 
     -- Bình luận cho newsId = 8 (Travel Guide: Summer Destinations)
-    (2, 'The summer destinations guide is just what I needed. So many great ideas!', '2025-05-27 12:00:00', 17, NULL, 8), -- clientId cập nhật từ 5 thành 2
+    (2, 'The summer destinations guide is just what I needed. So many great ideas!', '2025-05-27 12:00:00', NULL, 8), -- clientId cập nhật từ 5 thành 2
 
     -- Bình luận cho newsId = 9 (Startup Success Stories of the Year)
-    (1, 'Very inspiring stories. It shows what dedication can achieve.', '2025-05-27 10:00:00', 20, NULL, 9),
+    (1, 'Very inspiring stories. It shows what dedication can achieve.', '2025-05-27 10:00:00', NULL, 9),
 
     -- Bình luận cho newsId = 10 (Culinary Delights: New Recipes to Try)
-    (2, 'The new recipes look delicious! I\'m trying the pasta one tonight.', NOW(), 23, NULL, 10),
-    (3, 'Any recommendations for a good dessert recipe from the list?', NOW() - INTERVAL 1 HOUR, 9, NULL, 10),
-    (4, 'Reply to comment 19: The chocolate lava cake is a must-try!', NOW() - INTERVAL 30 MINUTE, 7, 19, 10); -- Giả sử bình luận có id 19 tồn tại cho newsId 10
+    (2, 'The new recipes look delicious! I\'m trying the pasta one tonight.', NOW(), NULL, 10),
+    (3, 'Any recommendations for a good dessert recipe from the list?', NOW() - INTERVAL 1 HOUR, NULL, 10),
+    (4, 'Reply to comment 19: The chocolate lava cake is a must-try!', NOW() - INTERVAL 30 MINUTE, 19, 10); -- Giả sử bình luận có id 19 tồn tại cho newsId 10
 
 -- Tạo bảng reports
 CREATE TABLE IF NOT EXISTS reports (
@@ -411,3 +410,12 @@ CREATE TABLE notifications (
 
 INSERT INTO notifications (id, clientId, replierId, newsId, content) VALUES ('1', '1', '2', 1, 'like');
 INSERT INTO notifications (id, clientId, replierId, newsId, content) VALUES ('2', '1', '3', 2, 'comment');
+
+CREATE TABLE comment_like (
+	id INT PRIMARY KEY auto_increment,
+    clientId BIGINT NOT NULL,
+    commentId BIGINT NOT NULL,
+    FOREIGN KEY (clientId) REFERENCES clients(id) ON DELETE CASCADE,
+    FOREIGN KEY (commentId) REFERENCES comments(id) ON DELETE CASCADE,
+    UNIQUE (clientId, commentId)
+);

@@ -112,7 +112,7 @@
                             </button>
                         </div>
                     </form>
-{{--                    report form--}}
+                    {{-- report form--}}
                     <div id="report-comment-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
                         <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-sm">
                             <h3 class="text-lg font-bold mb-4 text-gray-800">Báo cáo bình luận</h3>
@@ -141,94 +141,94 @@
                             </form>
                         </div>
                     </div>
-{{--                    comment--}}
+                    {{-- comment--}}
                     <div id="comments-list" class="space-y-6">
                         @if($news->comments && $news->comments->count() > 0)
-                            @foreach($news->comments as $comment)
-                                @if (is_null($comment->commentId))
-                                    <div id="comment-{{ $comment->id }}" class="p-4 bg-white rounded-lg shadow border border-gray-100">
-                                        <div class="flex items-start space-x-3">
-                                            <img src="{{ $comment->client->avatarUrl ?? 'https://placehold.co/40x40/a0aec0/ffffff?text=User' }}" alt="Avatar của {{ $comment->client->fullName ?? 'Người dùng' }}" class="w-10 h-10 rounded-full">
-                                            <div class="flex-1">
-                                                <div class="flex items-center justify-between">
-                                                    <span class="font-semibold text-blue-600">{{ optional($comment->client)->fullName ?? 'Người dùng ẩn danh' }}</span>
-                                                    <span class="text-xs text-gray-400">{{ $comment->date?->diffForHumans() ?? 'Không rõ thời gian' }}</span>
-                                                </div>
-                                                <p class="text-gray-700 mt-1">{{ $comment->content }}</p>
-                                                <div class="comment-actions flex items-center space-x-3 mt-3 text-sm text-gray-500" data-id="{{ $comment->id }}">
-                                                    <button onclick="react('{{ $comment->id }}', 'like')" class="like-count hover:text-blue-500 flex items-center">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-1">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6.633 10.5c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 0 1 2.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 0 0 .322-1.672V3a.75.75 0 0 1 .75-.75A2.25 2.25 0 0 1 16.5 4.5c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 0 1-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 0 0-1.423-.23H5.904M6.633 10.5l-1.07-1.07m1.07 1.07V15m0 0H3m3.75 0v4.5m0-4.5h.75m0 0V11.25m0 0h.75m0 0V15m0 0h.75M6.633 10.5c-.636 0-1.257.074-1.844.208M10.5 15.75a.75.75 0 0 0 0 1.5h4.5a.75.75 0 0 0 0-1.5h-4.5Z" />
-                                                        </svg>
-                                                        Thích (<span class="like-count-value">{{ $comment->like_count ?? 0 }}</span>)
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        class="reply-button hover:text-blue-500 flex items-center" {{-- Xóa onclick --}}
-                                                        data-comment-id="{{ $comment->id }}"
-                                                        data-client-name="{{ optional($comment->client)->fullName }}">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-1">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.076-4.076a1.526 1.526 0 0 1 1.037-.443h2.284M17.25 9.76c0-1.6-1.123-2.994-2.707-3.227A48.344 48.344 0 0 0 12 6.245c-1.108 0-2.206.086-3.293.245A3.228 3.228 0 0 0 6 9.756v3.006M21.75 12a9.75 9.75 0 1 1-19.5 0 9.75 9.75 0 0 1 19.5 0Z" />
-                                                        </svg>
-                                                        Phản hồi
-                                                    </button>
-                                                    <button type="button"
-                                                            class="report-comment-button hover:text-red-500 flex items-center"
-                                                            data-comment-id="{{ $comment->id }}">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-1">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 3v1.5M3 21v-6m0 0 2.77-.693a9 9 0 0 1 6.208.682l.108.054a9 9 0 0 0 6.086.71l3.114-.732a48.524 48.524 0 0 1-.005-10.499l-3.11.732a9 9 0 0 1-6.085-.711l-.108-.054a9 9 0 0 0-6.208-.682L3 4.5M3 15V4.5" />
-                                                        </svg>
-                                                        Báo cáo
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
+                        @foreach($news->comments as $comment)
+                        @if (is_null($comment->commentId))
+                        <div id="comment-{{ $comment->id }}" class="p-4 bg-white rounded-lg shadow border border-gray-100">
+                            <div class="flex items-start space-x-3">
+                                <img src="{{ $comment->client->avatarUrl ?? 'https://placehold.co/40x40/a0aec0/ffffff?text=User' }}" alt="Avatar của {{ $comment->client->fullName ?? 'Người dùng' }}" class="w-10 h-10 rounded-full">
+                                <div class="flex-1">
+                                    <div class="flex items-center justify-between">
+                                        <span class="font-semibold text-blue-600">{{ optional($comment->client)->fullName ?? 'Người dùng ẩn danh' }}</span>
+                                        <span class="text-xs text-gray-400">{{ $comment->date?->diffForHumans() ?? 'Không rõ thời gian' }}</span>
+                                    </div>
+                                    <p class="text-gray-700 mt-1">{{ $comment->content }}</p>
+                                    <div class="comment-actions flex items-center space-x-3 mt-3 text-sm text-gray-500" data-id="{{ $comment->id }}">
+                                        <button onclick="react('{{ $reply->id }}')" class="like-count flex items-center {{ Auth::user()->hasLikedComment($comment) ? 'bg-blue-500 text-white border-blue-500' : 'bg-gray-100 text-gray-700 hover:bg-blue-100 hover:text-blue-600' }}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3 h-3 mr-1">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M6.633 10.5c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 0 1 2.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 0 0 .322-1.672V3a.75.75 0 0 1 .75-.75A2.25 2.25 0 0 1 16.5 4.5c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 0 1-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 0 0-1.423-.23H5.904M6.633 10.5l-1.07-1.07m1.07 1.07V15m0 0H3m3.75 0v4.5m0-4.5h.75m0 0V11.25m0 0h.75m0 0V15m0 0h.75M6.633 10.5c-.636 0-1.257.074-1.844.208M10.5 15.75a.75.75 0 0 0 0 1.5h4.5a.75.75 0 0 0 0-1.5h-4.5Z" />
+                                            </svg>
+                                            {{ Auth::user()->hasLikedComment($comment) ? 'Đã thích' : 'Thích' }} (<span class="like-count-value">{{ $comment->likesCount() }}</span>)
+                                        </button>
+                                        <button
+                                            type="button"
+                                            class="reply-button hover:text-blue-500 flex items-center" {{-- Xóa onclick --}}
+                                            data-comment-id="{{ $comment->id }}"
+                                            data-client-name="{{ optional($comment->client)->fullName }}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-1">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.076-4.076a1.526 1.526 0 0 1 1.037-.443h2.284M17.25 9.76c0-1.6-1.123-2.994-2.707-3.227A48.344 48.344 0 0 0 12 6.245c-1.108 0-2.206.086-3.293.245A3.228 3.228 0 0 0 6 9.756v3.006M21.75 12a9.75 9.75 0 1 1-19.5 0 9.75 9.75 0 0 1 19.5 0Z" />
+                                            </svg>
+                                            Phản hồi
+                                        </button>
+                                        <button type="button"
+                                            class="report-comment-button hover:text-red-500 flex items-center"
+                                            data-comment-id="{{ $comment->id }}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-1">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 3v1.5M3 21v-6m0 0 2.77-.693a9 9 0 0 1 6.208.682l.108.054a9 9 0 0 0 6.086.71l3.114-.732a48.524 48.524 0 0 1-.005-10.499l-3.11.732a9 9 0 0 1-6.085-.711l-.108-.054a9 9 0 0 0-6.208-.682L3 4.5M3 15V4.5" />
+                                            </svg>
+                                            Báo cáo
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
 
-                                        <div class="replies-container ml-10 mt-4 pl-4 border-l-2 border-blue-200 space-y-4">
-                                            @if($comment->replies && $comment->replies->count() > 0)
-                                                @foreach($comment->replies as $reply)
-                                                    <div id="comment-{{ $reply->id }}" class="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg shadow-sm">
-                                                        <img src="{{ $reply->client->avatarUrl ?? 'https://placehold.co/32x32/718096/ffffff?text=User' }}" alt="Avatar của {{ $reply->client->fullName ?? 'Người dùng' }}" class="w-8 h-8 rounded-full">
-                                                        <div class="flex-1">
-                                                            <div class="flex items-center justify-between">
-                                                                <span class="font-semibold text-blue-500">{{ optional($reply->client)->fullName ?? 'Người dùng ẩn danh' }}</span>
-                                                                <span class="text-xs text-gray-400">{{ $reply->date?->diffForHumans() ?? 'Không rõ thời gian' }}</span>
-                                                            </div>
-                                                            <p class="text-gray-600 mt-1 text-sm">{{ $reply->content }}</p>
-                                                            <div class="comment-actions flex items-center space-x-3 mt-2 text-xs text-gray-500" data-id="{{ $reply->id }}">
-                                                                <button onclick="react('{{ $reply->id }}', 'like')" class="like-count hover:text-blue-500 flex items-center">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3 h-3 mr-1">
-                                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.633 10.5c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 0 1 2.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 0 0 .322-1.672V3a.75.75 0 0 1 .75-.75A2.25 2.25 0 0 1 16.5 4.5c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 0 1-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 0 0-1.423-.23H5.904M6.633 10.5l-1.07-1.07m1.07 1.07V15m0 0H3m3.75 0v4.5m0-4.5h.75m0 0V11.25m0 0h.75m0 0V15m0 0h.75M6.633 10.5c-.636 0-1.257.074-1.844.208M10.5 15.75a.75.75 0 0 0 0 1.5h4.5a.75.75 0 0 0 0-1.5h-4.5Z" />
-                                                                    </svg>
-                                                                    Thích (<span class="like-count-value">{{ $reply->like_count ?? 0 }}</span>)
-                                                                </button>
-                                                                <button
-                                                                    type="button"
-                                                                    class="reply-button hover:text-blue-500 flex items-center" {{-- Xóa onclick --}}
-                                                                    data-comment-id="{{ $comment->id }}" {{-- Vẫn trả lời comment gốc --}}
-                                                                    data-client-name="{{ optional($reply->client)->fullName }}">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3 h-3 mr-1">
-                                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.076-4.076a1.526 1.526 0 0 1 1.037-.443h2.284M17.25 9.76c0-1.6-1.123-2.994-2.707-3.227A48.344 48.344 0 0 0 12 6.245c-1.108 0-2.206.086-3.293.245A3.228 3.228 0 0 0 6 9.756v3.006M21.75 12a9.75 9.75 0 1 1-19.5 0 9.75 9.75 0 0 1 19.5 0Z" />
-                                                                    </svg>
-                                                                    Phản hồi
-                                                                </button>
-                                                                <button type="button"
-                                                                        class="report-comment-button hover:text-red-500 flex items-center"
-                                                                        data-comment-id="{{ $comment->id }}">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-1">
-                                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 3v1.5M3 21v-6m0 0 2.77-.693a9 9 0 0 1 6.208.682l.108.054a9 9 0 0 0 6.086.71l3.114-.732a48.524 48.524 0 0 1-.005-10.499l-3.11.732a9 9 0 0 1-6.085-.711l-.108-.054a9 9 0 0 0-6.208-.682L3 4.5M3 15V4.5" />
-                                                                    </svg>
-                                                                    Báo cáo
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                @endforeach
-                                            @endif
+                            <div class="replies-container ml-10 mt-4 pl-4 border-l-2 border-blue-200 space-y-4">
+                                @if($comment->replies && $comment->replies->count() > 0)
+                                @foreach($comment->replies as $reply)
+                                <div id="comment-{{ $reply->id }}" class="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg shadow-sm">
+                                    <img src="{{ $reply->client->avatarUrl ?? 'https://placehold.co/32x32/718096/ffffff?text=User' }}" alt="Avatar của {{ $reply->client->fullName ?? 'Người dùng' }}" class="w-8 h-8 rounded-full">
+                                    <div class="flex-1">
+                                        <div class="flex items-center justify-between">
+                                            <span class="font-semibold text-blue-500">{{ optional($reply->client)->fullName ?? 'Người dùng ẩn danh' }}</span>
+                                            <span class="text-xs text-gray-400">{{ $reply->date?->diffForHumans() ?? 'Không rõ thời gian' }}</span>
+                                        </div>
+                                        <p class="text-gray-600 mt-1 text-sm">{{ $reply->content }}</p>
+                                        <div class="comment-actions flex items-center space-x-3 mt-2 text-xs text-gray-500" data-id="{{ $reply->id }}">
+                                            <button onclick="react('{{ $reply->id }}')" class="like-count flex items-center {{ Auth::user()->hasLikedComment($comment) ? 'bg-blue-500 text-white border-blue-500' : 'bg-gray-100 text-gray-700 hover:bg-blue-100 hover:text-blue-600' }}">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3 h-3 mr-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.633 10.5c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 0 1 2.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 0 0 .322-1.672V3a.75.75 0 0 1 .75-.75A2.25 2.25 0 0 1 16.5 4.5c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 0 1-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 0 0-1.423-.23H5.904M6.633 10.5l-1.07-1.07m1.07 1.07V15m0 0H3m3.75 0v4.5m0-4.5h.75m0 0V11.25m0 0h.75m0 0V15m0 0h.75M6.633 10.5c-.636 0-1.257.074-1.844.208M10.5 15.75a.75.75 0 0 0 0 1.5h4.5a.75.75 0 0 0 0-1.5h-4.5Z" />
+                                                </svg>
+                                                {{ Auth::user()->hasLikedComment($reply) ? 'Đã thích' : 'Thích' }} (<span class="like-count-value">{{ $reply->likesCount() }}</span>)
+                                            </button>
+                                            <button
+                                                type="button"
+                                                class="reply-button hover:text-blue-500 flex items-center" {{-- Xóa onclick --}}
+                                                data-comment-id="{{ $comment->id }}" {{-- Vẫn trả lời comment gốc --}}
+                                                data-client-name="{{ optional($reply->client)->fullName }}">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3 h-3 mr-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.076-4.076a1.526 1.526 0 0 1 1.037-.443h2.284M17.25 9.76c0-1.6-1.123-2.994-2.707-3.227A48.344 48.344 0 0 0 12 6.245c-1.108 0-2.206.086-3.293.245A3.228 3.228 0 0 0 6 9.756v3.006M21.75 12a9.75 9.75 0 1 1-19.5 0 9.75 9.75 0 0 1 19.5 0Z" />
+                                                </svg>
+                                                Phản hồi
+                                            </button>
+                                            <button type="button"
+                                                class="report-comment-button hover:text-red-500 flex items-center"
+                                                data-comment-id="{{ $comment->id }}">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 3v1.5M3 21v-6m0 0 2.77-.693a9 9 0 0 1 6.208.682l.108.054a9 9 0 0 0 6.086.71l3.114-.732a48.524 48.524 0 0 1-.005-10.499l-3.11.732a9 9 0 0 1-6.085-.711l-.108-.054a9 9 0 0 0-6.208-.682L3 4.5M3 15V4.5" />
+                                                </svg>
+                                                Báo cáo
+                                            </button>
                                         </div>
                                     </div>
+                                </div>
+                                @endforeach
                                 @endif
-                            @endforeach
+                            </div>
+                        </div>
+                        @endif
+                        @endforeach
                         @endif
                     </div>
                 </section>
@@ -283,24 +283,19 @@
                 behavior: 'smooth'
             });
         }
-        function react(commentId, type) {
-            fetch(`/comments/${commentId}/${type}`, {
+
+        function react(commentId) {
+            fetch(`/comments/${commentId}/like`, {
                     method: 'POST',
                     headers: {
+                        'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     }
                 })
                 .then(res => res.json())
                 .then(data => {
-                    const wrapper = document.querySelector(`[data-id='${commentId}']`);
-                    if (wrapper) {
-                        wrapper.querySelector(`.${type}-count`).innerHTML = `
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.633 10.5c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 0 1 2.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 0 0 .322-1.672V3a.75.75 0 0 1 .75-.75A2.25 2.25 0 0 1 16.5 4.5c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 0 1-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 0 0-1.423-.23H5.904M6.633 10.5l-1.07-1.07m1.07 1.07V15m0 0H3m3.75 0v4.5m0-4.5h.75m0 0V11.25m0 0h.75m0 0V15m0 0h.75M6.633 10.5c-.636 0-1.257.074-1.844.208M10.5 15.75a.75.75 0 0 0 0 1.5h4.5a.75.75 0 0 0 0-1.5h-4.5Z" />
-                        </svg>
-                        Thích (${data[`${type}_count`]})
-                        `;
-                    }
+                    likeCount = document.getElementById('like-count-value');
+                    
                 })
                 .catch(() => alert(`Không thể ${type} bình luận.`));
         }
@@ -367,7 +362,7 @@
         });
     </script>
 
-{{--    handle submit content + report--}}
+    {{-- handle submit content + report--}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // --- Existing Comment & Reply Form Elements ---
@@ -455,7 +450,10 @@
                 replyToIdInput.value = commentId;
                 commentContent.value = `@${clientName} `;
                 commentContent.focus();
-                commentForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                commentForm.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
                 cancelReplyButton.classList.remove('hidden');
             }
 
@@ -533,11 +531,17 @@
                         console.log('Bình luận đã được thêm thành công!', newCommentData);
                     } else {
                         let errorMessage = data.message || 'Có lỗi xảy ra khi gửi bình luận.';
-                        if (data.errors) { for (const field in data.errors) { errorMessage += `\n- ${data.errors[field].join(', ')}`; } }
-                        alert(errorMessage); console.error('Lỗi khi gửi bình luận:', data);
+                        if (data.errors) {
+                            for (const field in data.errors) {
+                                errorMessage += `\n- ${data.errors[field].join(', ')}`;
+                            }
+                        }
+                        alert(errorMessage);
+                        console.error('Lỗi khi gửi bình luận:', data);
                     }
                 } catch (error) {
-                    alert('Không thể kết nối đến server. Vui lòng thử lại.'); console.error('Lỗi fetch request:', error);
+                    alert('Không thể kết nối đến server. Vui lòng thử lại.');
+                    console.error('Lỗi fetch request:', error);
                 }
             });
 
@@ -569,7 +573,8 @@
 
                     const formData = new FormData(reportCommentForm);
                     // Action URL points to the dedicated comment report route
-                    const actionUrl = '{{ route('reports.comments.store') }}';
+                    const actionUrl = '{{ route('
+                    reports.comments.store ') }}';
                     try {
                         const response = await fetch(actionUrl, {
                             method: 'POST',
@@ -604,4 +609,5 @@
         });
     </script>
 </body>
+
 </html>
