@@ -7,4 +7,4 @@
     - run sql in database.sql
     - npm install 
     - npm run dev
-    - composer artisan serve
+    - php artisan serve
