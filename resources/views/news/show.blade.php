@@ -559,7 +559,7 @@
                         body: formData,
                     });
                     const data = await response.json();
-
+                    console.log(data)
                     if (response.ok && data.success) {
                         const newCommentData = data.comment;
                         let newCommentHtml;
@@ -598,10 +598,13 @@
                                 errorMessage += `\n- ${data.errors[field].join(', ')}`;
                             }
                         }
-                        const loginUrl = "{{ route('login') }}";
-                        window.location.href = loginUrl;
                         alert(errorMessage);
-                        console.error('Lỗi khi gửi bình luận:', data);
+                        if(errorMessage === 'Bạn vui lòng đăng nhập để bình luận.') {
+                            const loginUrl = "{{ route('login') }}";
+                            window.location.href = loginUrl;
+                            console.error('Lỗi khi gửi bình luận:', data);
+                        }
+
                     }
                 } catch (error) {
                     alert('Không thể kết nối đến server. Vui lòng thử lại.');

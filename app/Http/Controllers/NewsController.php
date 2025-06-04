@@ -13,8 +13,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use App\Models\Comment; // Để lấy số lượng comment
-use Carbon\Carbon; // Import Carbon
+
 
 class   NewsController extends Controller
 {
@@ -359,32 +358,22 @@ class   NewsController extends Controller
         $featuredHotNews = $hotNews->first(); // The very first hot news for the main feature
 
         // 2. Fetch other hot news for the "Tin nóng" sidebar
-        // Exclude the featured one by ID if it exists
         $otherHotNews = collect([]);
         if ($hotNews->count() > 1) {
-            $otherHotNews = $hotNews->slice(1); // Skip the first one, take up to 5 others
+            $otherHotNews = $hotNews->slice(1);
         }
 
 
         // 3. Fetch latest news for the "Tin mới nhất" sidebar
-        // We'll take 10 latest news items, and the view will display the first 5.
         $latestNews = News::latest('date') // Order by latest creation date
             ->take(10)
             ->get();
 
-        // 4. Fetch opinion news for the "Góc nhìn" sidebar
-        // You'll need to define how 'opinion' news is identified.
-        // For example, if you have a specific labelId for 'Góc nhìn' (let's assume it's 7 for this example, or a specific field)
-        // Or if 'opinion' is a status or a tag in the content.
-        // For now, let's assume a specific labelId for 'Góc nhìn' (e.g., labelId = 7) or just take some random news.
-        // If 'Góc nhìn' is a specific label, make sure to add it to your `labels` table and data.
-        // For demonstration, let's pick a label, e.g., 'Đời sống' (labelId 1) or just random news for 'Góc nhìn'
         $opinionNews = News::inRandomOrder() // Get random articles
             ->take(5) // Take 5 random articles
             ->get();
 
         // 5. Handle the dynamic category section (main content area)
-        // Get the requested label_id from the URL query parameter. Default to 6 ('Kinh doanh') if not provided.
         $requestedLabelId = 1;
 
         if ($tab == 'tin-nong') $requestedLabelId = 1;
@@ -406,7 +395,7 @@ class   NewsController extends Controller
 
         // Fetch news for the dynamic category.
         // Using whereJsonContains for the 'labelId' JSON column to match single or array labels.
-        $dynamicCategoryNews = News::whereJsonContains('labelId', $requestedLabelId)
+        $dynamicCategoryNews = News::where('labelId', $requestedLabelId)
             ->latest('date')
             ->get(); // The view will take(10)
 

@@ -87,10 +87,10 @@ Route::post('/save-news', [NewsController::class, 'saveNews'])->name('news.save'
 // Route bình luận
 
 Route::post('/report/send', [ReportController::class, 'sendReport'])->name('reports.comments.store');
-
+Route::post('/news/{id}/comments', [CommentController::class, 'store'])->name('comments.store');
 Route::middleware('auth')->group(function () {
     Route::get('/news/{newsId}/comments', [CommentController::class, 'index'])->name('comments.index');
-    Route::post('/news/{id}/comments', [CommentController::class, 'store'])->name('comments.store');
+
     Route::post('/comments/{id}/like', [CommentController::class, 'like'])->name('comments.like');
     Route::post('/comments/{id}/dislike', [CommentController::class, 'dislike'])->name('comments.dislike');
     Route::post('/comments/{id}/report', [CommentController::class, 'report'])->name('comments.report');

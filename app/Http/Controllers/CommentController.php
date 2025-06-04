@@ -137,8 +137,15 @@ class CommentController extends Controller
                 'message' => 'Bạn vui lòng đăng nhập để bình luận.',
             ]);
         }
-        $client = Auth::user();
+
+        $client = Clients::find(Auth::id());
         log::info($client);
+        if($client->isMute <=0){
+            return response()->json([
+                'success' => false,
+                'message' => 'Bạn đã bị cấm bình luận.',
+            ]);
+        }
         $content = $request->input('content');
         $commentId = null;
 
