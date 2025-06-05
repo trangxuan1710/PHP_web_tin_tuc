@@ -131,7 +131,6 @@
             lucide.createIcons(); // Cập nhật lại icon
         }
 
-
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons(); // Initialize Lucide icons
 
@@ -141,7 +140,6 @@
 
                 const email = document.getElementById('email').value;
                 const password = document.getElementById('password').value;
-                const rememberMe = document.getElementById('remember').checked;
 
                 try {
                     const response = await fetch('/login', { // Thay đổi URL API của bạn
@@ -154,7 +152,6 @@
                         body: JSON.stringify({
                             email,
                             password,
-                            remember: rememberMe
                         })
                     });
 
@@ -176,12 +173,6 @@
                 }
             });
 
-            const googleLoginBtn = document.getElementById('google-login-btn');
-            googleLoginBtn.addEventListener('click', function() {
-                showUserMessage('Đang chuyển hướng đến Google để đăng nhập...', 'success');
-                //
-                console.log('Đăng nhập bằng Google');
-            });
         });
     </script>
 </body>
